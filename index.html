@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#f5ede0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Film Puanları" />
-  <title>Film Puanları</title>
+  <meta name="apple-mobile-web-app-title" content="İzlesem mi?" />
+  <title>İzlesem mi?</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -156,7 +156,7 @@
 <body>
 <div class="app">
   <div class="content">
-    <h1 id="site-title">Film Puanları</h1>
+    <h1 id="site-title">İzlesem mi?</h1>
     <p class="sub">IMDb · Rotten Tomatoes · Metacritic · TMDb</p>
     <div class="search-wrap">
       <div class="search-row">
@@ -199,7 +199,7 @@ var timer = null;
 var selId = null;
 var selMt = null;
 
-// RASTGELE GİZLİ CEVHER BULMA ALGORİTMASI
+// RASTGELE GİZLİ CEVHER BULMA ALGORİTMASI (GÜNCELLENMİŞ OY BAREMİ İLE)
 function loadRandomDiscovery() {
   qEl.value = "";
   toggleClearBtn();
@@ -207,22 +207,18 @@ function loadRandomDiscovery() {
   btnEl.disabled = true;
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
 
-  // Karakter derinliği, psikolojik katmanlar ve gri alanların yoğun işlendiği sinema türleri
-  // Dram(18), Gizem(9648), Suç(80), Gerilim(53), Tarih(36)
   var deepGenres = [18, 9648, 80, 53, 36];
   var randomGenre = deepGenres[Math.floor(Math.random() * deepGenres.length)];
-  
-  // Aramayı genişletmek ve farklı sonuçlar almak için 1 ile 5 arası rastgele bir sayfa seçilir
   var randomPage = Math.floor(Math.random() * 5) + 1;
 
   var url = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
             "&language=tr-TR" +
             "&vote_average.gte=7.0" +
-            "&vote_count.gte=300" +
-            "&vote_count.lte=3000" +
+            "&vote_count.gte=500" +
+            "&vote_count.lte=5000" +
             "&with_genres=" + randomGenre + 
             "&page=" + randomPage +
-            "&sort_by=popularity.desc"; // Bu baremdeki en popülerlerden başla
+            "&sort_by=popularity.desc";
 
   fetch(url)
     .then(function(r) { return r.json(); })
@@ -254,7 +250,6 @@ clearBtn.addEventListener("click", function() {
 });
 
 siteTitle.addEventListener("click", function() {
-  // Ana başlığa tıklandığında rastgele film yükle
   loadRandomDiscovery();
 });
 
@@ -374,7 +369,6 @@ function fetchDD(q) {
     .catch(function() { hideDD(); });
 }
 
-// Ana film yükleme fonksiyonu dışarı çıkarıldı, artık "Rastgele" veya "Arama" ile tetiklenebilir
 function loadFilm(id, mt, isRandom) {
   var currentSearchVal = qEl.value.trim();
   
@@ -387,7 +381,6 @@ function loadFilm(id, mt, isRandom) {
       var revData = results[1];
 
       var imdbId  = (dd.external_ids && dd.external_ids.imdb_id) || dd.imdb_id;
-      // Rastgele geldiyse kendi adını, aratılarak geldiyse q değerini referans al
       var title   = dd.title || dd.name || currentSearchVal;
       var year    = (dd.release_date || dd.first_air_date || "").slice(0, 4);
       var type    = mt === "tv" ? "Dizi" : "Film";
@@ -479,12 +472,12 @@ function loadFilm(id, mt, isRandom) {
           '</div>';
         }
 
-        var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nFilm Puanları uygulamasından incelendi.';
+        // Paylaşım metni de "İzlesem mi?" olarak güncellendi
+        var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.';
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
 
         var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
         
-        // Eğer film rastgele keşif ile geldiyse başlığın üstüne şık bir etiket bas
         var randomBadgeHtml = isRandom ? '<div class="random-badge">Günün Keşfi 💎</div>' : '';
 
         resEl.innerHTML = '<div class="card">' +
@@ -561,7 +554,6 @@ function doSearch() {
   btnEl.disabled = false; btnEl.textContent = "Ara";
 }
 
-// Site ilk yüklendiğinde rastgele bir gizli cevher getir
 window.addEventListener("DOMContentLoaded", function() {
   loadRandomDiscovery();
 });
