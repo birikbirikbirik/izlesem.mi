@@ -17,12 +17,27 @@
       --imdb: #c8960a; --rt-fresh: #d42a08; --rt-rotten: #7a2020;
       --meta-green: #4a9030; --meta-yellow: #c89010; --meta-red: #c03030;
       --tmdb: #0d9488; --shadow: rgba(80,40,10,0.10);
+      --glow: rgba(184,74,26,.08);
     }
-    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
-    .app { min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; position:relative; }
-    .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,rgba(184,74,26,.08),transparent 70%); pointer-events:none; }
+    
+    /* Koyu Tema Değişkenleri */
+    [data-theme="dark"] {
+      --bg: #141414; --bg2: #1e1e1e; --card: #181818; --border: #2e2e2e;
+      --accent: #e56532; --text: #e5e5e5; --muted: #8f8f8f;
+      --shadow: rgba(0,0,0,0.6);
+      --glow: rgba(229,101,50,.06);
+    }
+
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; transition: background 0.3s, color 0.3s; }
+    .app { min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px 20px 40px; position:relative; }
+    .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,var(--glow),transparent 70%); pointer-events:none; transition: background 0.3s; }
     .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; }
     
+    /* Üst Bar ve Tema Butonu */
+    .top-bar { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 10px; }
+    .theme-toggle-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px var(--shadow); }
+    .theme-toggle-btn:hover { background: var(--bg2); }
+
     h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,10vw,76px); letter-spacing:.08em; color:var(--accent); text-align:center; line-height:1; margin-bottom:6px; cursor: pointer; transition: opacity 0.2s; -webkit-tap-highlight-color: transparent; }
     h1:hover { opacity: 0.8; }
     
@@ -32,19 +47,19 @@
     
     .search-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
     input { width: 100%; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:14px 40px 14px 18px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; transition:border-color .2s,box-shadow .2s; -webkit-appearance:none; box-shadow:0 2px 8px var(--shadow); }
-    input:focus { border-color:var(--accent); box-shadow:0 2px 12px rgba(184,74,26,.12); }
-    input::placeholder { color:#b8a090; }
+    input:focus { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
+    input::placeholder { color:var(--muted); opacity:0.7; }
     
-    .clear-btn { position: absolute; right: 12px; background: none; border: none; color: #b8a090; font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
+    .clear-btn { position: absolute; right: 12px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
     .clear-btn:hover { color: var(--accent); }
 
     button.search-btn { background:var(--accent); border:none; border-radius:10px; padding:14px 22px; color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; letter-spacing:.04em; cursor:pointer; transition:background .2s,transform .1s; white-space:nowrap; -webkit-tap-highlight-color:transparent; box-shadow:0 2px 8px var(--shadow); }
     button.search-btn:hover { background:#d05520; }
     button.search-btn:active { transform:scale(.96); }
-    button.search-btn:disabled { background:#c8b090; cursor:not-allowed; }
+    button.search-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
 
-    .comfort-btn { background: rgba(184, 58, 26, 0.08); color: #a93226; border: 1.5px solid rgba(184, 58, 26, 0.2); width: 100%; border-radius: 10px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .05em; cursor: pointer; transition: all 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .comfort-btn:hover { background: rgba(184, 58, 26, 0.15); border-color: rgba(184, 58, 26, 0.4); }
+    .comfort-btn { background: var(--glow); color: var(--accent); border: 1.5px solid rgba(184, 58, 26, 0.2); width: 100%; border-radius: 10px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .05em; cursor: pointer; transition: all 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .comfort-btn:hover { border-color: rgba(184, 58, 26, 0.5); }
     .comfort-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--card); border:1.5px solid var(--border); border-radius:10px; box-shadow:0 8px 24px var(--shadow); z-index:100; overflow:hidden; max-height:280px; overflow-y:auto; }
@@ -63,7 +78,7 @@
     .clear-history-btn { display:block; width:100%; text-align:center; padding:12px; font-size:12px; color:#d42a08; background:var(--card); border:none; border-top:1px solid var(--border); cursor:pointer; font-weight:600; }
     .clear-history-btn:hover { background:var(--bg2); }
     
-    .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); }
+    .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     
     .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; }
@@ -89,8 +104,15 @@
     .action-btn.trailer-btn:hover { background:#c00; }
     .action-btn.share-btn { background:var(--bg2); color:var(--text); }
     .action-btn.share-btn:hover { background:var(--border); }
+
+    /* Dış Bağlantılar (IMDb, Letterboxd, TMDb) */
+    .outbound-links-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
     .action-btn.lb-btn { background:#202830; color:#00e054; }
     .action-btn.lb-btn:hover { background:#14191e; }
+    .action-btn.imdb-btn { background:#f5c518; color:#000; }
+    .action-btn.imdb-btn:hover { background:#e2b616; }
+    .action-btn.tmdb-btn { background:#0d9488; color:#fff; }
+    .action-btn.tmdb-btn:hover { background:#0f766e; }
     
     .platforms-wrap { margin-top:14px; border-top:1px dashed var(--border); padding-top:12px; }
     .platforms-title { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
@@ -104,13 +126,12 @@
     .weighted-avg { background: var(--card); padding: 22px 20px; text-align: center; border-bottom: 1.5px solid var(--border); }
     .wa-title { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .wa-score { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 1; color: var(--accent); margin-bottom: 8px; }
-    .wa-score span { font-size: 24px; color: #b8a080; }
-    .wa-weights { font-size: 10px; color: #b8a080; letter-spacing: .08em; line-height: 1.5; }
+    .wa-score span { font-size: 24px; color: var(--muted); opacity:0.6; }
+    .wa-weights { font-size: 10px; color: var(--muted); opacity:0.8; letter-spacing: .08em; line-height: 1.5; }
     
     .scores { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--border); }
-    .score-cell { background:var(--card); padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:7px; transition: background 0.2s ease; }
-    a.score-cell { text-decoration: none; cursor: pointer; }
-    a.score-cell:hover { background: var(--bg2); }
+    /* Puan Kartlarından Link ve Hover Efekti Kaldırıldı */
+    .score-cell { background:var(--card); padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:7px; }
     
     .score-name { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
     .score-num { font-family:'Bebas Neue',sans-serif; font-size:38px; line-height:1; letter-spacing:.02em; }
@@ -131,7 +152,7 @@
     .bar-fill.yellow { background:var(--meta-yellow); }
     .bar-fill.red    { background:var(--meta-red); }
     .bar-fill.tmdb   { background:var(--tmdb); }
-    .score-sub { font-size:10px; color:#b8a080; letter-spacing:.06em; }
+    .score-sub { font-size:10px; color:var(--muted); opacity:0.8; letter-spacing:.06em; }
     
     .bottom { padding:18px 24px 22px; border-top:1.5px solid var(--border); }
     .badge { display:inline-flex; align-items:center; padding:5px 12px; border-radius:5px; font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
@@ -142,7 +163,7 @@
     .badge.weak        { background: rgba(192, 48, 48, 0.08);  color: var(--meta-red); }
     .badge.trash       { background: rgba(0, 0, 0, 0.08);      color: #666; }
     
-    .plot { font-size:13.5px; line-height:1.7; color:var(--text); }
+    .plot { font-size:13.5px; line-height:1.7; color:var(--text); opacity:0.9; }
 
     .reviews-wrap { padding: 0 24px 24px; border-top: 1.5px solid var(--border); background: var(--card); }
     .rev-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); margin: 24px 0 14px; letter-spacing: .05em; }
@@ -169,11 +190,11 @@
     
     .err { padding:32px 24px; text-align:center; color:var(--muted); font-size:14px; line-height:1.6; }
     .err .icon { font-size:32px; margin-bottom:10px; }
-    .tip { margin-top:32px; font-size:11px; color:#c8b090; letter-spacing:.1em; text-align:center; line-height:1.8; }
+    .tip { margin-top:32px; font-size:11px; color:var(--muted); letter-spacing:.1em; text-align:center; line-height:1.8; opacity:0.8;}
 
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(42, 31, 20, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; display: flex; flex-direction: column; }
+    .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; display: flex; flex-direction: column; }
     .modal-overlay.active .modal-box { transform: translateY(0); }
     .modal-header { padding: 18px 24px; border-bottom: 1.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10; }
     .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--accent); letter-spacing: .05em; line-height: 1; }
@@ -189,6 +210,9 @@
 <body>
 <div class="app">
   <div class="content">
+    <div class="top-bar">
+      <button id="theme-toggle" class="theme-toggle-btn">🌙 Koyu Tema</button>
+    </div>
     <h1 id="site-title">İzlesem mi?</h1>
     <p class="sub">IMDb · Rotten Tomatoes · Metacritic · TMDb</p>
     <div class="search-wrap">
@@ -237,10 +261,29 @@ var btnEl = document.getElementById("btn");
 var comfortBtn = document.getElementById("comfort-btn");
 var resEl = document.getElementById("result");
 var siteTitle = document.getElementById("site-title");
+var themeToggle = document.getElementById('theme-toggle');
 var timer = null;
 var selId = null;
 var selMt = null;
 var currentCastHtml = ""; 
+
+// --- TEMA KONTROLÜ (DARK MODE) ---
+var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
+if (currentTheme === 'dark') {
+  document.body.setAttribute('data-theme', 'dark');
+  themeToggle.innerText = '☀️ Açık Tema';
+}
+themeToggle.addEventListener('click', function() {
+  if (document.body.getAttribute('data-theme') === 'dark') {
+    document.body.removeAttribute('data-theme');
+    localStorage.setItem('izlesemmi_theme', 'light');
+    themeToggle.innerText = '🌙 Koyu Tema';
+  } else {
+    document.body.setAttribute('data-theme', 'dark');
+    localStorage.setItem('izlesemmi_theme', 'dark');
+    themeToggle.innerText = '☀️ Açık Tema';
+  }
+});
 
 // --- ARAMA GEÇMİŞİ ALTYAPISI ---
 function getSearchHistory() {
@@ -628,9 +671,9 @@ function loadFilm(id, mt, isRandom) {
         var letterboxdUrl = "https://letterboxd.com/tmdb/" + dd.id; 
 
         function bw(n, max) { return n === null ? 0 : Math.min(100, Math.round(n / max * 100)); }
-        function sc(name, val, cls, w, sub, link) {
+        // Dış bağlantı linki (a tag) tamamen kaldırıldı, saf bilgi kutusu oldu
+        function sc(name, val, cls, w, sub) {
           var content = '<span class="score-name">' + name + '</span><span class="score-num ' + cls + '">' + val + '</span><div class="bar"><div class="bar-fill ' + cls + '" data-w="' + w + '" style="width:0%"></div></div><span class="score-sub">' + sub + '</span>';
-          if (link && val !== "—") return '<a href="' + link + '" target="_blank" rel="noopener" class="score-cell">' + content + '</a>';
           return '<div class="score-cell">' + content + '</div>';
         }
         
@@ -665,8 +708,10 @@ function loadFilm(id, mt, isRandom) {
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
         var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
 
-        // Letterboxd Butonu (IMDb butonu silindi, linkler koparıldı)
+        // Yeni Dış Bağlantılar (IMDb, Letterboxd, TMDb)
         var lbBtnHtml = '<a class="action-btn lb-btn" href="' + letterboxdUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>';
+        var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
+        var tmdbBtnHtml = tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '';
 
         resEl.innerHTML = '<div class="card">' +
           '<div class="card-head">' + 
@@ -678,8 +723,8 @@ function loadFilm(id, mt, isRandom) {
                 '<div class="actions-row">' +
                   (trailer ? '<button class="action-btn trailer-btn" onclick="openTrailerModal(\'' + trailer.key + '\')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>' : '') +
                   '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
-                  lbBtnHtml +
                 '</div>' +
+                '<div class="outbound-links-row">' + imdbBtnHtml + lbBtnHtml + tmdbBtnHtml + '</div>' +
               '</div>' +
             '</div>' +
             platformsHtml +
@@ -687,10 +732,10 @@ function loadFilm(id, mt, isRandom) {
           '</div>' +
           avgHtml +
           '<div class="scores">' +
-            sc("IMDb",       imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10),   "/ 10", imdbLink) +
-            sc("TMDb",       tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10),  "/ 10", tmdbLink) +
-            sc("Rotten T.",  rtScore   !== null ? rtScore + "%" : "—",        rCls, bw(rtScore, 100),    "Tomatometer", null) +
-            sc("Metacritic", metaScore !== null ? metaScore : "—",            mCls, bw(metaScore, 100),  "/ 100", null) +
+            sc("IMDb",       imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10),   "/ 10") +
+            sc("TMDb",       tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10),  "/ 10") +
+            sc("Rotten T.",  rtScore   !== null ? rtScore + "%" : "—",        rCls, bw(rtScore, 100),    "Tomatometer") +
+            sc("Metacritic", metaScore !== null ? metaScore : "—",            mCls, bw(metaScore, 100),  "/ 100") +
           '</div>' +
           '<div class="bottom">' + (verd ? '<div class="badge ' + verd.c + '">' + verd.l + '</div>' : '') + (plot ? '<p class="plot">' + plot + '</p>' : '') + '</div>' +
           reviewsHtml +
