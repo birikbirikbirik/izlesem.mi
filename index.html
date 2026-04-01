@@ -81,25 +81,29 @@
     
     .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; }
     .card-head-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
-    .poster { width:64px; height:94px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); }
-    .poster-ph { width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
+    
+    /* Afişi Sağlama Aldığımız Yer */
+    .poster { width:64px; min-width:64px; height:94px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); }
+    .poster-ph { width:64px; min-width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
     .head-info { flex:1; min-width:0; }
     
-    /* GÜNCELLENMİŞ ETİKET ALANI (Yatay Kaydırma / No-Wrap) */
+    /* GÜNCELLENMİŞ ETİKET ALANI (Bağımsız Tam Genişlik Satırı) */
     .tags-container { 
       display: flex; 
       gap: 6px; 
-      margin-bottom: 10px; 
+      margin-top: 16px; /* Afiş ve bilgilerden koptu, alta geçti */
+      margin-bottom: 6px; 
       align-items: center; 
-      flex-wrap: nowrap; /* Alt satıra geçmeyi engeller */
-      overflow-x: auto; /* Yatay kaydırmayı açar */
+      flex-wrap: nowrap; 
+      overflow-x: auto; 
       -webkit-overflow-scrolling: touch; 
-      scrollbar-width: none; /* Firefox için barı gizler */
-      padding-bottom: 2px;
+      scrollbar-width: none; 
+      width: 100%; 
+      padding-bottom: 4px;
     }
-    .tags-container::-webkit-scrollbar { display: none; /* Chrome/Safari için barı gizler */ }
+    .tags-container::-webkit-scrollbar { display: none; }
     
-    .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0; /* Küçülmeyi engeller */ }
+    .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0; }
     
     /* Etiket Renkleri */
     .tag-pill.random { background: var(--bg2); color: var(--accent); border: 1px solid var(--border); }
@@ -109,13 +113,11 @@
     .tag-pill.auteur { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.3); }
     .tag-pill.popcorn { background: rgba(230, 50, 50, 0.1); color: #e63232; border: 1px solid rgba(230, 50, 50, 0.3); }
     .tag-pill.award { background: rgba(212, 175, 55, 0.1); color: #b8860b; border: 1px solid rgba(212, 175, 55, 0.3); }
-    
-    /* Yeni Keyword Etiketleri */
     .tag-pill.true-story { background: rgba(43, 91, 132, 0.1); color: #2b5b84; border: 1px solid rgba(43, 91, 132, 0.3); }
     .tag-pill.book { background: rgba(139, 69, 19, 0.1); color: #8b4513; border: 1px solid rgba(139, 69, 19, 0.3); }
     .tag-pill.remake { background: rgba(100, 100, 100, 0.1); color: #777; border: 1px solid rgba(100, 100, 100, 0.3); }
     
-    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; }
+    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; }
     .tag-info-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--muted); }
 
     .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; }
@@ -727,7 +729,6 @@ function loadFilm(id, mt, isRandom) {
           }
       }
 
-      // KEYWORDS (Anahtar Kelimeler) Tespiti
       var kwData = dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [];
       var kwNames = kwData.map(function(k) { return k.name.toLowerCase(); });
       
@@ -783,14 +784,9 @@ function loadFilm(id, mt, isRandom) {
         if (imdbScore !== null && imdbScore >= 7.5 && imdbVotes > 100000 && metaScore !== null && metaScore <= 55) { tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>'; }
         if (od && od.Awards && /Oscar|Cannes|BAFTA|Palme d'Or|Golden Globe/i.test(od.Awards)) { tagsHtml += '<span class="tag-pill award">🏆 Ödüllü</span>'; }
         
-        // Yeni Etiketlerin Eklenmesi
         if (isTrueStory) { tagsHtml += '<span class="tag-pill true-story">🎭 Gerçek Hikaye</span>'; }
         if (isBook) { tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>'; }
         if (isRemake) { tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>'; }
-
-        if (tagsHtml !== '') {
-            tagsHtml += '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
-        }
 
         var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.';
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
@@ -800,20 +796,29 @@ function loadFilm(id, mt, isRandom) {
         var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
         var tmdbBtnHtml = tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '';
 
+        // TAGES KUTUSUNU OLUŞTURUYORUZ (Eğer boşsa hiç ekleme)
+        var tagsContainerHtml = '';
+        if (tagsHtml !== '') {
+            tagsHtml += '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
+            tagsContainerHtml = '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '</div>';
+        } else {
+            tagsContainerHtml = '<div class="tags-container" id="tags-container-' + id + '"></div>';
+        }
+
         resEl.innerHTML = '<div class="card">' +
           '<div class="card-head">' + 
             '<div class="card-head-top">' +
               (rawPoster ? '<img class="poster" src="' + rawPoster + '" alt="" />' : '<div class="poster-ph">🎬</div>') +
               '<div class="head-info">' + 
-                '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '</div>' + 
                 '<div class="card-title">' + title + '</div><div class="card-meta">' + metaLine + '</div>' +
-                '<div class="actions-row">' +
-                  (trailer ? '<button class="action-btn trailer-btn" onclick="openTrailerModal(\'' + trailer.key + '\')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>' : '') +
-                  '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
-                '</div>' +
-                '<div class="outbound-links-row">' + imdbBtnHtml + lbBtnHtml + tmdbBtnHtml + '</div>' +
               '</div>' +
             '</div>' +
+            tagsContainerHtml +
+            '<div class="actions-row">' +
+              (trailer ? '<button class="action-btn trailer-btn" onclick="openTrailerModal(\'' + trailer.key + '\')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>' : '') +
+              '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
+            '</div>' +
+            '<div class="outbound-links-row">' + imdbBtnHtml + lbBtnHtml + tmdbBtnHtml + '</div>' +
             platformsHtml +
             '<div class="kadro-btn-wrap"><button id="kadro-btn-trigger" class="action-btn kadro-btn">🎭 Kadroyu Gör</button></div>' +
           '</div>' +
