@@ -84,16 +84,15 @@
     
     .poster { width:64px; min-width:64px; height:94px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); }
     .poster-ph { width:64px; min-width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
-    .head-info { flex:1; min-width:0; }
+    .head-info { flex:1; min-width:0; } 
     
-    /* GÜNCELLENMİŞ ETİKET ALANI (Wrap - Kesin Çözüm) */
     .tags-container { 
       display: flex; 
       gap: 6px; 
       margin-top: 16px; 
       margin-bottom: 6px; 
       align-items: center; 
-      flex-wrap: wrap; /* Ekrandan taşmasını Ebediyen engeller, alt satıra geçer */
+      flex-wrap: wrap; 
       width: 100%; 
     }
     
@@ -292,7 +291,6 @@ var currentCastHtml = "";
 window.currentFilmReviews = [];
 window.currentReviewCount = 0;
 
-// Ülke Çeviri Sözlüğü (Destansı isimleri kısaltmak için)
 var countryMap = {
     "United States of America": "ABD",
     "United Kingdom": "İngiltere",
@@ -308,7 +306,6 @@ var countryMap = {
     "Brazil": "Brezilya"
 };
 
-// --- TEMA KONTROLÜ (DARK MODE) ---
 var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
 if (currentTheme === 'dark') {
   document.body.setAttribute('data-theme', 'dark');
@@ -326,7 +323,6 @@ themeToggle.addEventListener('click', function() {
   }
 });
 
-// --- ETİKET SÖZLÜĞÜ MODALI ---
 window.showTagInfoModal = function() {
     var infoHtml = `
         <div style="font-size:13px; line-height:1.6;">
@@ -345,7 +341,6 @@ window.showTagInfoModal = function() {
     openGenericModal('Etiket Sözlüğü', infoHtml);
 };
 
-// --- ARAMA GEÇMİŞİ ALTYAPISI ---
 function getSearchHistory() {
   var hist = localStorage.getItem('izlesemmi_history');
   return hist ? JSON.parse(hist) : [];
@@ -400,7 +395,6 @@ qEl.addEventListener("focus", function() {
   }
 });
 
-// --- MODAL KONTROLLERİ ---
 function openGenericModal(title, contentHTML) {
   document.getElementById("generic-modal-title").innerText = title;
   document.getElementById("generic-modal-content").innerHTML = contentHTML;
@@ -429,7 +423,7 @@ document.getElementById("trailer-modal").addEventListener("click", function(e) {
   if (e.target === this) closeTrailerModal();
 });
 
-// --- DİNAMİK KONFOR ALANINDAN ÇIK ---
+// GERÇEK RASTGELELİK İÇİN DİNAMİK KEŞİF
 function loadComfortZoneDiscovery() {
   qEl.value = "";
   toggleClearBtn();
@@ -441,34 +435,47 @@ function loadComfortZoneDiscovery() {
   var realKwIds = "2504|5695|6075|27933|4344"; 
   var langs = ['ko', 'fa', 'fr', 'da', 'es', 'it', 'ja', 'sv', 'de'];
   var randomLang = langs[Math.floor(Math.random() * langs.length)];
-  var randomPage = Math.floor(Math.random() * 3) + 1;
+  var cacheBuster = new Date().getTime(); 
 
-  var url = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
+  var baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
             "&language=tr-TR" +
             "&vote_average.gte=7.0" +
             "&vote_count.gte=500" +
             "&vote_count.lte=5000" +
-            "&with_original_language=" + randomLang +
-            "&with_keywords=" + realKwIds + 
-            "&page=" + randomPage +
-            "&sort_by=vote_average.desc";
+            "&with_keywords=" + realKwIds;
 
-  fetch(url)
+  var langUrl = baseUrl + "&with_original_language=" + randomLang;
+
+  // 1. Önce seçilen dildeki toplam sayfayı bul
+  fetch(langUrl + "&page=1&_=" + cacheBuster)
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.results && data.results.length > 0) {
-        var randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
+      if (data.total_results > 0) {
+        var maxPage = Math.min(data.total_pages, 500); 
+        var randomPage = Math.floor(Math.random() * maxPage) + 1;
+        return fetch(langUrl + "&page=" + randomPage + "&_=" + cacheBuster);
+      } else {
+        // O dilde yoksa, Yedek Plan (Global havuz) toplam sayfasını bul
+        return fetch(baseUrl + "&page=1&_=" + cacheBuster)
+          .then(function(r2) { return r2.json(); })
+          .then(function(data2) {
+            if(data2.total_results > 0) {
+                var maxPage2 = Math.min(data2.total_pages, 500);
+                var randomPage2 = Math.floor(Math.random() * maxPage2) + 1;
+                return fetch(baseUrl + "&page=" + randomPage2 + "&_=" + cacheBuster);
+            } else {
+                throw new Error("Havuz boş");
+            }
+          });
+      }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(finalData) {
+      if (finalData && finalData.results && finalData.results.length > 0) {
+        var randomMovie = finalData.results[Math.floor(Math.random() * finalData.results.length)];
         loadFilm(randomMovie.id, "movie", true);
       } else {
-        var fallbackUrl = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + "&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&vote_count.lte=5000&with_keywords=" + realKwIds + "&page=1&sort_by=vote_average.desc";
-        fetch(fallbackUrl).then(function(r2){return r2.json()}).then(function(d2){
-            if (d2.results && d2.results.length > 0) {
-                var rm = d2.results[Math.floor(Math.random() * d2.results.length)];
-                loadFilm(rm.id, "movie", true);
-            } else {
-                resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Sonuç bulunamadı, tekrar deneyin.</div></div></div>';
-            }
-        });
+        resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Sonuç bulunamadı, tekrar deneyin.</div></div></div>';
       }
     })
     .catch(function() {
@@ -480,7 +487,6 @@ function loadComfortZoneDiscovery() {
     });
 }
 
-// --- STANDART GİZLİ CEVHER (ANA SAYFA) ---
 function loadRandomDiscovery() {
   qEl.value = "";
   toggleClearBtn();
@@ -490,22 +496,30 @@ function loadRandomDiscovery() {
 
   var deepGenres = [18, 9648, 80, 53, 36];
   var randomGenre = deepGenres[Math.floor(Math.random() * deepGenres.length)];
-  var randomPage = Math.floor(Math.random() * 5) + 1;
+  var cacheBuster = new Date().getTime();
 
-  var url = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
+  var baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
             "&language=tr-TR" +
             "&vote_average.gte=7.0" +
             "&vote_count.gte=500" +
             "&vote_count.lte=5000" +
-            "&with_genres=" + randomGenre + 
-            "&page=" + randomPage +
-            "&sort_by=popularity.desc";
+            "&with_genres=" + randomGenre;
 
-  fetch(url)
+  fetch(baseUrl + "&page=1&_=" + cacheBuster)
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.results && data.results.length > 0) {
-        var randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
+        if(data.total_results > 0) {
+            var maxPage = Math.min(data.total_pages, 500);
+            var randomPage = Math.floor(Math.random() * maxPage) + 1;
+            return fetch(baseUrl + "&page=" + randomPage + "&_=" + cacheBuster);
+        } else {
+            throw new Error("Havuz boş");
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(finalData) {
+      if (finalData && finalData.results && finalData.results.length > 0) {
+        var randomMovie = finalData.results[Math.floor(Math.random() * finalData.results.length)];
         loadFilm(randomMovie.id, "movie", true);
       } else {
         resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Şu an için gizli bir cevher bulunamadı.</div></div></div>';
@@ -519,7 +533,6 @@ function loadRandomDiscovery() {
     });
 }
 
-// --- OLAY DİNLEYİCİLERİ (EVENT LISTENERS) ---
 comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
 
 function toggleClearBtn() {
@@ -553,7 +566,6 @@ document.addEventListener("click", function(e) {
 
 function hideDD() { ddEl.style.display = "none"; ddEl.innerHTML = ""; }
 
-// --- PAYLAŞIM VE ÇEVİRİ ---
 window.shareFilm = function(btn) {
   var data = JSON.parse(decodeURIComponent(btn.dataset.share));
   if (navigator.share) {
@@ -589,7 +601,6 @@ window.translateText = function(btn) {
     });
 };
 
-// --- YORUM KARTI OLUŞTURUCU ---
 function createReviewHTML(rev) {
     var author = rev.author || "Anonim";
     var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
@@ -603,7 +614,6 @@ function createReviewHTML(rev) {
              '</button></div>';
 }
 
-// --- VERİ ÇEKME FONKSİYONLARI ---
 function fetchDD(q) {
   fetch("https://api.themoviedb.org/3/search/multi?api_key=" + TK + "&query=" + encodeURIComponent(q) + "&language=tr-TR")
     .then(function(r) { return r.json(); })
@@ -807,7 +817,6 @@ function loadFilm(id, mt, isRandom) {
         var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
         var tmdbBtnHtml = tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '';
 
-        // TAGES KUTUSU (WRAP MANTIĞI İLE)
         var tagsContainerHtml = '';
         if (tagsHtml !== '') {
             tagsHtml += '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
