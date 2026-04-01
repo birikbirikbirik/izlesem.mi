@@ -237,7 +237,7 @@
     .err .icon { font-size:32px; margin-bottom:10px; }
     .tip { margin-top:32px; font-size:11px; color:var(--muted); letter-spacing:.1em; text-align:center; line-height:1.8; opacity:0.8;}
 
-    /* MODAL STİLLERİ */
+    /* MODAL STİLLERİ (Z-INDEX GÜNCELLENDİ) */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; display: flex; flex-direction: column; }
@@ -308,7 +308,7 @@
   </div>
 </div>
 
-<div id="generic-modal" class="modal-overlay">
+<div id="generic-modal" class="modal-overlay" style="z-index: 2000;">
   <div class="modal-box">
     <div class="modal-header">
       <div id="generic-modal-title" class="modal-title">Başlık</div>
@@ -318,7 +318,7 @@
   </div>
 </div>
 
-<div id="trailer-modal" class="modal-overlay">
+<div id="trailer-modal" class="modal-overlay" style="z-index: 2000;">
   <div class="modal-box">
     <button class="modal-close" onclick="closeTrailerModal()">&times;</button>
     <div id="trailer-modal-content" style="width:100%; aspect-ratio:16/9;"></div>
@@ -362,7 +362,7 @@
        <button class="search-btn" style="width:100%; background:transparent; color:var(--meta-red); border:1px solid var(--meta-red);" onclick="handleLogout()">Çıkış Yap</button>
 
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
-         <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:20px; text-align:center; display:flex; justify-content:center; align-items:center; gap:6px;">
+         <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:15px; text-align:center; display:flex; justify-content:center; align-items:center; gap:6px;">
             Sinematik Zihin Testi
             <button class="tag-info-btn" style="margin:0;" onclick="showInfoModal('Zihin Profili')">?</button>
          </h3>
