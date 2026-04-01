@@ -27,10 +27,10 @@
       --glow: rgba(229,101,50,.06);
     }
 
-    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; transition: background 0.3s, color 0.3s; }
-    .app { min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px 20px 40px; position:relative; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
+    .app { flex: 1; display:flex; flex-direction:column; align-items:center; padding:20px 20px 0; position:relative; }
     .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,var(--glow),transparent 70%); pointer-events:none; transition: background 0.3s; }
-    .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; }
+    .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; flex: 1; }
     
     .top-bar { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 8px; }
     .top-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px var(--shadow); }
@@ -76,7 +76,7 @@
     .clear-history-btn { display:block; width:100%; text-align:center; padding:12px; font-size:12px; color:#d42a08; background:var(--card); border:none; border-top:1px solid var(--border); cursor:pointer; font-weight:600; }
     .clear-history-btn:hover { background:var(--bg2); }
     
-    .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; }
+    .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     
     .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; }
@@ -85,8 +85,23 @@
     .poster-ph { width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
     .head-info { flex:1; min-width:0; }
     
-    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
-    .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    /* GÜNCELLENMİŞ ETİKET ALANI (Yatay Kaydırma / No-Wrap) */
+    .tags-container { 
+      display: flex; 
+      gap: 6px; 
+      margin-bottom: 10px; 
+      align-items: center; 
+      flex-wrap: nowrap; /* Alt satıra geçmeyi engeller */
+      overflow-x: auto; /* Yatay kaydırmayı açar */
+      -webkit-overflow-scrolling: touch; 
+      scrollbar-width: none; /* Firefox için barı gizler */
+      padding-bottom: 2px;
+    }
+    .tags-container::-webkit-scrollbar { display: none; /* Chrome/Safari için barı gizler */ }
+    
+    .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0; /* Küçülmeyi engeller */ }
+    
+    /* Etiket Renkleri */
     .tag-pill.random { background: var(--bg2); color: var(--accent); border: 1px solid var(--border); }
     .tag-pill.cinephile { background: rgba(13, 148, 136, 0.1); color: var(--tmdb); border: 1px solid rgba(13, 148, 136, 0.3); }
     .tag-pill.timeless { background: rgba(200, 150, 10, 0.1); color: var(--imdb); border: 1px solid rgba(200, 150, 10, 0.3); }
@@ -95,7 +110,12 @@
     .tag-pill.popcorn { background: rgba(230, 50, 50, 0.1); color: #e63232; border: 1px solid rgba(230, 50, 50, 0.3); }
     .tag-pill.award { background: rgba(212, 175, 55, 0.1); color: #b8860b; border: 1px solid rgba(212, 175, 55, 0.3); }
     
-    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; }
+    /* Yeni Keyword Etiketleri */
+    .tag-pill.true-story { background: rgba(43, 91, 132, 0.1); color: #2b5b84; border: 1px solid rgba(43, 91, 132, 0.3); }
+    .tag-pill.book { background: rgba(139, 69, 19, 0.1); color: #8b4513; border: 1px solid rgba(139, 69, 19, 0.3); }
+    .tag-pill.remake { background: rgba(100, 100, 100, 0.1); color: #777; border: 1px solid rgba(100, 100, 100, 0.3); }
+    
+    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; }
     .tag-info-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--muted); }
 
     .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; }
@@ -125,6 +145,8 @@
     .kadro-btn-wrap { margin-top:14px; }
     .kadro-btn { width:100%; justify-content:center; background:var(--card); border:1px solid var(--border); color:var(--text); padding:10px; }
     .kadro-btn:hover { background:var(--bg2); }
+    .load-more-btn { background: transparent; border: 1px dashed var(--border); color: var(--text); }
+    .load-more-btn:hover { background: var(--bg2); }
 
     .weighted-avg { background: var(--card); padding: 22px 20px; text-align: center; border-bottom: 1.5px solid var(--border); }
     .wa-title { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
@@ -207,6 +229,8 @@
 
     #trailer-modal .modal-box { max-width: 800px; background: #000; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
     #trailer-modal .modal-close { position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 24px; padding: 0 0 2px 0; }
+
+    .site-footer { margin-top: auto; padding: 30px 0 10px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; opacity: 0.7; font-family: 'DM Sans', sans-serif; width: 100%; }
   </style>
 </head>
 <body>
@@ -233,6 +257,8 @@
     </div>
     <div id="result"></div>
     <p class="tip">Telefonda: Menü → Ana Ekrana Ekle</p>
+    
+    <div class="site-footer">Atilla Kuru tarafından tasarlandı.</div>
   </div>
 </div>
 
@@ -268,6 +294,8 @@ var timer = null;
 var selId = null;
 var selMt = null;
 var currentCastHtml = ""; 
+window.currentFilmReviews = [];
+window.currentReviewCount = 0;
 
 // --- TEMA KONTROLÜ (DARK MODE) ---
 var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
@@ -298,6 +326,9 @@ window.showTagInfoModal = function() {
             <div style="margin-bottom:12px;"><strong>✍️ Auteur Kalemi:</strong> Filmin yönetmeni ile senaristi aynı kişi olan, stüdyo müdahalesi görmemiş kişisel vizyon filmleri.</div>
             <div style="margin-bottom:12px;"><strong>🍿 Halkın Seçimi:</strong> Eleştirmenlerin beğenmediği (Metacritic 55 ve altı) ama seyircinin bayıldığı (IMDb 7.5+ ve 100.000+ oy), derinlikten ziyade seyir zevki sunan işler.</div>
             <div style="margin-bottom:12px;"><strong>🏆 Ödüllü:</strong> Oscar, Cannes, BAFTA veya Altın Küre gibi prestijli sinema ödüllerinden tescilli filmler.</div>
+            <div style="margin-bottom:12px;"><strong>🎭 Gerçek Hikaye:</strong> Gerçek olaylara ve yaşanmışlıklara dayanan uyarlamalar.</div>
+            <div style="margin-bottom:12px;"><strong>📚 Kitaptan Uyarlama:</strong> Bir roman, kitap veya edebi metinden beyazperdeye aktarılanlar.</div>
+            <div style="margin-bottom:12px;"><strong>🔄 Yeniden Çekim:</strong> Geçmişte çekilmiş bir filmin yeni bir vizyonla tekrar sinemaya aktarılması (Remake).</div>
         </div>
     `;
     openGenericModal('Etiket Sözlüğü', infoHtml);
@@ -477,6 +508,7 @@ function loadRandomDiscovery() {
     });
 }
 
+// --- OLAY DİNLEYİCİLERİ (EVENT LISTENERS) ---
 comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
 
 function toggleClearBtn() {
@@ -510,6 +542,7 @@ document.addEventListener("click", function(e) {
 
 function hideDD() { ddEl.style.display = "none"; ddEl.innerHTML = ""; }
 
+// --- PAYLAŞIM VE ÇEVİRİ ---
 window.shareFilm = function(btn) {
   var data = JSON.parse(decodeURIComponent(btn.dataset.share));
   if (navigator.share) {
@@ -545,6 +578,21 @@ window.translateText = function(btn) {
     });
 };
 
+// --- YORUM KARTI OLUŞTURUCU ---
+function createReviewHTML(rev) {
+    var author = rev.author || "Anonim";
+    var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
+    var content = rev.content || "";
+    var safeContent = encodeURIComponent(content);
+    return '<div class="review-card">' +
+             '<div class="rev-author">' + author + ratingHtml + '</div>' +
+             '<div class="rev-content">' + content + '</div>' +
+             '<button class="rev-translate-btn" data-text="' + safeContent + '" onclick="translateText(this)">' +
+               '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir' +
+             '</button></div>';
+}
+
+// --- VERİ ÇEKME FONKSİYONLARI ---
 function fetchDD(q) {
   fetch("https://api.themoviedb.org/3/search/multi?api_key=" + TK + "&query=" + encodeURIComponent(q) + "&language=tr-TR")
     .then(function(r) { return r.json(); })
@@ -583,7 +631,7 @@ function loadFilm(id, mt, isRandom) {
   var currentSearchVal = qEl.value.trim();
   
   Promise.all([
-    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar&include_video_language=tr,en,null").then(function(r){return r.json()}),
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar,keywords&include_video_language=tr,en,null").then(function(r){return r.json()}),
     fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
   ])
   .then(function(results) {
@@ -597,7 +645,8 @@ function loadFilm(id, mt, isRandom) {
       var plot    = dd.overview || "";
       var rawPoster = dd.poster_path ? "https://image.tmdb.org/t/p/w154" + dd.poster_path : null;
       var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
-      
+      var country = (dd.production_countries && dd.production_countries.length > 0) ? dd.production_countries[0].name : "";
+
       var videos = dd.videos && dd.videos.results ? dd.videos.results : [];
       var trailer = videos.find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; }) || videos.find(function(v) { return v.site === "YouTube"; });
       
@@ -641,23 +690,23 @@ function loadFilm(id, mt, isRandom) {
           platformsHtml += '</div></div>';
       }
 
+      window.currentFilmReviews = revData.results || [];
+      window.currentReviewCount = 0;
       var reviewsHtml = "";
-      if (revData.results && revData.results.length > 0) {
-          var topReviews = revData.results.slice(0, 5);
-          reviewsHtml = '<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3>';
-          topReviews.forEach(function(rev) {
-              var author = rev.author || "Anonim";
-              var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
-              var content = rev.content || "";
-              var safeContent = encodeURIComponent(content);
-              reviewsHtml += '<div class="review-card">' +
-                               '<div class="rev-author">' + author + ratingHtml + '</div>' +
-                               '<div class="rev-content">' + content + '</div>' +
-                               '<button class="rev-translate-btn" data-text="' + safeContent + '" onclick="translateText(this)">' +
-                                 '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir' +
-                               '</button></div>';
+      
+      if (window.currentFilmReviews.length > 0) {
+          reviewsHtml = '<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3><div id="reviews-container">';
+          var initialReviews = window.currentFilmReviews.slice(0, 5);
+          initialReviews.forEach(function(rev) { 
+              reviewsHtml += createReviewHTML(rev); 
           });
           reviewsHtml += '</div>';
+          
+          if (window.currentFilmReviews.length > 5) {
+              reviewsHtml += '<button id="load-more-reviews" class="action-btn kadro-btn load-more-btn" style="margin-top:10px; width:100%;">⬇️ Devamını Gör</button>';
+          }
+          reviewsHtml += '</div>';
+          window.currentReviewCount = 5;
       }
 
       var recsHtml = '';
@@ -678,7 +727,14 @@ function loadFilm(id, mt, isRandom) {
           }
       }
 
-      // OMDb Verisi ve Etiketleri İçeren Ana Render Fonksiyonu
+      // KEYWORDS (Anahtar Kelimeler) Tespiti
+      var kwData = dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [];
+      var kwNames = kwData.map(function(k) { return k.name.toLowerCase(); });
+      
+      var isBook = kwNames.some(function(k) { return k.includes("based on novel") || k.includes("based on book") || k.includes("based on young adult novel") || k.includes("based on comic"); });
+      var isTrueStory = kwNames.some(function(k) { return k.includes("based on true story") || k.includes("based on true events") || k.includes("true story"); });
+      var isRemake = kwNames.some(function(k) { return k === "remake"; });
+
       function render(imdbScore, rtScore, metaScore, od) {
         var iCls = imdbScore === null ? "na" : "imdb";
         var rCls = rtScore   === null ? "na" : rtScore >= 60 ? "fresh" : "rotten";
@@ -717,7 +773,6 @@ function loadFilm(id, mt, isRandom) {
           avgHtml = '<div class="weighted-avg"><div class="wa-title">Ağırlıklı Ortalama Puan</div><div class="wa-score">' + finalAvg.toFixed(1) + '<span> / 100</span></div><div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div></div>';
         }
 
-        // MATEMATİKSEL ETİKETLER
         var tagsHtml = '';
         if (isRandom) { tagsHtml += '<span class="tag-pill random">💎 Keşif</span>'; }
         if (metaScore !== null && imdbScore !== null && metaScore >= 75 && imdbScore <= 6.8) { tagsHtml += '<span class="tag-pill cinephile">🎬 Sinefiller İçin</span>'; }
@@ -727,15 +782,19 @@ function loadFilm(id, mt, isRandom) {
         var imdbVotes = od && od.imdbVotes && od.imdbVotes !== "N/A" ? parseInt(od.imdbVotes.replace(/,/g, '')) : 0;
         if (imdbScore !== null && imdbScore >= 7.5 && imdbVotes > 100000 && metaScore !== null && metaScore <= 55) { tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>'; }
         if (od && od.Awards && /Oscar|Cannes|BAFTA|Palme d'Or|Golden Globe/i.test(od.Awards)) { tagsHtml += '<span class="tag-pill award">🏆 Ödüllü</span>'; }
+        
+        // Yeni Etiketlerin Eklenmesi
+        if (isTrueStory) { tagsHtml += '<span class="tag-pill true-story">🎭 Gerçek Hikaye</span>'; }
+        if (isBook) { tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>'; }
+        if (isRemake) { tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>'; }
 
-        // Eğer en az 1 etiket varsa, yanına "Sözlük" ikonunu ekle
         if (tagsHtml !== '') {
             tagsHtml += '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
         }
 
         var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.';
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
-        var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
+        var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · ");
 
         var lbBtnHtml = '<a class="action-btn lb-btn" href="' + letterboxdUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>';
         var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
@@ -774,6 +833,21 @@ function loadFilm(id, mt, isRandom) {
           resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
           var kBtn = document.getElementById("kadro-btn-trigger");
           if(kBtn) kBtn.addEventListener("click", function() { openGenericModal('Film Kadrosu', currentCastHtml); });
+
+          var loadMoreBtn = document.getElementById("load-more-reviews");
+          if (loadMoreBtn) {
+              loadMoreBtn.addEventListener("click", function() {
+                  var container = document.getElementById("reviews-container");
+                  var nextReviews = window.currentFilmReviews.slice(window.currentReviewCount, window.currentReviewCount + 5);
+                  nextReviews.forEach(function(rev) {
+                      container.insertAdjacentHTML('beforeend', createReviewHTML(rev));
+                  });
+                  window.currentReviewCount += 5;
+                  if (window.currentReviewCount >= window.currentFilmReviews.length) {
+                      loadMoreBtn.style.display = "none";
+                  }
+              });
+          }
         }, 50);
 
         if (director && director.id) {
@@ -789,7 +863,6 @@ function loadFilm(id, mt, isRandom) {
                         if (avgRating >= 7.6) {
                             var tContainer = document.getElementById('tags-container-' + id);
                             if (tContainer) {
-                                // Soru işareti butonundan önce ekle
                                 var ustaBtn = '<span class="tag-pill master">👑 Usta Yönetmen</span>';
                                 var btnHtml = '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
                                 if(tContainer.innerHTML.includes('tag-info-btn')) {
