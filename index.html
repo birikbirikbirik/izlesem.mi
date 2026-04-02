@@ -52,9 +52,10 @@
     .search-row { display:flex; gap:8px; width:100%; }
     
     .search-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
-    input { width: 100%; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:14px 40px 14px 18px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; transition:border-color .2s,box-shadow .2s; -webkit-appearance:none; box-shadow:0 2px 8px var(--shadow); }
-    input:focus { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
-    input::placeholder { color:var(--muted); opacity:0.7; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea { width: 100%; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:14px 18px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; transition:border-color .2s,box-shadow .2s; box-shadow:0 2px 8px var(--shadow); }
+    input:focus, textarea:focus { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
+    input::placeholder, textarea::placeholder { color:var(--muted); opacity:0.7; }
+    .search-input-wrap input { padding-right: 40px; }
     
     .clear-btn { position: absolute; right: 12px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
     .clear-btn:hover { color: var(--accent); }
@@ -228,6 +229,7 @@
     .wl-remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(2px); transition: background 0.2s; z-index: 2; line-height: 1; padding-bottom: 2px;}
     .wl-remove-btn:hover { background: var(--meta-red); }
     .wl-score-badge { position: absolute; top: 6px; left: 6px; background: rgba(184, 74, 26, 0.95); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
+    .diary-badge { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 4px; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
 
     .loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0; color:var(--muted); font-size:13px; letter-spacing:.1em; }
     .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
@@ -248,6 +250,9 @@
     .modal-close:hover { color: var(--accent); }
     .modal-body { padding: 24px; font-size: 14px; line-height: 1.7; color: var(--text); }
     .modal-spinner { display: flex; justify-content: center; padding: 30px 0; }
+
+    /* TOOLTIP MODAL (İç içe modal için z-index 3000) */
+    #tooltip-modal { z-index: 3000; }
 
     #trailer-modal .modal-box { max-width: 800px; background: #000; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
     #trailer-modal .modal-close { position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 24px; padding: 0 0 2px 0; }
@@ -270,6 +275,11 @@
     .genre-pill { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; background: var(--bg2); color: var(--muted); transition: 0.2s; user-select: none; display: inline-block; }
     .genre-pill.loved { background: var(--tmdb); color: #fff; border-color: var(--tmdb); }
     .genre-pill.hated { background: var(--meta-red); color: #fff; border-color: var(--meta-red); }
+
+    /* GÜNLÜK EMOJİ STİLLERİ */
+    .emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .emoji-btn { background: var(--bg2); border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: 0.2s; color: var(--text); display: flex; align-items: center; gap: 6px; flex: 1; min-width: calc(50% - 4px); font-weight: 500; }
+    .emoji-btn.active { background: rgba(184, 74, 26, 0.1); border-color: var(--accent); color: var(--accent); }
 
     .site-footer { margin-top: auto; padding: 30px 0 20px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; opacity: 0.8; font-family: 'DM Sans', sans-serif; width: 100%; line-height: 1.8;}
     .footer-link { color: var(--text); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--muted); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; }
@@ -323,10 +333,54 @@
   </div>
 </div>
 
+<div id="tooltip-modal" class="modal-overlay" style="z-index: 3000;">
+  <div class="modal-box" style="max-width: 400px;">
+    <div class="modal-header">
+      <div id="tooltip-modal-title" class="modal-title">Bilgi</div>
+      <button class="modal-close" onclick="closeTooltipModal()">&times;</button>
+    </div>
+    <div id="tooltip-modal-content" class="modal-body" style="font-size: 14px; line-height: 1.6;"></div>
+  </div>
+</div>
+
 <div id="trailer-modal" class="modal-overlay" style="z-index: 2000;">
   <div class="modal-box">
     <button class="modal-close" onclick="closeTrailerModal()">&times;</button>
     <div id="trailer-modal-content" style="width:100%; aspect-ratio:16/9;"></div>
+  </div>
+</div>
+
+<div id="diary-modal" class="modal-overlay" style="z-index: 2000;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" style="display:flex; align-items:center; gap:6px;">
+        Film Günlüğüm
+        <button class="tag-info-btn" style="margin:0;" onclick="showTooltipModal('Film Günlüğüm', 'Bu alan tamamen size ait özel bir sinema günlüğüdür. Girdiğiniz notları, izleme tarihinizi ve seçtiğiniz hissi sizden başka hiç kimse göremez. Not eklediğiniz filmler, izleme listelerinizde (📝) ikonu ile işaretlenir; seçtiğiniz his emojisi afişte görünmez, sadece günlüğünüze özel kalır.')">?</button>
+      </div>
+      <button class="modal-close" onclick="closeDiaryModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">İzleme Tarihi</div>
+      <input type="date" id="diary-date" style="margin-bottom:20px;">
+      
+      <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Nasıl Hissettirdi?</div>
+      <div class="emoji-grid">
+        <button class="emoji-btn" onclick="selectEmoji(this, '🤯 Zihin Açıcı')">🤯 Zihin Açıcı</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '😢 Sarsıcı')">😢 Sarsıcı</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '🤩 Eğlenceli')">🤩 Eğlenceli</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '⚡ Heyecanlı')">⚡ Heyecanlı</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '🥶 Tüyler Ürpertici')">🥶 Tüyler Ürpertici</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '😤 Sinir Bozucu')">😤 Sinir Bozucu</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '🥱 Sıkıcı')">🥱 Sıkıcı</button>
+        <button class="emoji-btn" onclick="selectEmoji(this, '😡 Vakit Kaybı')">😡 Vakit Kaybı</button>
+      </div>
+      
+      <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; margin-top:20px;">Kişisel Notlar</div>
+      <textarea id="diary-notes" rows="4" placeholder="Film hakkında kendinize özel notlarınızı buraya yazabilirsiniz..."></textarea>
+      
+      <input type="hidden" id="diary-movie-id">
+      <button class="search-btn" style="width:100%; margin-top:20px; padding:16px;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
+    </div>
   </div>
 </div>
 
@@ -351,7 +405,7 @@
            <div id="auth-user-email" style="font-weight:bold; color:var(--accent);"></div>
            <div id="user-stats" style="font-size:11px; color:var(--muted); margin-top:6px; font-weight: 600; display:flex; align-items:center; justify-content:center; gap:4px;">
               Puanlanan Film: 0 | Algoritma Gücü: %0
-              <button class="tag-info-btn" onclick="showInfoModal('Algoritma Gücü')">?</button>
+              <button class="tag-info-btn" onclick="showTooltipModal('Algoritma Gücü', 'Eserlere puan verdikçe, Zihinsel Eşleşme konusunda daha isabetli tahminler alacaksın.')">?</button>
            </div>
        </div>
        
@@ -373,7 +427,7 @@
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
          <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:15px; text-align:center; display:flex; justify-content:center; align-items:center; gap:6px;">
             Sinematik Zihin Testi
-            <button class="tag-info-btn" style="margin:0;" onclick="showInfoModal('Zihin Profili')">?</button>
+            <button class="tag-info-btn" style="margin:0;" onclick="showTooltipModal('Zihin Profili', 'Senin sinematik zevklerini ve tahammül sınırlarını belirmeye yönelik bir test. Buna verdiğin cevaplar, görüntülediğin içeriğin senin zevklerine ne kadar uygun olduğunu Zihinsel Eşleşme kategorisinde görmeni sağlayacak.')">?</button>
          </h3>
          
          <div class="test-card">
@@ -435,16 +489,21 @@ window.showHowToUseModal = function(e) {
                 • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar.<br>
                 • <strong>Zihinsel Eşleşme:</strong> Test cevaplarınız ve geçmişte verdiğiniz puanlar dikkate alınarak, incelediğiniz yapımın size hitap etme olasılığı %12 ile %98 arasında bir yüzdeyle gösterilir.
             </div>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">6. Film Günlüğüm</strong><br>
+                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir.
+            </div>
 
             <div style="margin-bottom:16px;">
-                <strong style="color:var(--accent);">6. İzlenecekler ve İzlenenler Listeleri</strong><br>
+                <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
                 • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan vererek işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
                 • Bir yapıma puan verdiğinizde veya "İzledim" butonuna bastığınızda, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
                 • Her iki listeyi de eklenme tarihine veya Ağırlıklı Ortalama puanına göre sıralayabilirsiniz.
             </div>
 
             <div style="margin-bottom:16px;">
-                <strong style="color:var(--accent);">7. Yorumlar, Çeviri ve Öneriler</strong><br>
+                <strong style="color:var(--accent);">8. Yorumlar, Çeviri ve Öneriler</strong><br>
                 • Yapım hakkında yazılmış öne çıkan yabancı yorumları okuyabilir, <strong>"Sitede Çevir"</strong> butonuna basarak metinleri doğrudan Türkçe'ye çevirebilirsiniz.<br>
                 • Sayfanın en altında bulunan <strong>"Bunu Sevenler Şunları Da İzledi"</strong> bölümünden benzer yapımlara ulaşabilirsiniz.
             </div>
@@ -453,20 +512,20 @@ window.showHowToUseModal = function(e) {
     openGenericModal('Nasıl Kullanılır?', contentHTML);
 };
 
-window.showInfoModal = function(type) {
-    var title = "", desc = "";
-    if (type === 'Zihin Profili') {
-        title = "Zihin Profili";
-        desc = "Senin sinematik zevklerini ve tahammül sınırlarını belirmeye yönelik bir test. Buna verdiğin cevaplar, görüntülediğin içeriğin senin zevklerine ne kadar uygun olduğunu 'Zihinsel Eşleşme' kategorisinde görmeni sağlayacak.";
-    } else if (type === 'Algoritma Gücü') {
-        title = "Algoritma Gücü";
-        desc = "Eserlere puan verdikçe, 'Zihinsel Eşleşme' konusunda daha isabetli tahminler alacaksın.";
-    } else if (type === 'Zihinsel Eşleşme') {
-        title = "Zihinsel Eşleşme";
-        desc = "Sıradan bir tavsiye olmanın ötesinde, senin zevklerini ve eserlere verdiğin puanları dikkate alarak, bir içeriğin sana ne kadar hitap ettiğini gösterir. Sen puan vermeye devam ettikçe daha isabetli tahminler yapar.";
-    }
-    openGenericModal(title, '<div style="font-size:14px; line-height:1.6; color:var(--text);">' + desc + '</div>');
+window.showTooltipModal = function(title, text) {
+    document.getElementById("tooltip-modal-title").innerText = title;
+    document.getElementById("tooltip-modal-content").innerHTML = text;
+    document.getElementById("tooltip-modal").classList.add("active");
 };
+
+window.closeTooltipModal = function() {
+    document.getElementById("tooltip-modal").classList.remove("active");
+};
+
+// Tooltip modal click overlay logic
+document.getElementById("tooltip-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeTooltipModal();
+});
 
 // ==========================================
 // 1. FIREBASE BAŞLATMA VE GLOBAL DEĞİŞKENLER
@@ -486,12 +545,13 @@ firebase.analytics();
 
 let isLoginMode = true; 
 let currentUser = null;
-let isInitialLoad = true; // Asenkron problemi çözmek için
+let isInitialLoad = true; 
 window.myList = [];
 window.currentSort = 'date_desc';
 window.currentListType = 'watchlist'; 
 let userMindProfile = { lovedGenres: [], hatedGenres: [] };
 let userRatings = {}; 
+let userDiary = {}; 
 
 const allGenres = ["Aksiyon", "Dram", "Komedi", "Korku", "Bilimkurgu", "Gerilim", "Suç", "Gizem", "Romantik", "Belgesel", "Savaş", "Tarih", "Fantastik", "Müzik", "Animasyon", "Aile", "Vahşi Batı"];
 const mindQuestions = [
@@ -523,13 +583,14 @@ auth.onAuthStateChanged(function(user) {
     document.getElementById("auth-user-email").innerText = user.email;
     document.getElementById("auth-title").innerText = "Profil Ayarları";
     
-    // Asenkron Veri Yükleme: Önce profil iner, sonra film yüklenir.
     Promise.all([
       db.collection("users").doc(user.uid).get(),
-      db.collection("users").doc(user.uid).collection("ratings").get()
+      db.collection("users").doc(user.uid).collection("ratings").get(),
+      db.collection("users").doc(user.uid).collection("diary").get()
     ]).then(results => {
       const doc = results[0];
       const snap = results[1];
+      const diarySnap = results[2];
 
       if(doc.exists && doc.data().mindProfile) {
           userMindProfile = doc.data().mindProfile;
@@ -539,6 +600,10 @@ auth.onAuthStateChanged(function(user) {
       
       userRatings = {}; 
       snap.forEach(ratingDoc => userRatings[ratingDoc.id] = ratingDoc.data().rating);
+      
+      userDiary = {};
+      diarySnap.forEach(dDoc => userDiary[dDoc.id] = dDoc.data());
+
       updateStatsUI();
 
       if(isInitialLoad) {
@@ -548,7 +613,7 @@ auth.onAuthStateChanged(function(user) {
     });
 
   } else {
-    currentUser = null; userMindProfile = { lovedGenres: [], hatedGenres: [] }; userRatings = {};
+    currentUser = null; userMindProfile = { lovedGenres: [], hatedGenres: [] }; userRatings = {}; userDiary = {};
     document.getElementById("auth-main-text").innerText = "Giriş Yap";
     document.getElementById("auth-body-unlogged").style.display = "block";
     document.getElementById("auth-body-logged").style.display = "none";
@@ -678,7 +743,7 @@ function updateStatsUI() {
   const weight = Math.round(calculateDavranisWeight(count) * 100);
   const el = document.getElementById("user-stats");
   if(el) {
-      el.innerHTML = `Puanlanan Film: ${count} | Algoritma Gücü: %${weight} <button class="tag-info-btn" onclick="showInfoModal('Algoritma Gücü')">?</button>`;
+      el.innerHTML = `Puanlanan Film: ${count} | Algoritma Gücü: %${weight} <button class="tag-info-btn" onclick="showTooltipModal('Algoritma Gücü', 'Eserlere puan verdikçe, Zihinsel Eşleşme konusunda daha isabetli tahminler alacaksın.')">?</button>`;
   }
 }
 
@@ -736,13 +801,12 @@ function handleStarMove(e, container) {
   const rect = container.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const percent = x / rect.width;
-  let val = Math.ceil(percent * 10) / 2; // 0.5 adımlar
+  let val = Math.ceil(percent * 10) / 2; 
   if(val < 0.5) val = 0.5; if(val > 5) val = 5;
   renderStars(val);
   currentDraftRating = val;
 }
 
-// Puanlama yapıldığında otomatik olarak "watched" (İzlenenler) listesine geçer, "watchlist"ten (İzlenecekler) silinir.
 function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
   if(!currentUser) { openAuthModal(); return; }
   if(currentDraftRating === 0) return;
@@ -752,16 +816,12 @@ function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
   db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).set({
     rating: currentDraftRating, title: decodeURIComponent(mTitle), poster: mPoster, ratedAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
-    
-    // 1. İzlenenler Arşivine Ekle
     db.collection("users").doc(currentUser.uid).collection("watched").doc(movieId.toString()).set({
         id: movieId.toString(), mt: mt, title: decodeURIComponent(mTitle), year: mYear, poster: mPoster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     
-    // 2. İzlenecekler Listesinden Sil (Varsa)
     db.collection("users").doc(currentUser.uid).collection("watchlist").doc(movieId.toString()).delete();
 
-    // 3. UI Güncellemeleri
     let wlBtn = document.getElementById('btn-watchlist-' + movieId);
     if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
     let wBtn = document.getElementById('btn-watched-' + movieId);
@@ -772,6 +832,67 @@ function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
     document.getElementById("star-hint").innerText = "Puan Kaydedildi!";
     setTimeout(()=> renderStars(currentDraftRating), 1500);
   });
+}
+
+// ==========================================
+// YENİ: FİLM GÜNLÜĞÜ (DIARY) MANTIĞI
+// ==========================================
+let currentDiaryEmotion = "";
+
+function openDiaryModal(id) {
+    if(!currentUser) { openAuthModal(); return; }
+    document.getElementById("diary-movie-id").value = id;
+    
+    let today = new Date().toISOString().split('T')[0];
+    document.getElementById("diary-date").value = today;
+    document.getElementById("diary-notes").value = "";
+    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+    currentDiaryEmotion = "";
+
+    if (userDiary[id]) {
+        if(userDiary[id].date) document.getElementById("diary-date").value = userDiary[id].date;
+        if(userDiary[id].note) document.getElementById("diary-notes").value = userDiary[id].note;
+        if(userDiary[id].emotion) {
+            currentDiaryEmotion = userDiary[id].emotion;
+            document.querySelectorAll(".emoji-btn").forEach(b => {
+                if(b.innerText === currentDiaryEmotion) b.classList.add("active");
+            });
+        }
+    }
+    
+    document.getElementById("diary-modal").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeDiaryModal() {
+    document.getElementById("diary-modal").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+document.getElementById("diary-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeDiaryModal();
+});
+
+function selectEmoji(btn, emotion) {
+    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentDiaryEmotion = emotion;
+}
+
+function saveDiaryEntry() {
+    if(!currentUser) return;
+    let id = document.getElementById("diary-movie-id").value;
+    let dDate = document.getElementById("diary-date").value;
+    let dNote = document.getElementById("diary-notes").value.trim();
+
+    let dataToSave = { date: dDate, emotion: currentDiaryEmotion, note: dNote, savedAt: firebase.firestore.FieldValue.serverTimestamp() };
+    
+    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).set(dataToSave).then(() => {
+        userDiary[id] = dataToSave;
+        closeDiaryModal();
+        let diaryBtn = document.getElementById("btn-diary-" + id);
+        if(diaryBtn) { diaryBtn.innerHTML = "📓 Güncellendi"; setTimeout(() => diaryBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
+    });
 }
 
 // ==========================================
@@ -810,7 +931,9 @@ window.renderListUI = function(sortType) {
     sorted.forEach(item => {
         let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
         let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
-        html += `<div class="wl-card-grid" onclick="loadFilm(${item.id}, '${item.mt}', false); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
+        let diaryBadge = userDiary[item.id] ? `<div class="diary-badge">📝</div>` : '';
+        
+        html += `<div class="wl-card-grid" onclick="loadFilm(${item.id}, '${item.mt}', false); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
     });
     html += `</div></div>`; resEl.innerHTML = html;
 };
@@ -831,23 +954,19 @@ window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetL
     let docRef = db.collection("users").doc(currentUser.uid).collection(targetList).doc(id.toString());
     
     if (isAdded) { 
-        // Listeden Çıkar
         btn.classList.remove('added'); 
         btn.innerHTML = targetList === 'watchlist' ? '⏳ İzleyeceğim' : '👁️ İzledim'; 
         docRef.delete(); 
     } else { 
-        // Listeye Ekle
         btn.classList.add('added'); 
         btn.innerHTML = '✓ Listemde'; 
         docRef.set({ id: id.toString(), mt, title: decodedTitle, year, poster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
         
-        // Mantık: İzlenenlere ekleniyorsa, İzleneceklerden SİL
         if(targetList === 'watched') {
             db.collection("users").doc(currentUser.uid).collection('watchlist').doc(id.toString()).delete();
             let wlBtn = document.getElementById('btn-watchlist-' + id);
             if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
         }
-        // Mantık: İzleneceklere ekleniyorsa, İzlenenlerden SİL
         if(targetList === 'watchlist') {
             db.collection("users").doc(currentUser.uid).collection('watched').doc(id.toString()).delete();
             let wBtn = document.getElementById('btn-watched-' + id);
@@ -1106,24 +1225,27 @@ window.loadFilm = function(id, mt, isRandom) {
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.' }));
         var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · ");
 
-        // İKİ FARKLI LİSTE BUTONU
         var safeTitle = encodeURIComponent(title).replace(/'/g, "\\'");
         var safePoster = rawPoster ? rawPoster.replace(/'/g, "\\'") : '';
         var avgPass = finalAvg !== null ? finalAvg : 'null';
         
         var wlBtnHtml = '<button id="btn-watchlist-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watchlist\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>';
-        
         var watchedBtnHtml = '<button id="btn-watched-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watched\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>';
+
+        // FİLM GÜNLÜĞÜ BUTONU EKLENDİ
+        var diaryBtnHtml = '<button id="btn-diary-' + id + '" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal(\'' + id + '\')">📓 Film Günlüğüm</button>';
 
         var ratingHtml = `
           <div class="user-rating-section">
+            ${matchBadgeHtml}
+            ${diaryBtnHtml}
+            <div style="border-top: 1px dashed var(--border); margin: 15px 0;"></div>
             <div class="rating-label">Senin Puanın</div>
             <div class="stars-container" onmousemove="handleStarMove(event, this)" onclick="submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')">
               <span>☆☆☆☆☆</span>
               <div class="star-filled">★★★★★</div>
             </div>
             <div id="star-hint" class="star-hint">Puan Ver</div>
-            ${matchBadgeHtml}
           </div>
         `;
 
