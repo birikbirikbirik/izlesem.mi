@@ -55,6 +55,7 @@
     input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea { width: 100%; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:14px 18px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; transition:border-color .2s,box-shadow .2s; box-shadow:0 2px 8px var(--shadow); }
     input:focus, textarea:focus { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
     input::placeholder, textarea::placeholder { color:var(--muted); opacity:0.7; }
+    input:disabled { opacity: 0.5; cursor: not-allowed; }
     .search-input-wrap input { padding-right: 40px; }
     
     .clear-btn { position: absolute; right: 12px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
@@ -216,8 +217,8 @@
 
     .wl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
     .wl-title { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--text); letter-spacing:.05em; line-height:1; }
-    .wl-sort-group { display: flex; gap: 6px; }
-    .wl-sort-btn { background: var(--card); border: 1.5px solid var(--border); color: var(--text); padding: 8px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .wl-sort-group { display: flex; gap: 6px; flex-wrap:wrap; }
+    .wl-sort-btn { background: var(--card); border: 1.5px solid var(--border); color: var(--text); padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
     .wl-sort-btn.active { background: rgba(184, 74, 26, 0.1); color: var(--accent); border-color: var(--accent); }
     .wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 16px; width: 100%; }
     .wl-card-grid { position: relative; background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
@@ -360,7 +361,14 @@
       <button class="modal-close" onclick="closeDiaryModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">İzleme Tarihi</div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;">İzleme Tarihi</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+            <input type="checkbox" id="diary-no-date" onchange="toggleDiaryDate()" style="width:14px; height:14px; box-shadow:none;">
+            <label for="diary-no-date" style="font-size:12px; color:var(--muted); cursor:pointer;">Tarih belirtmek istemiyorum</label>
+        </div>
+      </div>
       <input type="date" id="diary-date" style="margin-bottom:20px;">
       
       <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Nasıl Hissettirdi?</div>
@@ -379,6 +387,12 @@
       <textarea id="diary-notes" rows="4" placeholder="Film hakkında kendinize özel notlarınızı buraya yazabilirsiniz..."></textarea>
       
       <input type="hidden" id="diary-movie-id">
+      <input type="hidden" id="diary-movie-mt">
+      <input type="hidden" id="diary-movie-title">
+      <input type="hidden" id="diary-movie-year">
+      <input type="hidden" id="diary-movie-poster">
+      <input type="hidden" id="diary-movie-score">
+
       <button class="search-btn" style="width:100%; margin-top:20px; padding:16px;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
     </div>
   </div>
@@ -492,14 +506,14 @@ window.showHowToUseModal = function(e) {
             
             <div style="margin-bottom:16px;">
                 <strong style="color:var(--accent);">6. Film Günlüğüm</strong><br>
-                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir.
+                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi (veya tarihsiz) ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir.
             </div>
 
             <div style="margin-bottom:16px;">
                 <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
-                • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan vererek işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
-                • Bir yapıma puan verdiğinizde veya "İzledim" butonuna bastığınızda, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
-                • Her iki listeyi de eklenme tarihine veya Ağırlıklı Ortalama puanına göre sıralayabilirsiniz.
+                • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan verip/günlük tutarak işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
+                • Bir yapıma puan verdiğinizde veya günlüğüne not düştüğünüzde, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
+                • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.
             </div>
 
             <div style="margin-bottom:16px;">
@@ -522,7 +536,6 @@ window.closeTooltipModal = function() {
     document.getElementById("tooltip-modal").classList.remove("active");
 };
 
-// Tooltip modal click overlay logic
 document.getElementById("tooltip-modal").addEventListener("click", function(e) {
     if (e.target === this) closeTooltipModal();
 });
@@ -783,7 +796,7 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
 }
 
 // ==========================================
-// 5. YILDIZ PUANLAMA MANTIĞI
+// 5. YILDIZ PUANLAMA MANTIĞI & KURTARICI
 // ==========================================
 let currentDraftRating = 0;
 
@@ -807,25 +820,35 @@ function handleStarMove(e, container) {
   currentDraftRating = val;
 }
 
+// Kurtarma mekanizması (Fail-Safe): Listeden silinmiş olsa bile puan verince geri gelir.
+function ensureInWatchedList(id, mt, title, year, poster, score) {
+    if(!currentUser) return;
+    let scoreVal = score === "null" ? null : parseFloat(score);
+    let docRef = db.collection("users").doc(currentUser.uid).collection("watched").doc(id.toString());
+    
+    docRef.get().then(doc => {
+        if(!doc.exists) {
+            docRef.set({ id: id.toString(), mt, title: decodeURIComponent(title), year, poster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        }
+    });
+
+    db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).delete();
+    
+    let wlBtn = document.getElementById('btn-watchlist-' + id);
+    if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
+    let wBtn = document.getElementById('btn-watched-' + id);
+    if(wBtn) { wBtn.classList.add('added'); wBtn.innerHTML = '✓ Listemde'; }
+}
+
 function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
   if(!currentUser) { openAuthModal(); return; }
   if(currentDraftRating === 0) return;
   
-  let scoreVal = mScore === "null" ? null : parseFloat(mScore);
-
   db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).set({
     rating: currentDraftRating, title: decodeURIComponent(mTitle), poster: mPoster, ratedAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
-    db.collection("users").doc(currentUser.uid).collection("watched").doc(movieId.toString()).set({
-        id: movieId.toString(), mt: mt, title: decodeURIComponent(mTitle), year: mYear, poster: mPoster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
     
-    db.collection("users").doc(currentUser.uid).collection("watchlist").doc(movieId.toString()).delete();
-
-    let wlBtn = document.getElementById('btn-watchlist-' + movieId);
-    if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
-    let wBtn = document.getElementById('btn-watched-' + movieId);
-    if(wBtn) { wBtn.classList.add('added'); wBtn.innerHTML = '✓ Listemde'; }
+    ensureInWatchedList(movieId, mt, mTitle, mYear, mPoster, mScore);
 
     userRatings[movieId] = currentDraftRating;
     updateStatsUI();
@@ -835,22 +858,41 @@ function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
 }
 
 // ==========================================
-// YENİ: FİLM GÜNLÜĞÜ (DIARY) MANTIĞI
+// YENİ: FİLM GÜNLÜĞÜ (DIARY) MANTIĞI & KURTARICI
 // ==========================================
 let currentDiaryEmotion = "";
 
-function openDiaryModal(id) {
+function toggleDiaryDate() {
+    const cb = document.getElementById('diary-no-date');
+    document.getElementById('diary-date').disabled = cb.checked;
+}
+
+function openDiaryModal(id, mt, title, year, poster, score) {
     if(!currentUser) { openAuthModal(); return; }
+    
     document.getElementById("diary-movie-id").value = id;
+    document.getElementById("diary-movie-mt").value = mt;
+    document.getElementById("diary-movie-title").value = title;
+    document.getElementById("diary-movie-year").value = year;
+    document.getElementById("diary-movie-poster").value = poster;
+    document.getElementById("diary-movie-score").value = score;
     
     let today = new Date().toISOString().split('T')[0];
-    document.getElementById("diary-date").value = today;
     document.getElementById("diary-notes").value = "";
     document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
     currentDiaryEmotion = "";
 
     if (userDiary[id]) {
-        if(userDiary[id].date) document.getElementById("diary-date").value = userDiary[id].date;
+        if(userDiary[id].date) {
+            document.getElementById("diary-no-date").checked = false;
+            document.getElementById("diary-date").disabled = false;
+            document.getElementById("diary-date").value = userDiary[id].date;
+        } else if (userDiary[id].date === null) {
+            document.getElementById("diary-no-date").checked = true;
+            document.getElementById("diary-date").disabled = true;
+            document.getElementById("diary-date").value = "";
+        }
+        
         if(userDiary[id].note) document.getElementById("diary-notes").value = userDiary[id].note;
         if(userDiary[id].emotion) {
             currentDiaryEmotion = userDiary[id].emotion;
@@ -858,6 +900,10 @@ function openDiaryModal(id) {
                 if(b.innerText === currentDiaryEmotion) b.classList.add("active");
             });
         }
+    } else {
+        document.getElementById("diary-no-date").checked = false;
+        document.getElementById("diary-date").disabled = false;
+        document.getElementById("diary-date").value = today;
     }
     
     document.getElementById("diary-modal").classList.add("active");
@@ -882,13 +928,20 @@ function selectEmoji(btn, emotion) {
 function saveDiaryEntry() {
     if(!currentUser) return;
     let id = document.getElementById("diary-movie-id").value;
-    let dDate = document.getElementById("diary-date").value;
+    let mt = document.getElementById("diary-movie-mt").value;
+    let title = document.getElementById("diary-movie-title").value;
+    let year = document.getElementById("diary-movie-year").value;
+    let poster = document.getElementById("diary-movie-poster").value;
+    let score = document.getElementById("diary-movie-score").value;
+
+    let dDate = document.getElementById("diary-no-date").checked ? null : document.getElementById("diary-date").value;
     let dNote = document.getElementById("diary-notes").value.trim();
 
     let dataToSave = { date: dDate, emotion: currentDiaryEmotion, note: dNote, savedAt: firebase.firestore.FieldValue.serverTimestamp() };
     
     db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).set(dataToSave).then(() => {
         userDiary[id] = dataToSave;
+        ensureInWatchedList(id, mt, title, year, poster, score);
         closeDiaryModal();
         let diaryBtn = document.getElementById("btn-diary-" + id);
         if(diaryBtn) { diaryBtn.innerHTML = "📓 Güncellendi"; setTimeout(() => diaryBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
@@ -896,7 +949,7 @@ function saveDiaryEntry() {
 }
 
 // ==========================================
-// 6. ÇİFT İZLEME LİSTESİ MANTIĞI
+// 6. ÇİFT İZLEME LİSTESİ MANTIĞI & NULL HANDLING
 // ==========================================
 window.fetchUserList = function(listType) {
     closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
@@ -921,12 +974,32 @@ window.renderListUI = function(sortType) {
     if (window.myList.length === 0) { resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${emptyIcon}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; return; }
     
     let sorted = [...window.myList];
+    
     if (sortType === 'date_desc') sorted.sort((a,b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
     if (sortType === 'date_asc') sorted.sort((a,b) => (a.addedAt?.seconds || 0) - (b.addedAt?.seconds || 0));
     if (sortType === 'score_desc') sorted.sort((a,b) => (b.score || 0) - (a.score || 0));
     if (sortType === 'score_asc') sorted.sort((a,b) => (a.score || 0) - (b.score || 0));
     
-    let html = `<div style="width: 100%;"><div class="wl-header"><div class="wl-title">${listNameTR} (${sorted.length})</div><div class="wl-sort-group"><button class="wl-sort-btn ${sortType.includes('date') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Zaman ${sortType === 'date_asc' ? '▲' : '▼'}</button><button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button></div></div><div class="wl-grid">`;
+    // İzleme Tarihi Sıralaması (Sadece İzlenenler Listesinde Null Handling mantığı ile)
+    if (sortType === 'watched_date_desc' || sortType === 'watched_date_asc') {
+        sorted.sort((a, b) => {
+            let dateA = userDiary[a.id]?.date || null;
+            let dateB = userDiary[b.id]?.date || null;
+            if (!dateA && !dateB) return 0; // İkisi de boşsa eşittir
+            if (!dateA) return 1;  // A boşsa, her zaman en sona at (1)
+            if (!dateB) return -1; // B boşsa, B'yi en sona at (-1)
+            // İkisinin de tarihi varsa:
+            if (sortType === 'watched_date_desc') {
+                return dateA < dateB ? 1 : (dateA > dateB ? -1 : 0); // Yeniden eskiye
+            } else {
+                return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0); // Eskiden yeniye
+            }
+        });
+    }
+
+    let watchedDateBtns = window.currentListType === 'watched' ? `<button class="wl-sort-btn ${sortType.includes('watched_date') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'watched_date_desc' ? 'watched_date_asc' : 'watched_date_desc')">İzleme Tarihi ${sortType === 'watched_date_asc' ? '▲' : '▼'}</button>` : '';
+
+    let html = `<div style="width: 100%;"><div class="wl-header"><div class="wl-title">${listNameTR} (${sorted.length})</div><div class="wl-sort-group"><button class="wl-sort-btn ${sortType === 'date_desc' || sortType === 'date_asc' ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Eklenme Tarihi ${sortType === 'date_asc' ? '▲' : '▼'}</button><button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button>${watchedDateBtns}</div></div><div class="wl-grid">`;
     
     sorted.forEach(item => {
         let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
@@ -938,6 +1011,7 @@ window.renderListUI = function(sortType) {
     html += `</div></div>`; resEl.innerHTML = html;
 };
 
+// Fail-Safe gereği silinince sadece Listeden silinir, Günlük ve Puan silinmez.
 window.removeFromList = function(id, listType) {
     if (!currentUser) return; 
     window.myList = window.myList.filter(item => item.id != id);
@@ -1217,7 +1291,7 @@ window.loadFilm = function(id, mt, isRandom) {
 
         var matchBadgeHtml = '';
         if (matchScore !== null) {
-             matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + ' <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showInfoModal(\'Zihinsel Eşleşme\')">?</button></div>';
+             matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + ' <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showTooltipModal(\'Zihinsel Eşleşme\', \'Sıradan bir tavsiye olmanın ötesinde, senin zevklerini ve eserlere verdiğin puanları dikkate alarak, bir içeriğin sana ne kadar hitap ettiğini gösterir. Sen puan vermeye devam ettikçe daha isabetli tahminler yapar.\')">?</button></div>';
         }
 
         var tagsContainerHtml = tagsHtml !== '' ? '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button></div>' : '<div class="tags-container" id="tags-container-' + id + '"></div>';
@@ -1232,8 +1306,7 @@ window.loadFilm = function(id, mt, isRandom) {
         var wlBtnHtml = '<button id="btn-watchlist-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watchlist\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>';
         var watchedBtnHtml = '<button id="btn-watched-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watched\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>';
 
-        // FİLM GÜNLÜĞÜ BUTONU EKLENDİ
-        var diaryBtnHtml = '<button id="btn-diary-' + id + '" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal(\'' + id + '\')">📓 Film Günlüğüm</button>';
+        var diaryBtnHtml = '<button id="btn-diary-' + id + '" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal(\'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\')">📓 Film Günlüğüm</button>';
 
         var ratingHtml = `
           <div class="user-rating-section">
