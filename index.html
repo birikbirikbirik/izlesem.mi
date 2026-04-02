@@ -230,7 +230,7 @@
     .wl-remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(2px); transition: background 0.2s; z-index: 2; line-height: 1; padding-bottom: 2px;}
     .wl-remove-btn:hover { background: var(--meta-red); }
     .wl-score-badge { position: absolute; top: 6px; left: 6px; background: rgba(184, 74, 26, 0.95); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
-    .diary-badge { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 4px; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
+    .diary-badge { position: absolute; top: 36px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 0; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;}
 
     .loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0; color:var(--muted); font-size:13px; letter-spacing:.1em; }
     .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
@@ -373,14 +373,14 @@
       
       <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Nasıl Hissettirdi?</div>
       <div class="emoji-grid">
-        <button class="emoji-btn" onclick="selectEmoji(this, '🤯 Zihin Açıcı')">🤯 Zihin Açıcı</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '😢 Sarsıcı')">😢 Sarsıcı</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '🤩 Eğlenceli')">🤩 Eğlenceli</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '⚡ Heyecanlı')">⚡ Heyecanlı</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '🥶 Tüyler Ürpertici')">🥶 Tüyler Ürpertici</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '😤 Sinir Bozucu')">😤 Sinir Bozucu</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '🥱 Sıkıcı')">🥱 Sıkıcı</button>
-        <button class="emoji-btn" onclick="selectEmoji(this, '😡 Vakit Kaybı')">😡 Vakit Kaybı</button>
+        <button class="emoji-btn" data-emo="🤯 Zihin Açıcı" onclick="selectEmoji(this, '🤯 Zihin Açıcı')">🤯 Zihin Açıcı</button>
+        <button class="emoji-btn" data-emo="😢 Sarsıcı" onclick="selectEmoji(this, '😢 Sarsıcı')">😢 Sarsıcı</button>
+        <button class="emoji-btn" data-emo="🤩 Eğlenceli" onclick="selectEmoji(this, '🤩 Eğlenceli')">🤩 Eğlenceli</button>
+        <button class="emoji-btn" data-emo="⚡ Heyecanlı" onclick="selectEmoji(this, '⚡ Heyecanlı')">⚡ Heyecanlı</button>
+        <button class="emoji-btn" data-emo="🥶 Tüyler Ürpertici" onclick="selectEmoji(this, '🥶 Tüyler Ürpertici')">🥶 Tüyler Ürpertici</button>
+        <button class="emoji-btn" data-emo="😤 Sinir Bozucu" onclick="selectEmoji(this, '😤 Sinir Bozucu')">😤 Sinir Bozucu</button>
+        <button class="emoji-btn" data-emo="🥱 Sıkıcı" onclick="selectEmoji(this, '🥱 Sıkıcı')">🥱 Sıkıcı</button>
+        <button class="emoji-btn" data-emo="😡 Vakit Kaybı" onclick="selectEmoji(this, '😡 Vakit Kaybı')">😡 Vakit Kaybı</button>
       </div>
       
       <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; margin-top:20px;">Kişisel Notlar</div>
@@ -393,7 +393,10 @@
       <input type="hidden" id="diary-movie-poster">
       <input type="hidden" id="diary-movie-score">
 
-      <button class="search-btn" style="width:100%; margin-top:20px; padding:16px;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
+      <div style="display:flex; gap:8px; margin-top:20px;">
+         <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border);" onclick="clearDiaryEntry()">Temizle</button>
+         <button class="search-btn" style="flex:2;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
+      </div>
     </div>
   </div>
 </div>
@@ -506,14 +509,15 @@ window.showHowToUseModal = function(e) {
             
             <div style="margin-bottom:16px;">
                 <strong style="color:var(--accent);">6. Film Günlüğüm</strong><br>
-                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi (veya tarihsiz) ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir.
+                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi (veya tarihsiz) ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir. <b>Günlüğe veri girdiğinizde yapım otomatik olarak 'İzlenenler' listenize kaydedilir.</b>
             </div>
 
             <div style="margin-bottom:16px;">
                 <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
                 • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan verip/günlük tutarak işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
                 • Bir yapıma puan verdiğinizde veya günlüğüne not düştüğünüzde, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
-                • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.
+                • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.<br>
+                • <b>Hata Telafisi (Fail-Safe):</b> Bir yapımı İzlenenler listesinden silseniz dahi, verdiğiniz puan veya günlüğe yazdıklarınız asla silinmez. Yanlışlıkla sildiğiniz bir filmi, puanını veya günlüğünü tekrar kaydederek hiçbir veri kaybı yaşamadan anında İzlenenler listenize geri çağırabilirsiniz.
             </div>
 
             <div style="margin-bottom:16px;">
@@ -806,13 +810,25 @@ function renderStars(activeRating = 0) {
   const filledPart = container.querySelector('.star-filled');
   filledPart.style.width = (activeRating * 20) + "%";
   
-  const hints = ["Puan Ver", "Çöp", "Çok Kötü", "Kötü", "Sıradan", "Eh İşte", "İyi", "Çok İyi", "Harika", "Başyapıt", "Kusursuz"];
-  document.getElementById("star-hint").innerText = activeRating > 0 ? hints[activeRating * 2] : hints[0];
+  const hints = ["Puanı Geri Al", "Çöp", "Çok Kötü", "Kötü", "Sıradan", "Eh İşte", "İyi", "Çok İyi", "Harika", "Başyapıt", "Kusursuz"];
+  if (activeRating === 0) {
+      document.getElementById("star-hint").innerText = "Puanı Geri Al";
+  } else {
+      document.getElementById("star-hint").innerText = hints[activeRating * 2];
+  }
 }
 
 function handleStarMove(e, container) {
   const rect = container.getBoundingClientRect();
   const x = e.clientX - rect.left;
+  
+  // SIFIRLAMA BÖLGESİ: İlk 15 piksel puanı sıfırlar (Geri Alır)
+  if (x < 15) {
+      renderStars(0);
+      currentDraftRating = 0;
+      return;
+  }
+  
   const percent = x / rect.width;
   let val = Math.ceil(percent * 10) / 2; 
   if(val < 0.5) val = 0.5; if(val > 5) val = 5;
@@ -820,7 +836,6 @@ function handleStarMove(e, container) {
   currentDraftRating = val;
 }
 
-// Kurtarma mekanizması (Fail-Safe): Listeden silinmiş olsa bile puan verince geri gelir.
 function ensureInWatchedList(id, mt, title, year, poster, score) {
     if(!currentUser) return;
     let scoreVal = score === "null" ? null : parseFloat(score);
@@ -842,7 +857,19 @@ function ensureInWatchedList(id, mt, title, year, poster, score) {
 
 function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
   if(!currentUser) { openAuthModal(); return; }
-  if(currentDraftRating === 0) return;
+  
+  // PUAN GERİ ALMA MANTIĞI
+  if(currentDraftRating === 0) {
+      db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).delete().then(() => {
+          delete userRatings[movieId];
+          updateStatsUI();
+          document.getElementById("star-hint").innerText = "Puan Geri Alındı!";
+          setTimeout(()=> {
+              document.getElementById("star-hint").innerText = "Puan Ver";
+          }, 1500);
+      }).catch(()=>{});
+      return; // İzlenenler listesinden çıkarma yapılmıyor
+  }
   
   db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).set({
     rating: currentDraftRating, title: decodeURIComponent(mTitle), poster: mPoster, ratedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -897,7 +924,7 @@ function openDiaryModal(id, mt, title, year, poster, score) {
         if(userDiary[id].emotion) {
             currentDiaryEmotion = userDiary[id].emotion;
             document.querySelectorAll(".emoji-btn").forEach(b => {
-                if(b.innerText === currentDiaryEmotion) b.classList.add("active");
+                if(b.dataset.emo === currentDiaryEmotion) b.classList.add("active");
             });
         }
     } else {
@@ -948,6 +975,22 @@ function saveDiaryEntry() {
     });
 }
 
+window.clearDiaryEntry = function() {
+    if(!currentUser) return;
+    let id = document.getElementById("diary-movie-id").value;
+    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).delete().then(() => {
+        delete userDiary[id];
+        closeDiaryModal();
+        let diaryBtn = document.getElementById("btn-diary-" + id);
+        if(diaryBtn) { diaryBtn.innerHTML = "📓 Temizlendi"; setTimeout(() => diaryBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
+        if (window.currentListType === 'watched' && window.myList.some(item => item.id == id)) {
+            renderListUI(window.currentSort);
+        }
+        let filmDiaryBadge = document.querySelector(`.diary-badge`);
+        if(filmDiaryBadge) filmDiaryBadge.remove(); 
+    });
+};
+
 // ==========================================
 // 6. ÇİFT İZLEME LİSTESİ MANTIĞI & NULL HANDLING
 // ==========================================
@@ -980,19 +1023,17 @@ window.renderListUI = function(sortType) {
     if (sortType === 'score_desc') sorted.sort((a,b) => (b.score || 0) - (a.score || 0));
     if (sortType === 'score_asc') sorted.sort((a,b) => (a.score || 0) - (b.score || 0));
     
-    // İzleme Tarihi Sıralaması (Sadece İzlenenler Listesinde Null Handling mantığı ile)
     if (sortType === 'watched_date_desc' || sortType === 'watched_date_asc') {
         sorted.sort((a, b) => {
             let dateA = userDiary[a.id]?.date || null;
             let dateB = userDiary[b.id]?.date || null;
-            if (!dateA && !dateB) return 0; // İkisi de boşsa eşittir
-            if (!dateA) return 1;  // A boşsa, her zaman en sona at (1)
-            if (!dateB) return -1; // B boşsa, B'yi en sona at (-1)
-            // İkisinin de tarihi varsa:
+            if (!dateA && !dateB) return 0; 
+            if (!dateA) return 1;  
+            if (!dateB) return -1; 
             if (sortType === 'watched_date_desc') {
-                return dateA < dateB ? 1 : (dateA > dateB ? -1 : 0); // Yeniden eskiye
+                return dateA < dateB ? 1 : (dateA > dateB ? -1 : 0); 
             } else {
-                return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0); // Eskiden yeniye
+                return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0); 
             }
         });
     }
@@ -1011,7 +1052,6 @@ window.renderListUI = function(sortType) {
     html += `</div></div>`; resEl.innerHTML = html;
 };
 
-// Fail-Safe gereği silinince sadece Listeden silinir, Günlük ve Puan silinmez.
 window.removeFromList = function(id, listType) {
     if (!currentUser) return; 
     window.myList = window.myList.filter(item => item.id != id);
@@ -1353,7 +1393,7 @@ window.loadFilm = function(id, mt, isRandom) {
               });
           }
           
-          if(existingRating > 0) renderStars(existingRating);
+          if(existingRating > 0) renderStars(existingRating, true); else renderStars(0, true);
 
           if (currentUser) {
               db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).get().then(function(doc) {
