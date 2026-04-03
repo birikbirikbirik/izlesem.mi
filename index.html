@@ -267,8 +267,7 @@
     .person-info { flex: 1; }
     .person-name { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
     .person-meta { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
-    /* BİYOGRAFİ KESİNTİSİ İPTAL EDİLDİ */
-    .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); max-height: 200px; overflow-y: auto; padding-right: 5px; }
+    .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); max-height: 300px; overflow-y: auto; padding-right: 5px; }
     .person-bio::-webkit-scrollbar { width: 4px; }
     .person-bio::-webkit-scrollbar-track { background: var(--border); border-radius: 4px; }
     .person-bio::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
@@ -484,7 +483,6 @@
   </div>
 </div>
 
-
 <div id="diary-modal" class="modal-overlay" style="z-index: 2000;">
   <div class="modal-box">
     <div class="modal-header">
@@ -630,8 +628,22 @@
 
 <script>
 // ==========================================
-// KULLANIM KILAVUZU (MODAL İÇERİĞİ)
+// KULLANIM KILAVUZU & MODAL KONTROLLERİ
 // ==========================================
+
+// Global Modal Aç/Kapat Fonksiyonları EKLENDİ
+window.openGenericModal = function(title, html) { 
+    document.getElementById("generic-modal-title").innerText = title; 
+    document.getElementById("generic-modal-content").innerHTML = html; 
+    document.getElementById("generic-modal").classList.add("active"); 
+    document.body.style.overflow="hidden"; 
+};
+
+window.closeGenericModal = function() { 
+    document.getElementById("generic-modal").classList.remove("active"); 
+    document.body.style.overflow=""; 
+};
+
 window.showHowToUseModal = function(e) {
     if (e) e.preventDefault();
     var contentHTML = `
@@ -693,7 +705,7 @@ window.showHowToUseModal = function(e) {
             </div>
         </div>
     `;
-    openGenericModal('Nasıl Kullanılır?', contentHTML);
+    window.openGenericModal('Nasıl Kullanılır?', contentHTML);
 };
 
 window.showTooltipModal = function(title, text) {
@@ -708,10 +720,10 @@ window.closeTooltipModal = function() {
 
 // Modalların Dışına Tıklayınca Kapatma
 document.getElementById("tooltip-modal").addEventListener("click", function(e) {
-    if (e.target === this) closeTooltipModal();
+    if (e.target === this) window.closeTooltipModal();
 });
 document.getElementById("generic-modal").addEventListener("click", function(e) {
-    if (e.target === this) closeGenericModal();
+    if (e.target === this) window.closeGenericModal();
 });
 
 // ==========================================
@@ -824,7 +836,7 @@ document.addEventListener("click", e => {
 });
 
 siteTitle.addEventListener("click", function() {
-    closePersonView(); // Kişi sayfasındaysa ana sayfaya dön
+    closePersonView(); 
     loadRandomDiscovery();
 });
 comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
@@ -915,7 +927,6 @@ qEl.addEventListener("input", () => {
                 el.className = "dropdown-item";
                 let title = item.title || item.name || "";
                 
-                // UX Ayrımı: Kişi ise Departman, Film ise Yıl yaz
                 let sub = item.media_type === "person" ? 
                     (item.known_for_department === 'Acting' ? 'Oyuncu' : 'Yönetmen/Ekip') : 
                     (item.release_date || item.first_air_date || "").slice(0,4);
@@ -923,7 +934,6 @@ qEl.addEventListener("input", () => {
                 let img = item.poster_path || item.profile_path ? 
                     `https://image.tmdb.org/t/p/w92${item.poster_path || item.profile_path}` : '';
                 
-                // UX Ayrımı: Kişiler Yuvarlak, Filmler Dikdörtgen
                 let imgClass = item.media_type === "person" ? "dd-avatar" : "dd-poster";
                 
                 el.innerHTML = `
@@ -937,6 +947,7 @@ qEl.addEventListener("input", () => {
                     hideDD(); 
                     qEl.value = title; 
                     toggleClearBtn();
+                    saveSearchToHistory(title); // EKSİK OLAN KISIM EKLENDİ
                     if(item.media_type === "person") window.loadPerson(item.id);
                     else { closePersonView(); window.loadFilm(item.id, item.media_type); }
                 };
@@ -944,7 +955,7 @@ qEl.addEventListener("input", () => {
             });
             ddEl.style.display = "block";
         });
-    }, 300); // 300ms Gecikmeli Canlı Arama
+    }, 300);
 });
 
 function doSearch() {
@@ -954,7 +965,7 @@ function doSearch() {
   hideDD(); 
   btnEl.disabled = true; 
   
-  closePersonView(); // Yeni bir film araması yapıldığında kişi sayfasını kapat
+  closePersonView(); 
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Aranıyor...</span></div>';
   
   fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TK}&query=${encodeURIComponent(q)}&language=tr-TR`)
@@ -1245,8 +1256,24 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
 }
 
 // ==========================================
-// 6. KİŞİ SAYFASI (YENİ SAYFA HİSSİ)
+// 6. KİŞİ SAYFASI (YENİ SAYFA HİSSİ & ÇEVİRİ)
 // ==========================================
+// İngilizce departman isimlerini Türkçeye çevirme sözlüğü
+const deptMap = {
+    'Directing': 'Yönetmen',
+    'Writing': 'Senarist',
+    'Production': 'Yapım',
+    'Editing': 'Kurgu',
+    'Sound': 'Ses',
+    'Art': 'Sanat',
+    'Camera': 'Kamera',
+    'Crew': 'Ekip',
+    'Costume & Make-Up': 'Kostüm & Makyaj',
+    'Visual Effects': 'Görsel Efektler',
+    'Lighting': 'Işık',
+    'Acting': 'Oyuncu'
+};
+
 window.loadPerson = function(id) {
     // Mevcut film ekranını gizle, kişi ekranını göster
     resEl.style.display = "none";
@@ -1260,13 +1287,13 @@ window.loadPerson = function(id) {
         let age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : 'Bilinmiyor';
         let credits = p.combined_credits || {cast:[], crew:[]};
         
-        // Eserleri Departmanlara Ayırma
+        // Eserleri Departmanlara Ayırma (Sözlük Filtresi İle)
         let depts = {};
         credits.cast.forEach(c => { 
             (depts['Oyuncu'] = depts['Oyuncu'] || []).push(c); 
         });
         credits.crew.forEach(c => { 
-            let dName = c.department === 'Directing' ? 'Yönetmen' : (c.department === 'Writing' ? 'Senarist' : c.department);
+            let dName = deptMap[c.department] || c.department; // ÇEVİRİ BURADA YAPILIYOR
             (depts[dName] = depts[dName] || []).push(c); 
         });
 
@@ -1337,7 +1364,7 @@ window.closePersonView = function() {
     resEl.style.display = "block";
 };
 
-// Modaldan arta kalan gereksiz kapatma fonksiyonları
+// Modal artığı temizleme
 window.closePersonModal = window.closePersonView; 
 
 
@@ -1345,7 +1372,7 @@ window.closePersonModal = window.closePersonView;
 // 7. FİLM SAYFASI (YÜKLEME VE ÇİZİM MOTORU)
 // ==========================================
 window.loadFilm = function(id, mt) {
-  resEl.style.display = "block"; // Emin olmak için görünür yap
+  resEl.style.display = "block"; 
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Didik didik ediliyor...</span></div>';
   
   Promise.all([
@@ -1377,7 +1404,7 @@ window.loadFilm = function(id, mt) {
       var writers = writersArr.filter((v,i,a) => a.indexOf(v)===i).slice(0,3).join(", ");
       var actors = credits.cast.slice(0, 15);
       
-      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
+      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="closeGenericModal(); loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
       castHtml += `<div style="margin-bottom:24px; font-size:15px;"><strong>Senarist:</strong> ${writers || 'Bilinmiyor'}</div>`;
       castHtml += `<div style="font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--accent); margin-bottom:12px;">Oyuncular (15)</div><div class="kadro-scroll">`;
       actors.forEach(a => {
@@ -1475,10 +1502,10 @@ window.loadFilm = function(id, mt) {
 
         var matchBadgeHtml = '';
         if (matchScore !== null) {
-             matchBadgeHtml = `<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %${matchScore} <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showTooltipModal('Zihinsel Eşleşme', 'Test cevaplarınıza göre bu eserin size ne kadar uygun olduğunu gösterir.')">?</button></div>`;
+             matchBadgeHtml = `<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %${matchScore} <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="window.showTooltipModal('Zihinsel Eşleşme', 'Test cevaplarınıza göre bu eserin size ne kadar uygun olduğunu gösterir.')">?</button></div>`;
         }
 
-        var tagsContainerHtml = tagsHtml !== '' ? `<div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div>` : `<div class="tags-container" id="tags-container-${id}"></div>`;
+        var tagsContainerHtml = tagsHtml !== '' ? `<div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div>` : `<div class="tags-container" id="tags-container-${id}"></div>`;
 
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: `🎬 ${title} (${year || ''})\n⭐ Ağırlıklı Puan: ${finalAvg ? finalAvg.toFixed(1) : 'Yok'}/100\nİzlesem mi? uygulamasından incelendi.` }));
         var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · ");
@@ -1509,7 +1536,7 @@ window.loadFilm = function(id, mt) {
           <div class="card">
             <div class="card-head">
               <div class="card-head-top">
-                ${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}
+                ${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="window.openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}
                 <div class="head-info">
                   <div class="card-title">${title}</div>
                   <div class="card-meta">${metaLine}</div>
@@ -1548,7 +1575,7 @@ window.loadFilm = function(id, mt) {
         setTimeout(() => {
           resEl.querySelectorAll(".bar-fill[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
           let kBtn = document.getElementById("kadro-btn-trigger");
-          if(kBtn) kBtn.addEventListener("click", () => openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml));
+          if(kBtn) kBtn.addEventListener("click", () => window.openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml));
           
           let loadMoreBtn = document.getElementById("load-more-reviews");
           if (loadMoreBtn) {
@@ -1562,7 +1589,7 @@ window.loadFilm = function(id, mt) {
               });
           }
           
-          if(existingRating > 0) renderStars(existingRating); else renderStars(0);
+          if(existingRating > 0) window.renderStars(existingRating); else window.renderStars(0);
 
           if (currentUser) {
               db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).get().then(doc => {
@@ -1583,7 +1610,7 @@ window.loadFilm = function(id, mt) {
                     if (top5.length > 0 && (top5.reduce((sum, f) => sum + f.vote_average, 0) / top5.length) >= 7.6) {
                         let tContainer = document.getElementById('tags-container-' + id);
                         if (tContainer) {
-                            let btnHtml = `<button class="tag-info-btn" onclick="showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button>`;
+                            let btnHtml = `<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button>`;
                             if(tContainer.innerHTML.includes('tag-info-btn')) tContainer.innerHTML = tContainer.innerHTML.replace(btnHtml, '<span class="tag-pill master">👑 Usta Yönetmen</span>' + btnHtml);
                             else tContainer.innerHTML += '<span class="tag-pill master">👑 Usta Yönetmen</span>' + btnHtml;
                         }
@@ -1729,7 +1756,7 @@ window.clearDiaryEntry = function() {
 window.fetchUserList = function(listType) {
     closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
     if (!currentUser) return;
-    closePersonView(); // Liste açılırken kişi sayfasını kapa
+    closePersonView(); 
     window.currentListType = listType; window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
@@ -1829,7 +1856,7 @@ window.shareFilm = function(btn) {
 };
 
 window.translateText = function(btn) {
-  var text = decodeURIComponent(btn.dataset.text); openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
+  var text = decodeURIComponent(btn.dataset.text); window.openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
   fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(text)}`).then(r => r.json()).then(data => {
       var translated = ""; if (data && data[0]) { data[0].forEach(item => { if (item[0]) translated += item[0]; }); } 
       document.getElementById("generic-modal-content").innerHTML = translated ? translated.replace(/\n/g, "<br>") : "Çeviri yapılamadı.";
@@ -1854,7 +1881,7 @@ window.closeTrailerModal = function() {
     document.body.style.overflow = ""; 
 };
 document.getElementById("trailer-modal").addEventListener("click", function(e) { 
-    if (e.target === this) closeTrailerModal(); 
+    if (e.target === this) window.closeTrailerModal(); 
 });
 </script>
 </body>
