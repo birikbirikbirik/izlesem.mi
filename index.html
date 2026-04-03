@@ -259,14 +259,19 @@
     .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
     .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
 
-    /* KİŞİ SAYFASI BİLEŞENLERİ */
-    #person-modal .modal-box { max-width: 550px; background: var(--bg); border: none; }
-    .person-header { display: flex; gap: 20px; padding: 24px; border-bottom: 1.5px solid var(--border); background: var(--card); }
+    /* YENİ NESİL KİŞİ SAYFASI (MODAL DEĞİL, VIEW) */
+    #person-view { display: none; width: 100%; }
+    .person-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); margin-bottom: 20px; width: 100%; }
+    .person-header { display: flex; gap: 20px; padding: 24px; border-bottom: 1.5px solid var(--border); }
     .person-img { width: 120px; height: 170px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 12px var(--shadow); }
     .person-info { flex: 1; }
     .person-name { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
     .person-meta { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
-    .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    /* BİYOGRAFİ KESİNTİSİ İPTAL EDİLDİ */
+    .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); max-height: 200px; overflow-y: auto; padding-right: 5px; }
+    .person-bio::-webkit-scrollbar { width: 4px; }
+    .person-bio::-webkit-scrollbar-track { background: var(--border); border-radius: 4px; }
+    .person-bio::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
 
     .tabs { display: flex; overflow-x: auto; background: var(--card); border-bottom: 1.5px solid var(--border); padding: 0 10px; gap: 4px; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
@@ -274,9 +279,9 @@
     .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     .filmography-list { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-    .film-row { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--card); border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: 0.15s; }
+    .film-row { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: 0.15s; }
     .film-row:hover { border-color: var(--accent); }
-    .film-mini-poster { width: 40px; height: 58px; border-radius: 4px; object-fit: cover; background: var(--bg2); }
+    .film-mini-poster { width: 40px; height: 58px; border-radius: 4px; object-fit: cover; background: var(--card); }
     .film-row-info { flex: 1; min-width: 0; }
     .film-row-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
     .film-row-score { font-size: 11px; color: var(--tmdb); font-weight: 700; margin-top: 2px; }
@@ -465,7 +470,10 @@
       <div id="dd" class="dropdown" style="display:none"></div>
     </div>
 
-    <div id="result"></div>
+    <div id="result" style="width: 100%;"></div>
+    
+    <div id="person-view" style="display:none; width: 100%;"></div>
+    
     <p class="tip">Telefonda: Menü → Ana Ekrana Ekle</p>
     
     <div class="site-footer">
@@ -476,15 +484,6 @@
   </div>
 </div>
 
-<div id="person-modal" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div class="modal-title">Kişi Profili</div>
-      <button class="modal-close" onclick="closePersonModal()">&times;</button>
-    </div>
-    <div id="person-content"></div>
-  </div>
-</div>
 
 <div id="diary-modal" class="modal-overlay" style="z-index: 2000;">
   <div class="modal-box">
@@ -495,7 +494,7 @@
       </div>
       <button class="modal-close" onclick="closeDiaryModal()">&times;</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="padding:24px;">
       
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;">İzleme Tarihi</div>
@@ -631,7 +630,92 @@
 
 <script>
 // ==========================================
-// 1. CONFIG & GLOBALS
+// KULLANIM KILAVUZU (MODAL İÇERİĞİ)
+// ==========================================
+window.showHowToUseModal = function(e) {
+    if (e) e.preventDefault();
+    var contentHTML = `
+        <div style="font-size:13.5px; line-height:1.6; color:var(--text); max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+            <p style="margin-bottom:16px;">Bu platform, film ve diziler hakkında farklı veri tabanlarından bilgi çekerek analiz sunan bir araçtır. Sayfa yapısı ve kullanım özellikleri yukarıdan aşağıya doğru şu şekildedir:</p>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">1. Arama ve Keşif</strong><br>
+                • <strong>Arama Çubuğu:</strong> İstediğiniz film, dizi veya <b>sinema sektörü çalışanını (yönetmen, oyuncu, senarist vb.)</b> aratabilirsiniz. Arama sonuçlarında kişiler ve yapımlar görsel olarak birbirinden ayrılır.<br>
+                • <strong>Konfor Alanından Çık:</strong> Belirli temalara (psikolojik, felsefi, yavaş tempolu vb.) sahip ve belli bir puanın üzerindeki yapımları rastgele karşınıza çıkarır.<br>
+                • <strong>Tema Değiştirici:</strong> Sağ üst köşeden açık veya koyu tema arasında geçiş yapabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">2. Künye ve Etiketler</strong><br>
+                • Yapımın afişi, yılı, süresi, ülkesi ve türleri listelenir.<br>
+                • Verilere dayalı olarak filme otomatik atanan bazı etiketler bulunur (Örn: Auteur Kalemi, Sinefiller İçin, Halkın Seçimi). Bu etiketlerin hangi kriterlere göre atandığını görmek için yanlarındaki <strong>(?)</strong> butonuna tıklayabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">3. Aksiyonlar, Bağlantılar, Kadro ve Kişi Sayfaları</strong><br>
+                • <strong>Aksiyon Butonları:</strong> Yapımı listelerinize ekleyebilir, fragmanını açabilir veya sayfa bağlantısını kopyalayabilirsiniz.<br>
+                • <strong>Platform Bağlantıları:</strong> Yapımın IMDb, Letterboxd ve TMDb sayfalarına tek tıkla gidebilirsiniz.<br>
+                • <strong>Nereden İzlenir:</strong> Yapımın Türkiye'de resmi olarak hangi dijital platformlarda bulunduğunu görebilirsiniz.<br>
+                • <strong>Kadro ve Kişi Profilleri:</strong> Yönetmen ve senarist bilgisinin yanı sıra 15 kişilik detaylı oyuncu kadrosuna buradan ulaşabilirsiniz. <b>Listeden veya arama motorundan bir kişinin ismine tıkladığınızda</b>, o kişinin detaylı profiline gidersiniz. Bu sayfada kişinin biyografisini okuyabilir ve görev aldığı tüm eserleri (oyuncu, yönetmen vb.) sekmeler halinde ayrılmış detaylı bir filmografi listesinde inceleyebilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">4. Puanlama Sistemi</strong><br>
+                • <strong>Ağırlıklı Ortalama Puan:</strong> Metacritic (%35), IMDb (%30), Rotten Tomatoes (%20) ve TMDb (%15) oranları kullanılarak 100 üzerinden hesaplanan tek bir ortalama puandır.<br>
+                • Altındaki renkli tablolarda ise bu dört platformun kendi bağımsız puanları ayrı ayrı listelenir.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">5. Kişisel Puanınız ve Zihinsel Eşleşme</strong><br>
+                • <strong>Profil ve Test:</strong> Sağ üstteki profil menüsünden 14 soruluk testi çözüp, sevdiğiniz/sevmediğiniz türleri seçerek bir "Zihin Profili" oluşturabilirsiniz.<br>
+                • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar. Puanınızı silmek isterseniz yıldızların en soluna (başına) dokunabilirsiniz.<br>
+                • <strong>Zihinsel Eşleşme:</strong> Test cevaplarınız ve geçmişte verdiğiniz puanlar dikkate alınarak, incelediğiniz yapımın size hitap etme olasılığı %12 ile %98 arasında bir yüzdeyle gösterilir.
+            </div>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">6. Film Günlüğüm</strong><br>
+                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi (veya tarihsiz) ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir. <b>Günlüğe veri girdiğinizde yapım otomatik olarak 'İzlenenler' listenize kaydedilir.</b>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
+                • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan verip/günlük tutarak işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
+                • Bir yapıma puan verdiğinizde veya günlüğüne not düştüğünüzde, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
+                • Listelerde aradığınızı hızlıca bulmak için <strong>Live Search (Canlı Arama)</strong> çubuğunu kullanabilirsiniz. Siz "Film adı veya yılı" yazdıkça liste saniyeler içinde süzülecektir.<br>
+                • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.<br>
+                • <b>Hata Telafisi (Fail-Safe):</b> Bir yapımı İzlenenler listesinden silseniz dahi, verdiğiniz puan veya günlüğe yazdıklarınız asla silinmez. Yanlışlıkla sildiğiniz bir filmi, puanını veya günlüğünü tekrar kaydederek hiçbir veri kaybı yaşamadan anında İzlenenler listenize geri çağırabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">8. Yorumlar, Çeviri ve Öneriler</strong><br>
+                • Yapım hakkında yazılmış öne çıkan yabancı yorumları okuyabilir, <strong>"Sitede Çevir"</strong> butonuna basarak metinleri doğrudan Türkçe'ye çevirebilirsiniz.<br>
+                • Sayfanın en altında bulunan <strong>"Bunu Sevenler Şunları Da İzledi"</strong> bölümünden benzer yapımlara ulaşabilirsiniz.
+            </div>
+        </div>
+    `;
+    openGenericModal('Nasıl Kullanılır?', contentHTML);
+};
+
+window.showTooltipModal = function(title, text) {
+    document.getElementById("tooltip-modal-title").innerText = title;
+    document.getElementById("tooltip-modal-content").innerHTML = text;
+    document.getElementById("tooltip-modal").classList.add("active");
+};
+
+window.closeTooltipModal = function() {
+    document.getElementById("tooltip-modal").classList.remove("active");
+};
+
+// Modalların Dışına Tıklayınca Kapatma
+document.getElementById("tooltip-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeTooltipModal();
+});
+document.getElementById("generic-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeGenericModal();
+});
+
+// ==========================================
+// 1. FIREBASE BAŞLATMA VE GLOBAL DEĞİŞKENLER
 // ==========================================
 const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
 const OK = "44bf03a2";
@@ -687,7 +771,7 @@ const mindQuestions = [
 ];
 
 // ==========================================
-// 2. DOM ELEMENTS & EVENT LISTENERS
+// 2. DOM ELEMANLARI VE DİNLEYİCİLER
 // ==========================================
 const qEl = document.getElementById("q"); 
 const clearBtn = document.getElementById("clear-btn");
@@ -695,6 +779,7 @@ const ddEl = document.getElementById("dd");
 const btnEl = document.getElementById("btn");
 const comfortBtn = document.getElementById("comfort-btn"); 
 const resEl = document.getElementById("result");
+const personViewEl = document.getElementById("person-view");
 const siteTitle = document.getElementById("site-title"); 
 const themeToggle = document.getElementById("theme-toggle");
 
@@ -738,7 +823,10 @@ document.addEventListener("click", e => {
     if (!e.target.closest(".search-wrap")) hideDD(); 
 });
 
-siteTitle.addEventListener("click", loadRandomDiscovery);
+siteTitle.addEventListener("click", function() {
+    closePersonView(); // Kişi sayfasındaysa ana sayfaya dön
+    loadRandomDiscovery();
+});
 comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
 
 // ==========================================
@@ -827,6 +915,7 @@ qEl.addEventListener("input", () => {
                 el.className = "dropdown-item";
                 let title = item.title || item.name || "";
                 
+                // UX Ayrımı: Kişi ise Departman, Film ise Yıl yaz
                 let sub = item.media_type === "person" ? 
                     (item.known_for_department === 'Acting' ? 'Oyuncu' : 'Yönetmen/Ekip') : 
                     (item.release_date || item.first_air_date || "").slice(0,4);
@@ -834,6 +923,7 @@ qEl.addEventListener("input", () => {
                 let img = item.poster_path || item.profile_path ? 
                     `https://image.tmdb.org/t/p/w92${item.poster_path || item.profile_path}` : '';
                 
+                // UX Ayrımı: Kişiler Yuvarlak, Filmler Dikdörtgen
                 let imgClass = item.media_type === "person" ? "dd-avatar" : "dd-poster";
                 
                 el.innerHTML = `
@@ -848,13 +938,13 @@ qEl.addEventListener("input", () => {
                     qEl.value = title; 
                     toggleClearBtn();
                     if(item.media_type === "person") window.loadPerson(item.id);
-                    else window.loadFilm(item.id, item.media_type);
+                    else { closePersonView(); window.loadFilm(item.id, item.media_type); }
                 };
                 ddEl.appendChild(el);
             });
             ddEl.style.display = "block";
         });
-    }, 300);
+    }, 300); // 300ms Gecikmeli Canlı Arama
 });
 
 function doSearch() {
@@ -863,6 +953,8 @@ function doSearch() {
   saveSearchToHistory(q);
   hideDD(); 
   btnEl.disabled = true; 
+  
+  closePersonView(); // Yeni bir film araması yapıldığında kişi sayfasını kapat
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Aranıyor...</span></div>';
   
   fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TK}&query=${encodeURIComponent(q)}&language=tr-TR`)
@@ -882,7 +974,7 @@ function doSearch() {
 }
 
 function loadRandomDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Rastgele film seçiliyor...</span></div>';
   
   fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_genres=${[18, 9648, 80, 53, 36][Math.floor(Math.random() * 5)]}&page=${Math.floor(Math.random() * 50) + 1}`)
@@ -893,7 +985,7 @@ function loadRandomDiscovery() {
 }
 
 function loadComfortZoneDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor aranıyor...</span></div>';
   
   fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_keywords=2504|5695|6075|27933|4344&page=${Math.floor(Math.random() * 20) + 1}`)
@@ -972,10 +1064,6 @@ function closeAuthModal() {
     document.getElementById("auth-modal").classList.remove("active"); 
     document.body.style.overflow=""; 
 }
-document.getElementById("auth-modal").addEventListener("click", function(e) { 
-    if (e.target === this) closeAuthModal(); 
-});
-
 function toggleAuthMode() {
   isLoginMode = !isLoginMode; 
   document.getElementById("auth-error").style.display = "none";
@@ -989,7 +1077,6 @@ function toggleAuthMode() {
     document.querySelector(".auth-switch").innerHTML = 'Zaten üye misin? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Giriş Yap</span>';
   }
 }
-
 function handleAuthSubmit() {
   const email = document.getElementById("auth-email").value.trim(); 
   const pass = document.getElementById("auth-pass").value.trim();
@@ -1158,11 +1245,14 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
 }
 
 // ==========================================
-// 6. KİŞİ SAYFASI (YÖNETMEN/OYUNCU)
+// 6. KİŞİ SAYFASI (YENİ SAYFA HİSSİ)
 // ==========================================
 window.loadPerson = function(id) {
-    document.getElementById("person-modal").classList.add("active");
-    document.getElementById("person-content").innerHTML = '<div class="loading" style="padding:40px;"><div class="spinner"></div></div>';
+    // Mevcut film ekranını gizle, kişi ekranını göster
+    resEl.style.display = "none";
+    personViewEl.style.display = "block";
+    personViewEl.innerHTML = '<div class="loading" style="padding:40px;"><div class="spinner"></div></div>';
+    window.scrollTo({top: 0, behavior: 'smooth'});
     
     fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${TK}&language=tr-TR&append_to_response=combined_credits`)
     .then(r => r.json())
@@ -1184,24 +1274,30 @@ window.loadPerson = function(id) {
         let sortedDepts = Object.keys(depts).sort((a,b) => depts[b].length - depts[a].length);
 
         let html = `
-            <div class="person-header">
-                <img class="person-img" src="${p.profile_path ? 'https://image.tmdb.org/t/p/w342'+p.profile_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'170\' style=\'background:%23ede0ce\'></svg>'}">
-                <div class="person-info">
-                    <div class="person-name">${p.name}</div>
-                    <div class="person-meta">🎂 ${p.birthday || '-'} (${age} Yaş)<br>📍 ${p.place_of_birth || '-'}</div>
-                    <div class="person-bio">${p.biography || 'Biyografi bulunamadı.'}</div>
+            <button class="top-btn" style="margin-bottom:15px; border-color:var(--accent); color:var(--accent);" onclick="closePersonView()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Geri Dön
+            </button>
+            <div class="person-card">
+                <div class="person-header">
+                    <img class="person-img" src="${p.profile_path ? 'https://image.tmdb.org/t/p/w342'+p.profile_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'170\' style=\'background:%23ede0ce\'></svg>'}">
+                    <div class="person-info">
+                        <div class="person-name">${p.name}</div>
+                        <div class="person-meta">🎂 ${p.birthday || '-'} (${age} Yaş)<br>📍 ${p.place_of_birth || '-'}</div>
+                        <div class="person-bio">${p.biography || 'Biyografi bulunamadı.'}</div>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    ${sortedDepts.map((d, i) => `<div class="tab ${i===0?'active':''}" onclick="window.switchTab(this, '${d}')">${d}</div>`).join("")}
+                </div>
+                
+                <div id="filmography-container" class="filmography-list">
+                    ${sortedDepts.length > 0 ? renderFilmography(depts[sortedDepts[0]]) : '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Eser bulunamadı.</div>'}
                 </div>
             </div>
-            
-            <div class="tabs">
-                ${sortedDepts.map((d, i) => `<div class="tab ${i===0?'active':''}" onclick="window.switchTab(this, '${d}')">${d}</div>`).join("")}
-            </div>
-            
-            <div id="filmography-container" class="filmography-list">
-                ${sortedDepts.length > 0 ? renderFilmography(depts[sortedDepts[0]]) : '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Eser bulunamadı.</div>'}
-            </div>
         `;
-        document.getElementById("person-content").innerHTML = html;
+        personViewEl.innerHTML = html;
         window.tempDepts = depts; 
     });
 };
@@ -1218,8 +1314,8 @@ function renderFilmography(list) {
     });
 
     return unique.map(f => `
-        <div class="film-row" onclick="closePersonModal(); window.loadFilm(${f.id}, '${f.media_type}')">
-            <img class="film-mini-poster" src="${f.poster_path ? 'https://image.tmdb.org/t/p/w92'+f.poster_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'58\' style=\'background:%23ede0ce\'></svg>'}">
+        <div class="film-row" onclick="closePersonView(); window.loadFilm(${f.id}, '${f.media_type}'); window.scrollTo({top:0, behavior:'smooth'});">
+            <img class="film-mini-poster" src="${f.poster_path ? 'https://image.tmdb.org/t/p/w92'+f.poster_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'58\' style=\'background:%23card\'></svg>'}">
             <div class="film-row-info">
                 <div class="film-row-title">${f.title || f.name}</div>
                 <div class="film-row-score">★ ${(f.vote_average||0).toFixed(1)}</div>
@@ -1235,14 +1331,21 @@ window.switchTab = function(btn, dept) {
     document.getElementById("filmography-container").innerHTML = renderFilmography(window.tempDepts[dept]);
 };
 
-window.closePersonModal = function() { 
-    document.getElementById("person-modal").classList.remove("active"); 
+window.closePersonView = function() { 
+    personViewEl.style.display = "none"; 
+    personViewEl.innerHTML = "";
+    resEl.style.display = "block";
 };
+
+// Modaldan arta kalan gereksiz kapatma fonksiyonları
+window.closePersonModal = window.closePersonView; 
+
 
 // ==========================================
 // 7. FİLM SAYFASI (YÜKLEME VE ÇİZİM MOTORU)
 // ==========================================
 window.loadFilm = function(id, mt) {
+  resEl.style.display = "block"; // Emin olmak için görünür yap
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Didik didik ediliyor...</span></div>';
   
   Promise.all([
@@ -1626,6 +1729,7 @@ window.clearDiaryEntry = function() {
 window.fetchUserList = function(listType) {
     closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
     if (!currentUser) return;
+    closePersonView(); // Liste açılırken kişi sayfasını kapa
     window.currentListType = listType; window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
@@ -1696,8 +1800,7 @@ window.renderListUI = function(sortType) {
 
 window.removeFromList = function(id, listType) {
     if (!currentUser) return; 
-    window.myList = window.myList.filter(item => item.id != id); 
-    window.renderListUI(window.currentSort); 
+    window.myList = window.myList.filter(item => item.id != id); window.renderListUI(window.currentSort); 
     db.collection("users").doc(currentUser.uid).collection(listType).doc(id.toString()).delete();
 };
 
