@@ -17,6 +17,7 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
       --bg: #f5ede0; --bg2: #ede0ce; --card: #fdf7f0; --border: #ddd0bb;
       --accent: #b84a1a; --text: #2a1f14; --muted: #8a7060;
@@ -35,71 +36,172 @@
       --star-empty: #333;
     }
 
-    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; width:100%; overflow-x:hidden; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
-    .app { flex: 1; display:flex; flex-direction:column; align-items:center; padding:20px 20px 0; position:relative; width:100%; max-width:100%; overflow-x:hidden; }
-    .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,var(--glow),transparent 70%); pointer-events:none; transition: background 0.3s; }
-    .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; flex: 1; }
+    body { 
+      background: var(--bg); color: var(--text); 
+      font-family: 'DM Sans', sans-serif; 
+      min-height: 100vh; width: 100%; 
+      overflow-x: hidden; 
+      transition: background 0.3s, color 0.3s; 
+      display: flex; flex-direction: column; 
+    }
     
-    .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
-    .top-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px var(--shadow); display: flex; align-items: center; gap: 6px; }
+    .app { 
+      flex: 1; display: flex; flex-direction: column; 
+      align-items: center; padding: 20px 20px 0; 
+      position: relative; width: 100%; max-width: 100%; 
+      overflow-x: hidden; 
+    }
+    
+    .app::before { 
+      content: ''; position: fixed; top: -150px; left: 50%; 
+      transform: translateX(-50%); width: 500px; height: 500px; 
+      background: radial-gradient(circle, var(--glow), transparent 70%); 
+      pointer-events: none; transition: background 0.3s; 
+    }
+    
+    .content { 
+      position: relative; width: 100%; max-width: 560px; 
+      display: flex; flex-direction: column; align-items: center; 
+      flex: 1; 
+    }
+    
+    .top-bar { 
+      width: 100%; display: flex; justify-content: space-between; 
+      align-items: center; margin-bottom: 10px; gap: 8px; 
+    }
+    
+    .top-btn { 
+      background: var(--card); border: 1.5px solid var(--border); 
+      border-radius: 8px; padding: 6px 12px; 
+      font-family: 'DM Sans', sans-serif; font-size: 12px; 
+      font-weight: 600; color: var(--text); cursor: pointer; 
+      transition: all 0.2s; box-shadow: 0 2px 8px var(--shadow); 
+      display: flex; align-items: center; gap: 6px; 
+    }
     .top-btn:hover { background: var(--bg2); }
 
-    h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,10vw,76px); letter-spacing:.08em; color:var(--accent); text-align:center; line-height:1; margin-bottom:6px; cursor: pointer; transition: opacity 0.2s; -webkit-tap-highlight-color: transparent; }
+    h1 { 
+      font-family: 'Bebas Neue', sans-serif; 
+      font-size: clamp(44px, 10vw, 76px); 
+      letter-spacing: .08em; color: var(--accent); 
+      text-align: center; line-height: 1; margin-bottom: 6px; 
+      cursor: pointer; transition: opacity 0.2s; 
+      -webkit-tap-highlight-color: transparent; 
+    }
     h1:hover { opacity: 0.8; }
     
-    .sub { font-size:11px; color:var(--muted); letter-spacing:.22em; text-transform:uppercase; margin-bottom:40px; text-align:center; }
-    .search-wrap { position:relative; width:100%; margin-bottom:36px; }
-    .search-row { display:flex; gap:8px; width:100%; }
+    .sub { 
+      font-size: 11px; color: var(--muted); 
+      letter-spacing: .22em; text-transform: uppercase; 
+      margin-bottom: 40px; text-align: center; 
+    }
     
-    .search-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
-    input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea { width: 100%; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:14px 18px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; transition:border-color .2s,box-shadow .2s; box-shadow:0 2px 8px var(--shadow); }
-    input:focus, textarea:focus { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
-    input::placeholder, textarea::placeholder { color:var(--muted); opacity:0.7; }
+    .search-wrap { position: relative; width: 100%; margin-bottom: 36px; }
+    .search-row { display: flex; gap: 8px; width: 100%; }
+    
+    .search-input-wrap { 
+      position: relative; flex: 1; 
+      display: flex; align-items: center; 
+    }
+    
+    input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea { 
+      width: 100%; background: var(--card); 
+      border: 1.5px solid var(--border); border-radius: 10px; 
+      padding: 14px 18px; color: var(--text); 
+      font-family: 'DM Sans', sans-serif; font-size: 15px; 
+      outline: none; transition: border-color .2s, box-shadow .2s; 
+      box-shadow: 0 2px 8px var(--shadow); 
+    }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 2px 12px var(--glow); }
+    input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
     input:disabled { opacity: 0.5; cursor: not-allowed; }
     .search-input-wrap input { padding-right: 40px; }
     
-    .list-search-input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--card); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    .list-search-input { 
+      width: 100%; padding: 12px 16px; border-radius: 8px; 
+      border: 1.5px solid var(--border); background: var(--card); 
+      color: var(--text); font-family: 'DM Sans', sans-serif; 
+      font-size: 14px; margin-bottom: 16px; 
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none; 
+    }
     .list-search-input:focus { border-color: var(--accent); box-shadow: 0 2px 8px var(--glow); }
-    .list-search-input::placeholder { color: var(--muted); opacity: 0.7; }
 
-    .clear-btn { position: absolute; right: 12px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
+    .clear-btn { 
+      position: absolute; right: 12px; background: none; 
+      border: none; color: var(--muted); font-size: 24px; 
+      cursor: pointer; padding: 0 4px; outline: none; 
+      display: none; line-height: 1; 
+      -webkit-tap-highlight-color: transparent; transition: color 0.2s; 
+    }
     .clear-btn:hover { color: var(--accent); }
 
-    button.search-btn { background:var(--accent); border:none; border-radius:10px; padding:14px 22px; color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; letter-spacing:.04em; cursor:pointer; transition:background .2s,transform .1s; white-space:nowrap; -webkit-tap-highlight-color:transparent; box-shadow:0 2px 8px var(--shadow); }
-    button.search-btn:hover { background:#d05520; }
-    button.search-btn:active { transform:scale(.96); }
-    button.search-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
+    button.search-btn { 
+      background: var(--accent); border: none; border-radius: 10px; 
+      padding: 14px 22px; color: #fff; 
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; 
+      letter-spacing: .04em; cursor: pointer; 
+      transition: background .2s, transform .1s; white-space: nowrap; 
+      -webkit-tap-highlight-color: transparent; box-shadow: 0 2px 8px var(--shadow); 
+    }
+    button.search-btn:hover { background: #d05520; }
+    button.search-btn:active { transform: scale(.96); }
+    button.search-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
 
-    .comfort-btn { background: var(--glow); color: var(--accent); border: 1.5px solid rgba(184, 58, 26, 0.2); width: 100%; border-radius: 10px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .05em; cursor: pointer; transition: all 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .comfort-btn { 
+      background: var(--glow); color: var(--accent); 
+      border: 1.5px solid rgba(184, 58, 26, 0.2); width: 100%; 
+      border-radius: 10px; padding: 12px; 
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; 
+      letter-spacing: .05em; cursor: pointer; transition: all 0.2s; 
+      margin-top: 10px; display: flex; align-items: center; 
+      justify-content: center; gap: 8px; 
+    }
     .comfort-btn:hover { border-color: rgba(184, 58, 26, 0.5); }
     .comfort-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     /* ARAMA DROPDOWN */
-    .dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--card); border:1.5px solid var(--border); border-radius:10px; box-shadow:0 8px 24px var(--shadow); z-index:100; overflow:hidden; max-height:350px; overflow-y:auto; }
-    .dropdown-item { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; transition:background .15s; border-bottom:1px solid var(--border); -webkit-tap-highlight-color:transparent; }
-    .dropdown-item:last-child { border-bottom:none; }
-    .dropdown-item:hover, .dropdown-item:active { background:var(--bg2); }
-    .dd-poster { width:42px; height:60px; object-fit:cover; border-radius:4px; background:var(--bg2); flex-shrink:0; }
-    .dd-avatar { width:42px; height:42px; object-fit:cover; border-radius:50%; background:var(--bg2); flex-shrink:0; border: 1.5px solid var(--border); }
-    .dd-info { flex:1; min-width:0; }
-    .dd-title { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .dd-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+    .dropdown { 
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; 
+      background: var(--card); border: 1.5px solid var(--border); 
+      border-radius: 10px; box-shadow: 0 8px 24px var(--shadow); 
+      z-index: 100; overflow: hidden; max-height: 350px; overflow-y: auto; 
+    }
+    .dropdown-item { 
+      display: flex; align-items: center; gap: 12px; 
+      padding: 10px 14px; cursor: pointer; transition: background .15s; 
+      border-bottom: 1px solid var(--border); -webkit-tap-highlight-color: transparent; 
+    }
+    .dropdown-item:last-child { border-bottom: none; }
+    .dropdown-item:hover { background: var(--bg2); }
+    .dd-poster { width: 42px; height: 60px; object-fit: cover; border-radius: 4px; background: var(--bg2); flex-shrink: 0; }
+    .dd-avatar { width: 42px; height: 42px; object-fit: cover; border-radius: 50%; background: var(--bg2); flex-shrink: 0; border: 1.5px solid var(--border); }
+    .dd-info { flex: 1; min-width: 0; }
+    .dd-title { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dd-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    .history-item { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; transition:background .15s; border-bottom:1px solid var(--border); font-size:14px; color:var(--text); }
-    .history-item:hover { background:var(--bg2); }
-    .history-item svg { width:16px; height:16px; color:var(--muted); }
-    .clear-history-btn { display:block; width:100%; text-align:center; padding:12px; font-size:12px; color:#d42a08; background:var(--card); border:none; border-top:1px solid var(--border); cursor:pointer; font-weight:600; }
-    .clear-history-btn:hover { background:var(--bg2); }
+    .history-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; transition: background .15s; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); }
+    .history-item:hover { background: var(--bg2); }
+    .history-item svg { width: 16px; height: 16px; color: var(--muted); }
+    .clear-history-btn { display: block; width: 100%; text-align: center; padding: 12px; font-size: 12px; color: #d42a08; background: var(--card); border: none; border-top: 1px solid var(--border); cursor: pointer; font-weight: 600; }
+    .clear-history-btn:hover { background: var(--bg2); }
     
-    .card { width:100%; max-width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    /* FILM KARTI */
+    .card { 
+      width: 100%; max-width: 100%; background: var(--card); 
+      border: 1.5px solid var(--border); border-radius: 14px; 
+      overflow: hidden; animation: fadeUp .35s ease; 
+      box-shadow: 0 4px 20px var(--shadow); 
+      transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; 
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: translateY(0) } }
     
-    .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; width:100%; box-sizing: border-box; }
+    .card-head { padding: 22px 24px 18px; border-bottom: 1.5px solid var(--border); display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
     .card-head-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
     
-    .poster { width:80px; height:120px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); cursor: zoom-in; transition: transform 0.2s; }
+    .poster { width: 80px; height: 120px; object-fit: cover; border-radius: 6px; flex-shrink: 0; box-shadow: 0 2px 8px var(--shadow); cursor: zoom-in; transition: transform 0.2s; }
     .poster:hover { transform: scale(1.03); }
-    .head-info { flex:1; min-width:0; } 
+    .poster-ph { width: 80px; height: 120px; background: var(--bg2); border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .head-info { flex: 1; min-width: 0; } 
     
     .tags-container { display: flex; gap: 6px; margin-top: 16px; margin-bottom: 6px; align-items: center; flex-wrap: wrap; width: 100%; }
     .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0; }
@@ -107,55 +209,60 @@
     .tag-pill.cinephile { background: rgba(13, 148, 136, 0.1); color: var(--tmdb); border: 1px solid rgba(13, 148, 136, 0.3); }
     .tag-pill.timeless { background: rgba(200, 150, 10, 0.1); color: var(--imdb); border: 1px solid rgba(200, 150, 10, 0.3); }
     .tag-pill.master { background: rgba(184, 74, 26, 0.1); color: var(--accent); border: 1px solid rgba(184, 74, 26, 0.3); }
-    .tag-pill.auteur { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.3); }
     .tag-pill.popcorn { background: rgba(230, 50, 50, 0.1); color: #e63232; border: 1px solid rgba(230, 50, 50, 0.3); }
     .tag-pill.award { background: rgba(212, 175, 55, 0.1); color: #b8860b; border: 1px solid rgba(212, 175, 55, 0.3); }
     .tag-pill.true-story { background: rgba(43, 91, 132, 0.1); color: #2b5b84; border: 1px solid rgba(43, 91, 132, 0.3); }
     .tag-pill.book { background: rgba(139, 69, 19, 0.1); color: #8b4513; border: 1px solid rgba(139, 69, 19, 0.3); }
     .tag-pill.remake { background: rgba(100, 100, 100, 0.1); color: #777; border: 1px solid rgba(100, 100, 100, 0.3); }
     
-    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; padding:0;}
+    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; padding: 0; }
     .tag-info-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--muted); }
 
-    .card-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; }
-    .card-meta { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:10px; line-height: 1.5; }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: .05em; color: var(--text); margin-bottom: 4px; line-height: 1.1; }
+    .card-meta { font-size: 12px; color: var(--muted); letter-spacing: .04em; margin-bottom: 10px; line-height: 1.5; }
     
     .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .action-btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:500; cursor:pointer; text-decoration:none; transition:background .2s; font-family:'DM Sans',sans-serif; flex: 1; min-width: calc(50% - 4px); }
-    .action-btn svg { width:12px; height:12px; }
+    .action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background .2s; font-family: 'DM Sans', sans-serif; flex: 1; min-width: calc(50% - 4px); }
+    .action-btn svg { width: 12px; height: 12px; }
     
     .action-btn.wl-btn { background: var(--bg2); color: var(--text); border: 1.5px solid var(--border); }
     .action-btn.wl-btn:hover { border-color: var(--meta-green); color: var(--meta-green); }
     .action-btn.wl-btn.added { background: rgba(74, 144, 48, 0.1); color: var(--meta-green); border-color: var(--meta-green); }
 
-    .action-btn.trailer-btn { background:#e02020; color:#fff; }
-    .action-btn.trailer-btn:hover { background:#c00; }
-    .action-btn.share-btn { background:var(--bg2); color:var(--text); }
-    .action-btn.share-btn:hover { background:var(--border); }
+    .action-btn.trailer-btn { background: #e02020; color: #fff; }
+    .action-btn.trailer-btn:hover { background: #c00; }
+    .action-btn.share-btn { background: var(--bg2); color: var(--text); }
+    .action-btn.share-btn:hover { background: var(--border); }
 
     .outbound-links-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-    .action-btn.lb-btn { background:#202830; color:#00e054; min-width: 0; }
-    .action-btn.lb-btn:hover { background:#14191e; }
-    .action-btn.imdb-btn { background:#f5c518; color:#000; min-width: 0; }
-    .action-btn.imdb-btn:hover { background:#e2b616; }
-    .action-btn.tmdb-btn { background:#0d9488; color:#fff; min-width: 0; }
-    .action-btn.tmdb-btn:hover { background:#0f766e; }
+    .action-btn.lb-btn { background: #202830; color: #00e054; min-width: 0; }
+    .action-btn.lb-btn:hover { background: #14191e; }
+    .action-btn.imdb-btn { background: #f5c518; color: #000; min-width: 0; }
+    .action-btn.imdb-btn:hover { background: #e2b616; }
+    .action-btn.tmdb-btn { background: #0d9488; color: #fff; min-width: 0; }
+    .action-btn.tmdb-btn:hover { background: #0f766e; }
     
-    .platforms-wrap { margin-top:14px; border-top:1px dashed var(--border); padding-top:12px; }
-    .platforms-title { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
-    .platforms-list { display:flex; gap:8px; flex-wrap:wrap; }
-    .provider-logo { width:32px; height:32px; border-radius:8px; box-shadow:0 2px 4px var(--shadow); }
+    .platforms-wrap { margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 12px; }
+    .platforms-title { font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .platforms-list { display: flex; gap: 8px; flex-wrap: wrap; }
+    .provider-logo { width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 2px 4px var(--shadow); }
     
-    .kadro-scroll { display:flex; flex-direction:column; gap:8px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
-    .kadro-item { display:flex; align-items:center; gap:12px; background:var(--bg2); padding:10px 14px; border-radius:10px; cursor:pointer; transition: transform 0.2s; }
+    .kadro-btn-wrap { margin-top: 14px; }
+    .kadro-btn { width: 100%; justify-content: center; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px; min-width: 100%; }
+    .kadro-btn:hover { background: var(--bg2); }
+    .load-more-btn { background: transparent; border: 1px dashed var(--border); color: var(--text); min-width: 100%; }
+    .load-more-btn:hover { background: var(--bg2); }
+
+    .kadro-scroll { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
+    .kadro-item { display: flex; align-items: center; gap: 12px; background: var(--bg2); padding: 10px 14px; border-radius: 10px; cursor: pointer; transition: transform 0.2s; }
     .kadro-item:active { transform: scale(0.98); }
-    .kadro-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; border: 2px solid var(--card); }
+    .kadro-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--card); }
 
     /* LIGHTBOX */
-    .lightbox { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:5000; display:none; align-items:center; justify-content:center; padding:20px; cursor: zoom-out; }
-    .lightbox img { max-width:100%; max-height:90vh; border-radius:8px; box-shadow:0 0 40px rgba(0,0,0,0.5); }
+    .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
+    .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
 
-    /* PERSON MODAL */
+    /* KİŞİ SAYFASI BİLEŞENLERİ */
     #person-modal .modal-box { max-width: 550px; background: var(--bg); border: none; }
     .person-header { display: flex; gap: 20px; padding: 24px; border-bottom: 1.5px solid var(--border); background: var(--card); }
     .person-img { width: 120px; height: 170px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 12px var(--shadow); }
@@ -164,7 +271,6 @@
     .person-meta { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
     .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* TABS */
     .tabs { display: flex; overflow-x: auto; background: var(--card); border-bottom: 1.5px solid var(--border); padding: 0 10px; gap: 4px; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab { padding: 14px 20px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -175,38 +281,40 @@
     .film-row:hover { border-color: var(--accent); }
     .film-mini-poster { width: 40px; height: 58px; border-radius: 4px; object-fit: cover; background: var(--bg2); }
     .film-row-info { flex: 1; min-width: 0; }
-    .film-row-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .film-row-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
     .film-row-score { font-size: 11px; color: var(--tmdb); font-weight: 700; margin-top: 2px; }
     .film-row-year { font-size: 12px; color: var(--muted); font-weight: 500; min-width: 40px; text-align: right; }
 
+    /* PUANLAMA & GÖSTERİM */
     .weighted-avg { background: var(--card); padding: 22px 20px; text-align: center; border-bottom: 1.5px solid var(--border); }
     .wa-title { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-    .wa-score { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 1; color: var(--accent); margin-bottom: 8px; }
-    .wa-score span { font-size: 24px; color: var(--muted); opacity:0.6; }
-    .wa-weights { font-size: 10px; color: var(--muted); opacity:0.8; letter-spacing: .08em; line-height: 1.5; }
+    .wa-score { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .wa-score span { font-size: 24px; color: var(--muted); opacity: 0.6; }
+    .wa-weights { font-size: 10px; color: var(--muted); opacity: 0.8; letter-spacing: .08em; line-height: 1.5; }
     
-    .scores { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--border); }
-    .score-cell { background:var(--card); padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:7px; }
-    .score-name { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
-    .score-num { font-family:'Bebas Neue',sans-serif; font-size:38px; line-height:1; letter-spacing:.02em; }
-    .score-num.imdb   { color:var(--imdb); }
-    .score-num.fresh  { color:var(--rt-fresh); }
-    .score-num.rotten { color:var(--rt-rotten); }
-    .score-num.green  { color:var(--meta-green); }
-    .score-num.yellow { color:var(--meta-yellow); }
-    .score-num.red    { color:var(--meta-red); }
-    .score-num.tmdb   { color:var(--tmdb); }
-    .score-num.na     { color:var(--border); font-size:24px; }
-    .bar { width:100%; height:3px; background:var(--bg2); border-radius:2px; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:2px; transition:width 1s cubic-bezier(.16,1,.3,1); }
-    .bar-fill.imdb   { background:var(--imdb); }
-    .bar-fill.fresh  { background:var(--rt-fresh); }
-    .bar-fill.rotten { background:var(--rt-rotten); }
-    .bar-fill.green  { background:var(--meta-green); }
-    .bar-fill.yellow { background:var(--meta-yellow); }
-    .bar-fill.red    { background:var(--meta-red); }
-    .bar-fill.tmdb   { background:var(--tmdb); }
-    .score-sub { font-size:10px; color:var(--muted); opacity:0.8; letter-spacing:.06em; }
+    .scores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); }
+    .score-cell { background: var(--card); padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 7px; }
+    .score-name { font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .score-num { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; letter-spacing: .02em; }
+    .score-num.imdb { color: var(--imdb); }
+    .score-num.fresh { color: var(--rt-fresh); }
+    .score-num.rotten { color: var(--rt-rotten); }
+    .score-num.green { color: var(--meta-green); }
+    .score-num.yellow { color: var(--meta-yellow); }
+    .score-num.red { color: var(--meta-red); }
+    .score-num.tmdb { color: var(--tmdb); }
+    .score-num.na { color: var(--border); font-size: 24px; }
+    
+    .bar { width: 100%; height: 3px; background: var(--bg2); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 2px; transition: width 1s cubic-bezier(.16,1,.3,1); }
+    .bar-fill.imdb { background: var(--imdb); }
+    .bar-fill.fresh { background: var(--rt-fresh); }
+    .bar-fill.rotten { background: var(--rt-rotten); }
+    .bar-fill.green { background: var(--meta-green); }
+    .bar-fill.yellow { background: var(--meta-yellow); }
+    .bar-fill.red { background: var(--meta-red); }
+    .bar-fill.tmdb { background: var(--tmdb); }
+    .score-sub { font-size: 10px; color: var(--muted); opacity: 0.8; letter-spacing: .06em; }
 
     .user-rating-section { background: var(--bg2); padding: 22px 20px; text-align: center; border-bottom: 1.5px solid var(--border); }
     .rating-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
@@ -214,17 +322,17 @@
     .stars-container .star-filled { position: absolute; top: 0; left: 0; color: var(--star-fill); overflow: hidden; width: 0%; pointer-events: none; white-space: nowrap; transition: width 0.1s; }
     .star-hint { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--accent); margin-top: 8px; min-height: 18px; }
     
-    .bottom { padding:18px 24px 22px; border-top:1.5px solid var(--border); }
-    .badge { display:inline-flex; align-items:center; padding:5px 12px; border-radius:5px; font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
+    .bottom { padding: 18px 24px 22px; border-top: 1.5px solid var(--border); }
+    .badge { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
     .badge.masterpiece { background: rgba(212, 175, 55, 0.15); color: #b8860b; }
-    .badge.v-good      { background: rgba(74, 144, 48, 0.12);  color: var(--meta-green); }
-    .badge.good        { background: rgba(13, 148, 136, 0.12); color: var(--tmdb); }
-    .badge.avg         { background: rgba(200, 144, 16, 0.10); color: var(--meta-yellow); }
-    .badge.weak        { background: rgba(192, 48, 48, 0.08);  color: var(--meta-red); }
-    .badge.trash       { background: rgba(0, 0, 0, 0.08);      color: #666; }
-    .badge.match       { background: var(--tmdb); color: #fff; font-size:13px; font-weight: 600; letter-spacing: .05em; padding: 8px 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2); width: 100%; justify-content: center; margin-bottom: 15px; display:flex; align-items:center;}
+    .badge.v-good { background: rgba(74, 144, 48, 0.12); color: var(--meta-green); }
+    .badge.good { background: rgba(13, 148, 136, 0.12); color: var(--tmdb); }
+    .badge.avg { background: rgba(200, 144, 16, 0.10); color: var(--meta-yellow); }
+    .badge.weak { background: rgba(192, 48, 48, 0.08); color: var(--meta-red); }
+    .badge.trash { background: rgba(0, 0, 0, 0.08); color: #666; }
+    .badge.match { background: var(--tmdb); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .05em; padding: 8px 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2); width: 100%; justify-content: center; margin-bottom: 15px; display: flex; align-items: center; }
     
-    .plot { font-size:13.5px; line-height:1.7; color:var(--text); opacity:0.9; }
+    .plot { font-size: 13.5px; line-height: 1.7; color: var(--text); opacity: 0.9; }
 
     .reviews-wrap { padding: 0 24px 24px; border-top: 1.5px solid var(--border); background: var(--card); }
     .rev-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); margin: 24px 0 14px; letter-spacing: .05em; }
@@ -245,9 +353,10 @@
     .rec-card img { width: 100%; aspect-ratio: 2/3; display: block; object-fit: cover; }
     .rec-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 24px 8px 10px; font-size: 11px; font-weight: 500; text-align: center; line-height: 1.3; }
 
-    .wl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
-    .wl-title { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--text); letter-spacing:.05em; line-height:1; }
-    .wl-sort-group { display: flex; gap: 6px; flex-wrap:wrap; }
+    /* İZLEME LİSTELERİ */
+    .wl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
+    .wl-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--text); letter-spacing: .05em; line-height: 1; }
+    .wl-sort-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .wl-sort-btn { background: var(--card); border: 1.5px solid var(--border); color: var(--text); padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
     .wl-sort-btn.active { background: rgba(184, 74, 26, 0.1); color: var(--accent); border-color: var(--accent); }
     .wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 16px; width: 100%; }
@@ -257,20 +366,20 @@
     .wl-info-grid { padding: 10px 8px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
     .wl-card-title { font-size: 12px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; color: var(--text); }
     .wl-card-year { font-size: 10px; font-weight: 500; color: var(--muted); }
-    .wl-remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(2px); transition: background 0.2s; z-index: 2; line-height: 1; padding-bottom: 2px;}
+    .wl-remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(2px); transition: background 0.2s; z-index: 2; line-height: 1; padding-bottom: 2px; }
     .wl-remove-btn:hover { background: var(--meta-red); }
-    .wl-score-badge { position: absolute; top: 6px; left: 6px; background: rgba(184, 74, 26, 0.95); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
-    .diary-badge { position: absolute; top: 36px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 0; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;}
+    .wl-score-badge { position: absolute; top: 6px; left: 6px; background: rgba(184, 74, 26, 0.95); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .diary-badge { position: absolute; top: 36px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 0; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
 
-    .loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0; color:var(--muted); font-size:13px; letter-spacing:.1em; }
-    .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    
-    .err { padding:32px 24px; text-align:center; color:var(--muted); font-size:14px; line-height:1.6; }
-    .err .icon { font-size:32px; margin-bottom:10px; }
-    .tip { margin-top:32px; font-size:11px; color:var(--muted); letter-spacing:.1em; text-align:center; line-height:1.8; opacity:0.8;}
+    /* SPINNER & ERROR */
+    .loading { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 44px 0; color: var(--muted); font-size: 13px; letter-spacing: .1em; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg) } }
+    .err { padding: 32px 24px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .err .icon { font-size: 32px; margin-bottom: 10px; }
+    .tip { margin-top: 32px; font-size: 11px; color: var(--muted); letter-spacing: .1em; text-align: center; line-height: 1.8; opacity: 0.8; }
 
-    /* MODAL STİLLERİ (Z-INDEX 2000 GÜVENCESİ) */
+    /* MODAL OVERLAYS */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; display: flex; flex-direction: column; }
@@ -279,13 +388,15 @@
     .modal-close { background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; line-height: 0.5; padding: 5px; transition: color 0.2s; }
     .modal-close:hover { color: var(--accent); }
     .modal-body { padding: 24px; font-size: 14px; line-height: 1.7; color: var(--text); }
-    .modal-spinner { display: flex; justify-content: center; padding: 30px 0; }
 
+    /* TOOLTIP MODAL */
     #tooltip-modal { z-index: 3000; }
+    
+    /* TRAILER MODAL */
     #trailer-modal .modal-box { max-width: 800px; background: #000; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
     #trailer-modal .modal-close { position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 24px; padding: 0 0 2px 0; }
 
-    /* ÜYELİK & ZİHİN TESTİ STİLLERİ */
+    /* ÜYELİK VE TEST STİLLERİ */
     .auth-input { width: 100%; margin-bottom: 12px; }
     .auth-error { color: var(--meta-red); font-size: 13px; font-weight: 500; margin-top: 10px; text-align: center; display: none; }
     .auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
@@ -315,19 +426,26 @@
 </head>
 <body>
 
-<div id="lb" class="lightbox" onclick="closeLightbox()"><img id="lb-img" src="" alt=""></div>
+<div id="lb" class="lightbox" onclick="closeLightbox()">
+  <img id="lb-img" src="" alt="Büyük Afiş">
+</div>
 
 <div class="app">
   <div class="content">
+    
     <div class="top-bar">
       <button id="auth-main-btn" class="top-btn" onclick="openAuthModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
         <span id="auth-main-text">Giriş Yap</span>
       </button>
       <button id="theme-toggle" class="top-btn">🌙 Koyu Tema</button>
     </div>
+
     <h1 id="site-title">İzlesem mi?</h1>
-    <p class="sub">IMDb · Rotten Tomatoes · Metacritic · TMDb</p>
+    <p class="sub" style="margin-bottom:20px;">IMDb · Rotten Tomatoes · Metacritic · TMDb</p>
     
     <div class="search-wrap">
       <div class="search-row">
@@ -338,11 +456,18 @@
         <button id="btn" class="search-btn">Ara</button>
       </div>
       <button id="comfort-btn" class="comfort-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><circle cx="15.5" cy="8.5" r="1.5"></circle><circle cx="15.5" cy="15.5" r="1.5"></circle><circle cx="8.5" cy="15.5" r="1.5"></circle></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <circle cx="15.5" cy="8.5" r="1.5"></circle>
+          <circle cx="15.5" cy="15.5" r="1.5"></circle>
+          <circle cx="8.5" cy="15.5" r="1.5"></circle>
+        </svg>
         Konfor Alanından Çık
       </button>
       <div id="dd" class="dropdown" style="display:none"></div>
     </div>
+
     <div id="result"></div>
     <p class="tip">Telefonda: Menü → Ana Ekrana Ekle</p>
     
@@ -350,6 +475,7 @@
       Atilla Kuru tarafından tasarlandı.<br><br>
       <a class="footer-link" onclick="showHowToUseModal(event)">Nasıl Kullanılır?</a>
     </div>
+
   </div>
 </div>
 
@@ -409,6 +535,7 @@
          <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border);" onclick="clearDiaryEntry()">Temizle</button>
          <button class="search-btn" style="flex:2;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -442,10 +569,12 @@
 
 <div id="auth-modal" class="modal-overlay" style="z-index: 1000;">
   <div class="modal-box" style="max-width: 450px;">
+    
     <div class="modal-header">
       <div id="auth-title" class="modal-title">Giriş Yap</div>
       <button class="modal-close" onclick="closeAuthModal()">&times;</button>
     </div>
+    
     <div class="modal-body" id="auth-body-unlogged">
        <form onsubmit="event.preventDefault(); handleAuthSubmit();" style="width:100%;">
            <input type="email" id="auth-email" name="email" class="auth-input" autocomplete="username" placeholder="E-posta adresi" required>
@@ -455,6 +584,7 @@
        <div id="auth-error" class="auth-error">Hata mesajı</div>
        <div class="auth-switch">Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span></div>
     </div>
+    
     <div class="modal-body" id="auth-body-logged" style="display:none;">
        <div style="text-align:center; margin-bottom:24px;">
            <div style="font-size:15px; margin-bottom:6px;">Hoş geldin,</div>
@@ -477,7 +607,6 @@
        <button class="top-btn" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="showMindTest()">
           🧠 Zihin Profilini Güncelle
        </button>
-       
        <button class="search-btn" style="width:100%; background:transparent; color:var(--meta-red); border:1px solid var(--meta-red);" onclick="handleLogout()">Çıkış Yap</button>
 
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
@@ -499,6 +628,7 @@
          <button class="search-btn" style="width:100%; margin-top:10px; padding:16px;" onclick="saveMindProfile()">Kaydet ve Kapat</button>
        </div>
     </div>
+
   </div>
 </div>
 
@@ -580,13 +710,20 @@ window.closeTooltipModal = function() {
     document.getElementById("tooltip-modal").classList.remove("active");
 };
 
+// Modal dışına tıklayınca kapatma
 document.getElementById("tooltip-modal").addEventListener("click", function(e) {
     if (e.target === this) closeTooltipModal();
+});
+document.getElementById("generic-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeGenericModal();
 });
 
 // ==========================================
 // 1. FIREBASE BAŞLATMA VE GLOBAL DEĞİŞKENLER
 // ==========================================
+const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
+const OK = "44bf03a2";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60",
   authDomain: "izlesemmi.firebaseapp.com",
@@ -595,11 +732,16 @@ const firebaseConfig = {
   messagingSenderId: "498958427347",
   appId: "1:498958427347:web:538638b49f7a05a8b6a026"
 };
-firebase.initializeApp(firebaseConfig);
+
+// Çoklu başlatmayı önlemek için kontrol
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const auth = firebase.auth();
 const db = firebase.firestore();
 firebase.analytics();
 
+// Durum (State) Değişkenleri
 let isLoginMode = true; 
 let currentUser = null;
 let isInitialLoad = true; 
@@ -671,7 +813,11 @@ auth.onAuthStateChanged(function(user) {
     });
 
   } else {
-    currentUser = null; userMindProfile = { lovedGenres: [], hatedGenres: [] }; userRatings = {}; userDiary = {};
+    currentUser = null; 
+    userMindProfile = { lovedGenres: [], hatedGenres: [] }; 
+    userRatings = {}; 
+    userDiary = {};
+    
     document.getElementById("auth-main-text").innerText = "Giriş Yap";
     document.getElementById("auth-body-unlogged").style.display = "block";
     document.getElementById("auth-body-logged").style.display = "none";
@@ -685,42 +831,61 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
-function openAuthModal() { document.getElementById("auth-error").style.display="none"; document.getElementById("auth-modal").classList.add("active"); document.body.style.overflow="hidden"; }
-function closeAuthModal() { document.getElementById("auth-modal").classList.remove("active"); document.body.style.overflow=""; }
-document.getElementById("auth-modal").addEventListener("click", function(e) { if (e.target === this) closeAuthModal(); });
+function openAuthModal() { 
+    document.getElementById("auth-error").style.display="none"; 
+    document.getElementById("auth-modal").classList.add("active"); 
+    document.body.style.overflow="hidden"; 
+}
+function closeAuthModal() { 
+    document.getElementById("auth-modal").classList.remove("active"); 
+    document.body.style.overflow=""; 
+}
+document.getElementById("auth-modal").addEventListener("click", function(e) { 
+    if (e.target === this) closeAuthModal(); 
+});
 
 function toggleAuthMode() {
-  isLoginMode = !isLoginMode; document.getElementById("auth-error").style.display = "none";
+  isLoginMode = !isLoginMode; 
+  document.getElementById("auth-error").style.display = "none";
   if (isLoginMode) {
-    document.getElementById("auth-title").innerText = "Giriş Yap"; document.getElementById("auth-submit-btn").innerText = "Giriş Yap";
+    document.getElementById("auth-title").innerText = "Giriş Yap"; 
+    document.getElementById("auth-submit-btn").innerText = "Giriş Yap";
     document.querySelector(".auth-switch").innerHTML = 'Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span>';
   } else {
-    document.getElementById("auth-title").innerText = "Yeni Hesap Oluştur"; document.getElementById("auth-submit-btn").innerText = "Kayıt Ol";
+    document.getElementById("auth-title").innerText = "Yeni Hesap Oluştur"; 
+    document.getElementById("auth-submit-btn").innerText = "Kayıt Ol";
     document.querySelector(".auth-switch").innerHTML = 'Zaten üye misin? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Giriş Yap</span>';
   }
 }
 
 function handleAuthSubmit() {
-  const email = document.getElementById("auth-email").value.trim(); const pass = document.getElementById("auth-pass").value.trim();
-  const errDiv = document.getElementById("auth-error"); const btn = document.getElementById("auth-submit-btn");
+  const email = document.getElementById("auth-email").value.trim(); 
+  const pass = document.getElementById("auth-pass").value.trim();
+  const errDiv = document.getElementById("auth-error"); 
+  const btn = document.getElementById("auth-submit-btn");
+  
   if (!email || !pass) { errDiv.innerText = "Lütfen alanları doldurun."; errDiv.style.display = "block"; return; }
+  
   errDiv.style.display = "none"; btn.disabled = true; btn.innerText = "Bekleyin...";
+  
   if (isLoginMode) {
     auth.signInWithEmailAndPassword(email, pass).then(closeAuthModal).catch(error => {
-        errDiv.style.display = "block"; errDiv.innerText = (error.code.includes('invalid')||error.code.includes('wrong')||error.code.includes('not-found')) ? "E-posta veya şifre hatalı." : "Bir hata oluştu.";
+        errDiv.style.display = "block"; 
+        errDiv.innerText = (error.code.includes('invalid')||error.code.includes('wrong')||error.code.includes('not-found')) ? "E-posta veya şifre hatalı." : "Bir hata oluştu.";
       }).finally(() => { btn.disabled = false; btn.innerText = "Giriş Yap"; });
   } else {
     auth.createUserWithEmailAndPassword(email, pass).then(userCredential => {
         return db.collection("users").doc(userCredential.user.uid).set({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), mindProfile: { lovedGenres: [], hatedGenres: [] } });
       }).then(closeAuthModal).catch(error => {
-        errDiv.style.display = "block"; errDiv.innerText = error.code === 'auth/email-already-in-use' ? "E-posta zaten kullanımda." : (error.code === 'auth/weak-password' ? "Şifre zayıf." : "Hata oluştu.");
+        errDiv.style.display = "block"; 
+        errDiv.innerText = error.code === 'auth/email-already-in-use' ? "E-posta zaten kullanımda." : (error.code === 'auth/weak-password' ? "Şifre zayıf." : "Hata oluştu.");
       }).finally(() => { btn.disabled = false; btn.innerText = "Kayıt Ol"; });
   }
 }
 function handleLogout() { auth.signOut(); }
 
 // ==========================================
-// 3. PROFİL TESTİ ARAYÜZÜ
+// 3. PROFİL TESTİ ARAYÜZÜ (ZİHİNSEL EŞLEŞME)
 // ==========================================
 function showMindTest() {
   const area = document.getElementById("mind-test-area");
@@ -756,21 +921,39 @@ function showMindTest() {
 function toggleGenre(genre, type, el) {
     if(type === 'love') {
         if(!userMindProfile.lovedGenres) userMindProfile.lovedGenres = [];
-        if(userMindProfile.lovedGenres.includes(genre)) { userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); el.classList.remove('loved'); } 
-        else { userMindProfile.lovedGenres.push(genre); el.classList.add('loved'); }
-        if(userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(genre)) { userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); showMindTest(); }
+        if(userMindProfile.lovedGenres.includes(genre)) { 
+            userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); 
+            el.classList.remove('loved'); 
+        } else { 
+            userMindProfile.lovedGenres.push(genre); 
+            el.classList.add('loved'); 
+        }
+        if(userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(genre)) { 
+            userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); 
+            showMindTest(); 
+        }
     } else {
         if(!userMindProfile.hatedGenres) userMindProfile.hatedGenres = [];
-        if(userMindProfile.hatedGenres.includes(genre)) { userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); el.classList.remove('hated'); } 
-        else { userMindProfile.hatedGenres.push(genre); el.classList.add('hated'); }
-        if(userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(genre)) { userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); showMindTest(); }
+        if(userMindProfile.hatedGenres.includes(genre)) { 
+            userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); 
+            el.classList.remove('hated'); 
+        } else { 
+            userMindProfile.hatedGenres.push(genre); 
+            el.classList.add('hated'); 
+        }
+        if(userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(genre)) { 
+            userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); 
+            showMindTest(); 
+        }
     }
 }
 
 function setMindOpt(btn) {
-  const qid = btn.dataset.qid; const val = btn.dataset.val;
+  const qid = btn.dataset.qid; 
+  const val = btn.dataset.val;
   document.querySelectorAll(`[data-qid="${qid}"]`).forEach(b => b.classList.remove("active"));
-  btn.classList.add("active"); userMindProfile[qid] = val;
+  btn.classList.add("active"); 
+  userMindProfile[qid] = val;
 }
 
 function saveMindProfile() {
@@ -810,13 +993,18 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
   const year = releaseDate ? parseInt(releaseDate.split("-")[0]) : 2024;
   const fGenres = filmGenres ? filmGenres.map(g => g.name) : [];
 
-  if (userMindProfile.lovedGenres && userMindProfile.lovedGenres.length > 0) { userMindProfile.lovedGenres.forEach(g => { if(fGenres.includes(g)) score += 15; }); }
-  if (userMindProfile.hatedGenres && userMindProfile.hatedGenres.length > 0) { userMindProfile.hatedGenres.forEach(g => { if(fGenres.includes(g)) score -= 25; }); }
+  if (userMindProfile.lovedGenres && userMindProfile.lovedGenres.length > 0) { 
+      userMindProfile.lovedGenres.forEach(g => { if(fGenres.includes(g)) score += 15; }); 
+  }
+  if (userMindProfile.hatedGenres && userMindProfile.hatedGenres.length > 0) { 
+      userMindProfile.hatedGenres.forEach(g => { if(fGenres.includes(g)) score -= 25; }); 
+  }
 
   mindQuestions.forEach(q => {
     const userVal = userMindProfile[q.id];
     if (!userVal || userVal === 'meh') return; 
     let hasKeyword = false;
+    
     if (q.id === "q14" && year < 2000) hasKeyword = true; 
     else if (q.keys.some(k => kwList.some(tk => tk.includes(k)))) hasKeyword = true;
 
@@ -838,529 +1026,318 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
 }
 
 // ==========================================
-// 5. YILDIZ PUANLAMA MANTIĞI & KURTARICI
+// 4. ARAMA MOTORU (CANLI & KİŞİ ARAMA)
 // ==========================================
-function handleStarMove(e, container) {
-  const rect = container.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  if (x < 15) { renderStars(0); currentDraftRating = 0; return; }
-  const percent = x / rect.width;
-  let val = Math.ceil(percent * 10) / 2; 
-  if(val < 0.5) val = 0.5; if(val > 5) val = 5;
-  renderStars(val);
-  currentDraftRating = val;
-}
+const clearBtn = document.getElementById("clear-btn");
+const btnEl = document.getElementById("btn");
+const comfortBtn = document.getElementById("comfort-btn"); 
+const resEl = document.getElementById("result");
+const siteTitle = document.getElementById("site-title"); 
+const themeToggle = document.getElementById('theme-toggle');
 
-function renderStars(activeRating = 0) {
-  const container = document.querySelector('.stars-container');
-  if(!container) return;
-  const filledPart = container.querySelector('.star-filled');
-  filledPart.style.width = (activeRating * 20) + "%";
-  
-  const hints = ["Puanı Geri Al", "Çöp", "Çok Kötü", "Kötü", "Sıradan", "Eh İşte", "İyi", "Çok İyi", "Harika", "Başyapıt", "Kusursuz"];
-  if (activeRating === 0) {
-      document.getElementById("star-hint").innerText = "Puanı Geri Al";
-  } else {
-      document.getElementById("star-hint").innerText = hints[activeRating * 2];
-  }
-}
+let searchTimer = null;
 
-function ensureInWatchedList(id, mt, title, year, poster, score) {
-    if(!currentUser) return;
-    let scoreVal = score === "null" ? null : parseFloat(score);
-    let docRef = db.collection("users").doc(currentUser.uid).collection("watched").doc(id.toString());
+qEl.addEventListener("input", () => {
+    toggleClearBtn(); 
+    clearTimeout(searchTimer);
     
-    docRef.get().then(doc => {
-        if(!doc.exists) {
-            docRef.set({ id: id.toString(), mt, title: decodeURIComponent(title), year, poster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        }
-    });
-
-    db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).delete();
+    let v = qEl.value.trim();
+    if(v.length < 2) { 
+        ddEl.style.display="none"; 
+        return; 
+    }
     
-    let wlBtn = document.getElementById('btn-watchlist-' + id);
-    if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
-    let wBtn = document.getElementById('btn-watched-' + id);
-    if(wBtn) { wBtn.classList.add('added'); wBtn.innerHTML = '✓ Listemde'; }
-}
-
-function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
-  if(!currentUser) { openAuthModal(); return; }
-  
-  if(currentDraftRating === 0) {
-      db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).delete().then(() => {
-          delete userRatings[movieId];
-          updateStatsUI();
-          document.getElementById("star-hint").innerText = "Puan Geri Alındı!";
-          setTimeout(()=> { document.getElementById("star-hint").innerText = "Puan Ver"; }, 1500);
-      }).catch(()=>{});
-      return; 
-  }
-  
-  db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).set({
-    rating: currentDraftRating, title: decodeURIComponent(mTitle), poster: mPoster, ratedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    ensureInWatchedList(movieId, mt, mTitle, mYear, mPoster, mScore);
-    userRatings[movieId] = currentDraftRating;
-    updateStatsUI();
-    document.getElementById("star-hint").innerText = "Puan Kaydedildi!";
-    setTimeout(()=> renderStars(currentDraftRating), 1500);
-  });
-}
-
-// ==========================================
-// GÜNLÜK (DIARY) MANTIĞI & KURTARICI
-// ==========================================
-function toggleDiaryDate() {
-    const cb = document.getElementById('diary-no-date');
-    document.getElementById('diary-date').disabled = cb.checked;
-}
-
-function openDiaryModal(id, mt, title, year, poster, score) {
-    if(!currentUser) { openAuthModal(); return; }
-    
-    document.getElementById("diary-movie-id").value = id;
-    document.getElementById("diary-movie-mt").value = mt;
-    document.getElementById("diary-movie-title").value = title;
-    document.getElementById("diary-movie-year").value = year;
-    document.getElementById("diary-movie-poster").value = poster;
-    document.getElementById("diary-movie-score").value = score;
-    
-    let today = new Date().toISOString().split('T')[0];
-    document.getElementById("diary-notes").value = "";
-    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
-    currentDiaryEmotion = "";
-
-    if (userDiary[id]) {
-        if(userDiary[id].date) {
-            document.getElementById("diary-no-date").checked = false;
-            document.getElementById("diary-date").disabled = false;
-            document.getElementById("diary-date").value = userDiary[id].date;
-        } else if (userDiary[id].date === null) {
-            document.getElementById("diary-no-date").checked = true;
-            document.getElementById("diary-date").disabled = true;
-            document.getElementById("diary-date").value = "";
-        }
-        if(userDiary[id].note) document.getElementById("diary-notes").value = userDiary[id].note;
-        if(userDiary[id].emotion) {
-            currentDiaryEmotion = userDiary[id].emotion;
-            document.querySelectorAll(".emoji-btn").forEach(b => {
-                if(b.dataset.emo === currentDiaryEmotion) b.classList.add("active");
+    searchTimer = setTimeout(() => {
+        fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TK}&query=${encodeURIComponent(v)}&language=tr-TR`)
+        .then(r => r.json())
+        .then(data => {
+            let items = (data.results || []).slice(0, 7);
+            if(!items.length) { hideDD(); return; }
+            
+            ddEl.innerHTML = "";
+            items.forEach(item => {
+                let el = document.createElement("div"); 
+                el.className = "dropdown-item";
+                let title = item.title || item.name || "";
+                
+                // UX Ayrımı: Kişi ise Departman, Film ise Yıl yaz
+                let sub = item.media_type === "person" ? 
+                    (item.known_for_department === 'Acting' ? 'Oyuncu' : 'Yönetmen/Ekip') : 
+                    (item.release_date || item.first_air_date || "").slice(0,4);
+                
+                let img = item.poster_path || item.profile_path ? 
+                    `https://image.tmdb.org/t/p/w92${item.poster_path || item.profile_path}` : '';
+                
+                // UX Ayrımı: Kişiler Yuvarlak, Filmler Dikdörtgen
+                let imgClass = item.media_type === "person" ? "dd-avatar" : "dd-poster";
+                
+                el.innerHTML = `
+                    <img class="${imgClass}" src="${img || 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'42\' height=\'60\' style=\'background:%23ede0ce\'></svg>'}">
+                    <div class="dd-info">
+                        <div class="dd-title">${title}</div>
+                        <div class="dd-sub">${sub}</div>
+                    </div>`;
+                
+                el.onclick = () => {
+                    hideDD(); qEl.value = title; toggleClearBtn();
+                    if(item.media_type === "person") window.loadPerson(item.id);
+                    else window.loadFilm(item.id, item.media_type);
+                };
+                ddEl.appendChild(el);
             });
-        }
-    } else {
-        document.getElementById("diary-no-date").checked = false;
-        document.getElementById("diary-date").disabled = false;
-        document.getElementById("diary-date").value = today;
-    }
-    
-    document.getElementById("diary-modal").classList.add("active");
-    document.body.style.overflow = "hidden";
-}
-
-function closeDiaryModal() {
-    document.getElementById("diary-modal").classList.remove("active");
-    document.body.style.overflow = "";
-}
-
-document.getElementById("diary-modal").addEventListener("click", function(e) {
-    if (e.target === this) closeDiaryModal();
-});
-
-function selectEmoji(btn, emotion) {
-    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentDiaryEmotion = emotion;
-}
-
-function saveDiaryEntry() {
-    if(!currentUser) return;
-    let id = document.getElementById("diary-movie-id").value;
-    let mt = document.getElementById("diary-movie-mt").value;
-    let title = document.getElementById("diary-movie-title").value;
-    let year = document.getElementById("diary-movie-year").value;
-    let poster = document.getElementById("diary-movie-poster").value;
-    let score = document.getElementById("diary-movie-score").value;
-
-    let dDate = document.getElementById("diary-no-date").checked ? null : document.getElementById("diary-date").value;
-    let dNote = document.getElementById("diary-notes").value.trim();
-
-    let dataToSave = { date: dDate, emotion: currentDiaryEmotion, note: dNote, savedAt: firebase.firestore.FieldValue.serverTimestamp() };
-    
-    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).set(dataToSave).then(() => {
-        userDiary[id] = dataToSave;
-        ensureInWatchedList(id, mt, title, year, poster, score);
-        closeDiaryModal();
-        let diaryBtn = document.getElementById("btn-diary-" + id);
-        if(diaryBtn) { diaryBtn.innerHTML = "📓 Güncellendi"; setTimeout(() => diaryBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
-    });
-}
-
-window.clearDiaryEntry = function() {
-    if(!currentUser) return;
-    let id = document.getElementById("diary-movie-id").value;
-    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).delete().then(() => {
-        delete userDiary[id];
-        closeDiaryModal();
-        let diaryBtn = document.getElementById("btn-diary-" + id);
-        if(diaryBtn) { diaryBtn.innerHTML = "📓 Temizlendi"; setTimeout(() => diaryBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
-        if (window.currentListType === 'watched' && window.myList.some(item => item.id == id)) {
-            renderListUI(window.currentSort);
-        }
-        let filmDiaryBadge = document.querySelector(`.diary-badge`);
-        if(filmDiaryBadge) filmDiaryBadge.remove(); 
-    });
-};
-
-// ==========================================
-// 6. ÇİFT İZLEME LİSTESİ & CANLI ARAMA
-// ==========================================
-window.fetchUserList = function(listType) {
-    closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
-    if (!currentUser) return;
-    
-    window.currentListType = listType; 
-    window.currentListSearchTerm = ""; 
-    let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
-    
-    resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
-    
-    db.collection("users").doc(currentUser.uid).collection(listType).get().then(snap => {
-        window.myList = []; snap.forEach(doc => window.myList.push(doc.data()));
-        renderListUI(window.currentSort);
-    }).catch(() => resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Hata oluştu.</div></div></div>');
-};
-
-window.liveFilterList = function(val) {
-    window.currentListSearchTerm = val;
-    let term = val.toLowerCase().trim();
-    let cards = document.querySelectorAll('.wl-card-grid');
-    cards.forEach(card => {
-        let title = card.getAttribute('data-title').toLowerCase();
-        let year = card.getAttribute('data-year') || '';
-        if(title.includes(term) || year.includes(term)) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-};
-
-window.renderListUI = function(sortType) {
-    window.currentSort = sortType;
-    let listNameTR = window.currentListType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
-    let emptyIcon = window.currentListType === 'watchlist' ? '⏳' : '👁️';
-
-    if (window.myList.length === 0) { resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${emptyIcon}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; return; }
-    
-    let sorted = [...window.myList];
-    
-    if (sortType === 'date_desc') sorted.sort((a,b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
-    if (sortType === 'date_asc') sorted.sort((a,b) => (a.addedAt?.seconds || 0) - (b.addedAt?.seconds || 0));
-    if (sortType === 'score_desc') sorted.sort((a,b) => (b.score || 0) - (a.score || 0));
-    if (sortType === 'score_asc') sorted.sort((a,b) => (a.score || 0) - (b.score || 0));
-    
-    if (sortType === 'watched_date_desc' || sortType === 'watched_date_asc') {
-        sorted.sort((a, b) => {
-            let dateA = userDiary[a.id]?.date || null;
-            let dateB = userDiary[b.id]?.date || null;
-            if (!dateA && !dateB) return 0; 
-            if (!dateA) return 1;  
-            if (!dateB) return -1; 
-            if (sortType === 'watched_date_desc') {
-                return dateA < dateB ? 1 : (dateA > dateB ? -1 : 0); 
-            } else {
-                return dateA > dateB ? 1 : (dateA < dateB ? -1 : 0); 
-            }
+            ddEl.style.display = "block";
         });
-    }
-
-    let watchedDateBtns = window.currentListType === 'watched' ? `<button class="wl-sort-btn ${sortType.includes('watched_date') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'watched_date_desc' ? 'watched_date_asc' : 'watched_date_desc')">İzleme Tarihi ${sortType === 'watched_date_asc' ? '▲' : '▼'}</button>` : '';
-
-    let listSearchHtml = `<input type="text" class="list-search-input" placeholder="Film adı veya yapım yılı..." value="${window.currentListSearchTerm}" oninput="liveFilterList(this.value)">`;
-
-    let html = `<div style="width: 100%;">
-                    <div class="wl-header">
-                        <div class="wl-title">${listNameTR} (${sorted.length})</div>
-                        <div class="wl-sort-group">
-                            <button class="wl-sort-btn ${sortType === 'date_desc' || sortType === 'date_asc' ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Eklenme Tarihi ${sortType === 'date_asc' ? '▲' : '▼'}</button>
-                            <button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button>
-                            ${watchedDateBtns}
-                        </div>
-                    </div>
-                    ${listSearchHtml}
-                    <div class="wl-grid">`;
-    
-    sorted.forEach(item => {
-        let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
-        let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
-        let diaryBadge = userDiary[item.id] ? `<div class="diary-badge">📝</div>` : '';
-        
-        html += `<div class="wl-card-grid" data-title="${item.title.replace(/"/g, '&quot;')}" data-year="${item.year || ''}" onclick="loadFilm(${item.id}, '${item.mt}'); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
-    });
-    html += `</div></div>`; 
-    resEl.innerHTML = html;
-
-    if(window.currentListSearchTerm) {
-        window.liveFilterList(window.currentListSearchTerm);
-        let searchInput = document.querySelector('.list-search-input');
-        if(searchInput) { searchInput.focus(); let val = searchInput.value; searchInput.value = ''; searchInput.value = val; }
-    }
-};
-
-window.removeFromList = function(id, listType) {
-    if (!currentUser) return; 
-    window.myList = window.myList.filter(item => item.id != id);
-    renderListUI(window.currentSort); 
-    db.collection("users").doc(currentUser.uid).collection(listType).doc(id.toString()).delete().catch(()=>{});
-};
-
-window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetList) {
-    if (!currentUser) { openAuthModal(); return; }
-    
-    let decodedTitle = decodeURIComponent(title);
-    let scoreVal = score === "null" ? null : parseFloat(score);
-    let isAdded = btn.classList.contains('added'); 
-    let docRef = db.collection("users").doc(currentUser.uid).collection(targetList).doc(id.toString());
-    
-    if (isAdded) { 
-        btn.classList.remove('added'); 
-        btn.innerHTML = targetList === 'watchlist' ? '⏳ İzleyeceğim' : '👁️ İzledim'; 
-        docRef.delete(); 
-    } else { 
-        btn.classList.add('added'); 
-        btn.innerHTML = '✓ Listemde'; 
-        docRef.set({ id: id.toString(), mt, title: decodedTitle, year, poster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
-        
-        if(targetList === 'watched') {
-            db.collection("users").doc(currentUser.uid).collection('watchlist').doc(id.toString()).delete();
-            let wlBtn = document.getElementById('btn-watchlist-' + id);
-            if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
-        }
-        if(targetList === 'watchlist') {
-            db.collection("users").doc(currentUser.uid).collection('watched').doc(id.toString()).delete();
-            let wBtn = document.getElementById('btn-watched-' + id);
-            if(wBtn) { wBtn.classList.remove('added'); wBtn.innerHTML = '👁️ İzledim'; }
-        }
-    }
-};
-
-// ==========================================
-// 7. GENEL SİTE MANTIĞI & ARAMA
-// ==========================================
-var qEl = document.getElementById("q"); var clearBtn = document.getElementById("clear-btn");
-var ddEl = document.getElementById("dd"); var btnEl = document.getElementById("btn");
-var comfortBtn = document.getElementById("comfort-btn"); var resEl = document.getElementById("result");
-var siteTitle = document.getElementById("site-title"); var themeToggle = document.getElementById('theme-toggle');
-var timer = null; window.currentFilmReviews = []; window.currentReviewCount = 0;
-
-var countryMap = { "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa", "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya", "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya" };
-var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
-if (currentTheme === 'dark') { document.body.setAttribute('data-theme', 'dark'); themeToggle.innerText = '☀️ Açık Tema'; }
-themeToggle.addEventListener('click', function() {
-  if (document.body.getAttribute('data-theme') === 'dark') { document.body.removeAttribute('data-theme'); localStorage.setItem('izlesemmi_theme', 'light'); themeToggle.innerText = '🌙 Koyu Tema'; } 
-  else { document.body.setAttribute('data-theme', 'dark'); localStorage.setItem('izlesemmi_theme', 'dark'); themeToggle.innerText = '☀️ Açık Tema'; }
+    }, 300); // 300ms Gecikmeli Canlı Arama
 });
-
-function getSearchHistory() { var hist = localStorage.getItem('izlesemmi_history'); return hist ? JSON.parse(hist) : []; }
-function saveSearchToHistory(query) {
-  if (!query || query.trim().length < 2) return;
-  var q = query.trim(); var hist = getSearchHistory(); hist = hist.filter(function(item) { return item.toLowerCase() !== q.toLowerCase(); });
-  hist.unshift(q); if (hist.length > 3) hist = hist.slice(0, 3); localStorage.setItem('izlesemmi_history', JSON.stringify(hist));
-}
-function clearSearchHistory() { localStorage.removeItem('izlesemmi_history'); hideDD(); qEl.focus(); }
-function showHistoryDD() {
-  var hist = getSearchHistory(); if (hist.length === 0) { hideDD(); return; } ddEl.innerHTML = "";
-  hist.forEach(function(item) {
-    var el = document.createElement("div"); el.className = "history-item"; el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' + item;
-    el.addEventListener("click", function() { qEl.value = item; toggleClearBtn(); hideDD(); doSearch(); }); ddEl.appendChild(el);
-  });
-  var clearBtnEl = document.createElement("button"); clearBtnEl.className = "clear-history-btn"; clearBtnEl.innerText = "Geçmişi Temizle";
-  clearBtnEl.addEventListener("click", function(e) { e.stopPropagation(); clearSearchHistory(); }); ddEl.appendChild(clearBtnEl); ddEl.style.display = "block";
-}
-
-qEl.addEventListener("focus", function() { if (qEl.value.trim().length === 0) showHistoryDD(); });
-
-function openGenericModal(title, contentHTML) { document.getElementById("generic-modal-title").innerText = title; document.getElementById("generic-modal-content").innerHTML = contentHTML; document.getElementById("generic-modal").classList.add("active"); document.body.style.overflow = "hidden"; }
-function closeGenericModal() { document.getElementById("generic-modal").classList.remove("active"); document.body.style.overflow = ""; }
-document.getElementById("generic-modal").addEventListener("click", function(e) { if (e.target === this) closeGenericModal(); });
-
-function openTrailerModal(key) { document.getElementById("trailer-modal-content").innerHTML = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + key + '?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'; document.getElementById("trailer-modal").classList.add("active"); document.body.style.overflow = "hidden"; }
-function closeTrailerModal() { document.getElementById("trailer-modal").classList.remove("active"); document.getElementById("trailer-modal-content").innerHTML = ''; document.body.style.overflow = ""; }
-document.getElementById("trailer-modal").addEventListener("click", function(e) { if (e.target === this) closeTrailerModal(); });
-
-function loadComfortZoneDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); btnEl.disabled = true; comfortBtn.disabled = true; resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor talep eden bir film aranıyor...</span></div>';
-  var realKwIds = "2504|5695|6075|27933|4344"; var langs = ['ko', 'fa', 'fr', 'da', 'es', 'it', 'ja', 'sv', 'de']; var randomLang = langs[Math.floor(Math.random() * langs.length)]; var cacheBuster = new Date().getTime(); 
-  var baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + "&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&vote_count.lte=5000&with_keywords=" + realKwIds;
-  var langUrl = baseUrl + "&with_original_language=" + randomLang;
-  fetch(langUrl + "&page=1&_=" + cacheBuster).then(function(r) { return r.json(); }).then(function(data) {
-      if (data.total_results > 0) { var randomPage = Math.floor(Math.random() * Math.min(data.total_pages, 500)) + 1; return fetch(langUrl + "&page=" + randomPage + "&_=" + cacheBuster); } 
-      else { return fetch(baseUrl + "&page=1&_=" + cacheBuster).then(function(r2) { return r2.json(); }).then(function(data2) { if(data2.total_results > 0) { var randomPage2 = Math.floor(Math.random() * Math.min(data2.total_pages, 500)) + 1; return fetch(baseUrl + "&page=" + randomPage2 + "&_=" + cacheBuster); } else throw new Error("Havuz boş"); }); }
-    }).then(function(r) { return r.json(); }).then(function(finalData) {
-      if (finalData && finalData.results && finalData.results.length > 0) { var randomMovie = finalData.results[Math.floor(Math.random() * finalData.results.length)]; loadFilm(randomMovie.id, "movie"); } 
-      else resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Sonuç bulunamadı.</div></div></div>';
-    }).catch(function() { resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası.</div></div></div>'; }).finally(function() { btnEl.disabled = false; comfortBtn.disabled = false; });
-}
-
-function loadRandomDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); btnEl.disabled = true; resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
-  var deepGenres = [18, 9648, 80, 53, 36]; var randomGenre = deepGenres[Math.floor(Math.random() * deepGenres.length)]; var cacheBuster = new Date().getTime();
-  var baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + "&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&vote_count.lte=5000&with_genres=" + randomGenre;
-  fetch(baseUrl + "&page=1&_=" + cacheBuster).then(function(r) { return r.json(); }).then(function(data) {
-        if(data.total_results > 0) { var randomPage = Math.floor(Math.random() * Math.min(data.total_pages, 500)) + 1; return fetch(baseUrl + "&page=" + randomPage + "&_=" + cacheBuster); } else throw new Error("Havuz boş");
-    }).then(function(r) { return r.json(); }).then(function(finalData) {
-      if (finalData && finalData.results && finalData.results.length > 0) { var randomMovie = finalData.results[Math.floor(Math.random() * finalData.results.length)]; loadFilm(randomMovie.id, "movie"); } 
-      else resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Cevher bulunamadı.</div></div></div>';
-    }).catch(function() { resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası.</div></div></div>'; }).finally(function() { btnEl.disabled = false; });
-}
-
-comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
-
-function toggleClearBtn() { clearBtn.style.display = qEl.value.length > 0 ? "block" : "none"; }
-clearBtn.addEventListener("click", function() { qEl.value = ""; toggleClearBtn(); hideDD(); qEl.focus(); showHistoryDD(); });
-siteTitle.addEventListener("click", loadRandomDiscovery);
-btnEl.addEventListener("click", function() { doSearch(); });
-qEl.addEventListener("keydown", function(e) { if (e.key === "Enter") { hideDD(); doSearch(); } if (e.key === "Escape") hideDD(); });
-
-document.addEventListener("click", function(e) { if (!e.target.closest(".search-wrap")) hideDD(); });
-function hideDD() { ddEl.style.display = "none"; ddEl.innerHTML = ""; }
-
-window.shareFilm = function(btn) {
-  var data = JSON.parse(decodeURIComponent(btn.dataset.share));
-  if (navigator.share) { navigator.share({ title: data.title, text: data.text }).catch(function(){}); } 
-  else { navigator.clipboard.writeText(data.text).then(function() { var oldHtml = btn.innerHTML; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Kopyalandı!'; setTimeout(function() { btn.innerHTML = oldHtml; }, 2000); }); }
-};
-
-window.translateText = function(btn) {
-  var text = decodeURIComponent(btn.dataset.text); openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
-  fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=" + encodeURIComponent(text)).then(function(res) { return res.json(); }).then(function(data) {
-      var translated = ""; if (data && data[0]) { data[0].forEach(function(item) { if (item[0]) translated += item[0]; }); } document.getElementById("generic-modal-content").innerHTML = translated ? translated.replace(/\n/g, "<br>") : "Çeviri yapılamadı.";
-    }).catch(function() { document.getElementById("generic-modal-content").innerHTML = "Bağlantı hatası."; });
-};
-
-function createReviewHTML(rev) {
-    var author = rev.author || "Anonim"; var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : ''; var content = rev.content || "";
-    return '<div class="review-card"><div class="rev-author">' + author + ratingHtml + '</div><div class="rev-content">' + content + '</div><button class="rev-translate-btn" data-text="' + encodeURIComponent(content) + '" onclick="translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>';
-}
 
 function doSearch() {
-  var q = qEl.value.trim(); if (!q) return;
-  saveSearchToHistory(q); btnEl.disabled = true; btnEl.textContent = "Aranıyor...";
-  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Didik didik ediliyor...</span></div>';
-
+  let q = qEl.value.trim(); 
+  if (!q) return;
+  hideDD(); 
+  btnEl.disabled = true; 
+  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Aranıyor...</span></div>';
+  
   fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TK}&query=${encodeURIComponent(q)}&language=tr-TR`)
-  .then(r => r.json()).then(data => {
+  .then(r => r.json())
+  .then(data => {
       let first = (data.results || []).find(r => r.media_type === "movie" || r.media_type === "tv" || r.media_type === "person");
       if (!first) {
           resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🎬</div><div>Sonuç bulunamadı.</div></div></div>';
-      } else {
-          if (first.media_type === "person") loadPerson(first.id);
-          else loadFilm(first.id, first.media_type);
+      } else { 
+          if (first.media_type === "person") window.loadPerson(first.id); 
+          else window.loadFilm(first.id, first.media_type); 
       }
-  }).catch(() => {
-      resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası.</div></div></div>';
-  }).finally(() => {
-      btnEl.disabled = false; btnEl.textContent = "Ara";
+  })
+  .finally(() => { btnEl.disabled = false; });
+}
+
+btnEl.addEventListener("click", doSearch);
+qEl.addEventListener("keydown", e => { 
+    if (e.key === "Enter") doSearch(); 
+    if (e.key === "Escape") hideDD(); 
+});
+clearBtn.addEventListener("click", () => { 
+    qEl.value = ""; toggleClearBtn(); hideDD(); qEl.focus(); 
+});
+
+function toggleClearBtn() { clearBtn.style.display = qEl.value.length > 0 ? "block" : "none"; }
+function hideDD() { ddEl.style.display = "none"; ddEl.innerHTML = ""; }
+document.addEventListener("click", e => { if (!e.target.closest(".search-wrap")) hideDD(); });
+
+siteTitle.addEventListener("click", loadRandomDiscovery);
+comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
+
+function loadRandomDiscovery() {
+  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Rastgele film seçiliyor...</span></div>';
+  
+  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_genres=${[18, 9648, 80, 53, 36][Math.floor(Math.random() * 5)]}&page=${Math.floor(Math.random() * 50) + 1}`)
+  .then(r => r.json())
+  .then(data => {
+      if (data.results && data.results.length > 0) window.loadFilm(data.results[Math.floor(Math.random() * data.results.length)].id, "movie");
+  }).catch(()=> resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Hata.</div></div></div>');
+}
+
+function loadComfortZoneDiscovery() {
+  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor aranıyor...</span></div>';
+  
+  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_keywords=2504|5695|6075|27933|4344&page=${Math.floor(Math.random() * 20) + 1}`)
+  .then(r => r.json())
+  .then(data => {
+      if (data.results && data.results.length > 0) window.loadFilm(data.results[Math.floor(Math.random() * data.results.length)].id, "movie");
   });
 }
 
-// (Film sayfası çizdirme ve skor hesaplama motorları birleştirildi)
-// Not: Ağırlıklı Puan algoritması ve Lightbox/Person entegrasyonu tamamen aktiftir.
+// ==========================================
+// 5. KİŞİ SAYFASI (PERSON PROFILE)
+// ==========================================
+window.loadPerson = function(id) {
+    document.getElementById("person-modal").classList.add("active");
+    document.getElementById("person-content").innerHTML = '<div class="loading" style="padding:40px;"><div class="spinner"></div></div>';
+    
+    fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${TK}&language=tr-TR&append_to_response=combined_credits`)
+    .then(r => r.json())
+    .then(p => {
+        let age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : 'Bilinmiyor';
+        let credits = p.combined_credits || {cast:[], crew:[]};
+        
+        // Eserleri Departmanlara Ayırma (Gruplama)
+        let depts = {};
+        credits.cast.forEach(c => { 
+            (depts['Oyuncu'] = depts['Oyuncu'] || []).push(c); 
+        });
+        credits.crew.forEach(c => { 
+            let dName = c.department === 'Directing' ? 'Yönetmen' : (c.department === 'Writing' ? 'Senarist' : c.department);
+            (depts[dName] = depts[dName] || []).push(c); 
+        });
+
+        // En çok eser verilen departmanı bulma ve sıralama
+        let sortedDepts = Object.keys(depts).sort((a,b) => depts[b].length - depts[a].length);
+
+        let html = `
+            <div class="person-header">
+                <img class="person-img" src="${p.profile_path ? 'https://image.tmdb.org/t/p/w342'+p.profile_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'170\' style=\'background:%23ede0ce\'></svg>'}">
+                <div class="person-info">
+                    <div class="person-name">${p.name}</div>
+                    <div class="person-meta">🎂 ${p.birthday || '-'} (${age} Yaş)<br>📍 ${p.place_of_birth || '-'}</div>
+                    <div class="person-bio">${p.biography || 'Biyografi bulunamadı.'}</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                ${sortedDepts.map((d, i) => `<div class="tab ${i===0?'active':''}" onclick="window.switchTab(this, '${d}')">${d}</div>`).join("")}
+            </div>
+            
+            <div id="filmography-container" class="filmography-list">
+                ${sortedDepts.length > 0 ? renderFilmography(depts[sortedDepts[0]]) : '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Eser bulunamadı.</div>'}
+            </div>
+        `;
+        document.getElementById("person-content").innerHTML = html;
+        window.tempDepts = depts; // Sekme (Tab) geçişi için veriyi geçici bellekte tut
+    });
+};
+
+function renderFilmography(list) {
+    // Yıla göre azalan sıralama (En yeniler üstte)
+    let sorted = list.sort((a,b) => (b.release_date || b.first_air_date || "").localeCompare(a.release_date || a.first_air_date || ""));
+    
+    // N+1 Sorununu önlemek için duplicate eserleri engelle
+    let unique = []; let ids = [];
+    sorted.forEach(f => { 
+        if(!ids.includes(f.id)){ 
+            ids.push(f.id); 
+            unique.push(f); 
+        } 
+    });
+
+    return unique.map(f => `
+        <div class="film-row" onclick="closePersonModal(); window.loadFilm(${f.id}, '${f.media_type}')">
+            <img class="film-mini-poster" src="${f.poster_path ? 'https://image.tmdb.org/t/p/w92'+f.poster_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'58\' style=\'background:%23ede0ce\'></svg>'}">
+            <div class="film-row-info">
+                <div class="film-row-title">${f.title || f.name}</div>
+                <div class="film-row-score">★ ${(f.vote_average||0).toFixed(1)}</div>
+            </div>
+            <div class="film-row-year">${(f.release_date || f.first_air_date || "").slice(0,4)}</div>
+        </div>
+    `).join("");
+}
+
+window.switchTab = function(btn, dept) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("filmography-container").innerHTML = renderFilmography(window.tempDepts[dept]);
+};
+
+window.closePersonModal = function() { 
+    document.getElementById("person-modal").classList.remove("active"); 
+};
+
+// ==========================================
+// 6. FİLM SAYFASI VE PUAN HESAPLAMA MOTORU
+// ==========================================
+var countryMap = { "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa", "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya", "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya" };
 
 window.loadFilm = function(id, mt) {
-  var currentSearchVal = qEl.value.trim();
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Didik didik ediliyor...</span></div>';
   
   Promise.all([
-    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar,keywords&include_video_language=tr,en,null").then(function(r){return r.json()}),
-    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
-  ]).then(function(results) {
-      var dd = results[0]; var revData = results[1];
+    fetch(`https://api.themoviedb.org/3/${mt}/${id}?api_key=${TK}&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar,keywords&include_video_language=tr,en,null`).then(r => r.json()),
+    fetch(`https://api.themoviedb.org/3/${mt}/${id}/reviews?api_key=${TK}`).then(r => r.json())
+  ]).then(results => {
+      var dd = results[0]; 
+      var revData = results[1];
       var imdbId  = (dd.external_ids && dd.external_ids.imdb_id) || dd.imdb_id;
-      var title   = dd.title || dd.name || currentSearchVal;
+      var title   = dd.title || dd.name;
       var year    = (dd.release_date || dd.first_air_date || "").slice(0, 4);
       var type    = mt === "tv" ? "Dizi" : "Film";
       var plot    = dd.overview || "";
-      var rawPoster = dd.poster_path ? "https://image.tmdb.org/t/p/w342" + dd.poster_path : null; // Yüksek çözünürlük
-      var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
+      var rawPoster = dd.poster_path ? `https://image.tmdb.org/t/p/w342${dd.poster_path}` : null;
+      var genres  = (dd.genres || []).slice(0, 2).map(g => g.name).join(", ");
       var rawCountry = (dd.production_countries && dd.production_countries.length > 0) ? dd.production_countries[0].name : "";
       var country = countryMap[rawCountry] || rawCountry; 
+      
       var videos = dd.videos && dd.videos.results ? dd.videos.results : [];
-      var trailer = videos.find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; }) || videos.find(function(v) { return v.site === "YouTube"; });
+      var trailer = videos.find(v => v.site === "YouTube" && v.type === "Trailer") || videos.find(v => v.site === "YouTube");
       var tmdbScore  = dd.vote_average && dd.vote_count > 10 ? parseFloat(dd.vote_average.toFixed(1)) : null;
 
       var rawTime = dd.runtime || (dd.episode_run_time && dd.episode_run_time.length > 0 ? dd.episode_run_time[0] : null);
       var timeStr = rawTime ? (Math.floor(rawTime/60)>0 ? Math.floor(rawTime/60)+"s " : "") + (rawTime%60)+"dk" : "";
 
       var credits = dd.credits || {crew:[], cast:[]};
-      var director = credits.crew.find(function(c) { return c.job === 'Director'; });
-      var writersArr = credits.crew.filter(function(c) { return c.department === 'Writing' || c.job === 'Screenplay' || c.job === 'Writer'; }).map(function(c) { return c.name; });
-      var writers = writersArr.filter(function(v,i,a) { return a.indexOf(v)===i; }).slice(0,3).join(", ");
-      var actors = credits.cast.slice(0, 15); // 15 KİŞİYE ÇIKARILDI
+      var director = credits.crew.find(c => c.job === 'Director');
+      var writersArr = credits.crew.filter(c => c.department === 'Writing' || c.job === 'Screenplay' || c.job === 'Writer').map(c => c.name);
+      var writers = writersArr.filter((v,i,a) => a.indexOf(v)===i).slice(0,3).join(", ");
+      var actors = credits.cast.slice(0, 15); // Kadro sınırı 15
       
-      var castHtml = '<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ' + (director ? `<span style="cursor:pointer; color:var(--accent);" onclick="loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor') + '</div>';
-      castHtml += '<div style="margin-bottom:24px; font-size:15px;"><strong>Senarist:</strong> ' + (writers || 'Bilinmiyor') + '</div>';
-      castHtml += '<div style="font-family:\'Bebas Neue\',sans-serif; font-size:22px; color:var(--accent); margin-bottom:12px; letter-spacing:.05em;">Oyuncular (15)</div><div class="kadro-scroll">';
-      actors.forEach(function(a) {
-          var imgUrl = a.profile_path ? 'https://image.tmdb.org/t/p/w185' + a.profile_path : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" style="background:%23ede0ce"></svg>';
-          castHtml += '<div class="kadro-item" onclick="closeGenericModal(); loadPerson(' + a.id + ')"><img class="kadro-avatar" src="' + imgUrl + '" /><div style="font-size:14px; line-height:1.4;"><strong>' + a.name + '</strong><br/><span style="color:var(--muted); font-size:12px;">' + a.character + '</span></div></div>';
+      // Kadro HTML (Tıklanabilir İsimler)
+      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
+      castHtml += `<div style="margin-bottom:24px; font-size:15px;"><strong>Senarist:</strong> ${writers || 'Bilinmiyor'}</div>`;
+      castHtml += `<div style="font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--accent); margin-bottom:12px;">Oyuncular (15)</div><div class="kadro-scroll">`;
+      actors.forEach(a => {
+          var imgUrl = a.profile_path ? `https://image.tmdb.org/t/p/w185${a.profile_path}` : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' style=\'background:%23ede0ce\'></svg>';
+          castHtml += `<div class="kadro-item" onclick="closeGenericModal(); loadPerson(${a.id})"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`;
       });
-      castHtml += '</div>'; currentCastHtml = castHtml;
+      castHtml += `</div>`; 
+      window.currentCastHtml = castHtml; // Modal için globale at
 
       var providersTR = dd['watch/providers'] && dd['watch/providers'].results && dd['watch/providers'].results.TR;
       var platformsHtml = '';
       if (providersTR && providersTR.flatrate) {
-          platformsHtml = '<div class="platforms-wrap"><div class="platforms-title">Nereden İzlenir</div><div class="platforms-list">';
-          providersTR.flatrate.forEach(function(p) { platformsHtml += '<img class="provider-logo" src="https://image.tmdb.org/t/p/w45' + p.logo_path + '" title="' + p.provider_name + '"/>'; });
-          platformsHtml += '</div></div>';
+          platformsHtml = `<div class="platforms-wrap"><div class="platforms-title">Nereden İzlenir</div><div class="platforms-list">`;
+          providersTR.flatrate.forEach(p => { platformsHtml += `<img class="provider-logo" src="https://image.tmdb.org/t/p/w45${p.logo_path}" title="${p.provider_name}"/>`; });
+          platformsHtml += `</div></div>`;
       }
 
       window.currentFilmReviews = revData.results || [];
       window.currentReviewCount = 0;
       var reviewsHtml = "";
       if (window.currentFilmReviews.length > 0) {
-          reviewsHtml = '<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3><div id="reviews-container">';
-          window.currentFilmReviews.slice(0, 5).forEach(function(rev) { reviewsHtml += createReviewHTML(rev); });
-          reviewsHtml += '</div>';
-          if (window.currentFilmReviews.length > 5) reviewsHtml += '<button id="load-more-reviews" class="action-btn kadro-btn load-more-btn" style="margin-top:10px; width:100%;">⬇️ Devamını Gör</button>';
-          reviewsHtml += '</div>';
+          reviewsHtml = `<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3><div id="reviews-container">`;
+          window.currentFilmReviews.slice(0, 5).forEach(rev => { reviewsHtml += createReviewHTML(rev); });
+          reviewsHtml += `</div>`;
+          if (window.currentFilmReviews.length > 5) reviewsHtml += `<button id="load-more-reviews" class="action-btn kadro-btn load-more-btn" style="margin-top:10px; width:100%;">⬇️ Devamını Gör</button>`;
+          reviewsHtml += `</div>`;
           window.currentReviewCount = 5;
       }
 
       var recsHtml = '';
       var recList = (dd.recommendations && dd.recommendations.results && dd.recommendations.results.length > 0) ? dd.recommendations.results : ((dd.similar && dd.similar.results) ? dd.similar.results : []);
       if (recList.length > 0) {
-          var topRecs = recList.filter(function(r) { return r.poster_path; }).slice(0, 4);
+          var topRecs = recList.filter(r => r.poster_path).slice(0, 4);
           if (topRecs.length > 0) {
-              recsHtml = '<div class="reviews-wrap" style="border-top:none; padding-top:0;"><h3 class="rev-title" style="margin-top:0;">Bunu Sevenler Şunları Da İzledi</h3><div class="recs-grid">';
-              topRecs.forEach(function(r) {
-                  recsHtml += '<div class="rec-card" onclick="loadFilm(' + r.id + ', \'' + (r.media_type||mt) + '\', false); window.scrollTo({top:0, behavior:\'smooth\'});"><img src="https://image.tmdb.org/t/p/w154' + r.poster_path + '"/><div class="rec-title">' + (r.title||r.name) + ((r.release_date||r.first_air_date) ? '<br/>(' + (r.release_date||r.first_air_date).slice(0,4) + ')' : '') + '</div></div>';
+              recsHtml = `<div class="reviews-wrap" style="border-top:none; padding-top:0;"><h3 class="rev-title" style="margin-top:0;">Bunu Sevenler Şunları Da İzledi</h3><div class="recs-grid">`;
+              topRecs.forEach(r => {
+                  recsHtml += `<div class="rec-card" onclick="loadFilm(${r.id}, '${r.media_type||mt}'); window.scrollTo({top:0, behavior:'smooth'});"><img src="https://image.tmdb.org/t/p/w154${r.poster_path}"/><div class="rec-title">${r.title||r.name}${r.release_date||r.first_air_date ? `<br/>(${(r.release_date||r.first_air_date).slice(0,4)})` : ''}</div></div>`;
               });
-              recsHtml += '</div></div>';
+              recsHtml += `</div></div>`;
           }
       }
 
-      var kwNames = (dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : []).map(function(k) { return k.name.toLowerCase(); });
-      var isBook = kwNames.some(function(k) { return k.includes("based on novel") || k.includes("based on book") || k.includes("based on comic"); });
-      var isTrueStory = kwNames.some(function(k) { return k.includes("based on true story") || k.includes("true story"); });
-      var isRemake = kwNames.some(function(k) { return k === "remake"; });
+      var kwNames = (dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : []).map(k => k.name.toLowerCase());
+      var isBook = kwNames.some(k => k.includes("based on novel") || k.includes("based on book") || k.includes("based on comic"));
+      var isTrueStory = kwNames.some(k => k.includes("based on true story") || k.includes("true story"));
+      var isRemake = kwNames.some(k => k === "remake");
 
       var matchScore = calculateMatchScore(dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [], dd.release_date || dd.first_air_date, dd.genres || []);
       var existingRating = userRatings[id] || 0;
       currentDraftRating = existingRating;
 
-      function render(imdbScore, rtScore, metaScore, od) {
+      // Puanları Render Etme
+      function render(imdbScore, rtScore, metaScore) {
         var iCls = imdbScore === null ? "na" : "imdb";
         var rCls = rtScore   === null ? "na" : rtScore >= 60 ? "fresh" : "rotten";
         var mCls = metaScore === null ? "na" : metaScore >= 61 ? "green" : metaScore >= 40 ? "yellow" : "red";
         var tCls = tmdbScore === null ? "na" : "tmdb";
-        var imdbLink = imdbId ? "https://www.imdb.com/title/" + imdbId + "/" : null;
-        var tmdbLink = "https://www.themoviedb.org/" + mt + "/" + dd.id;
-        var letterboxdUrl = "https://letterboxd.com/tmdb/" + dd.id; 
+        
+        var imdbLink = imdbId ? `https://www.imdb.com/title/${imdbId}/` : null;
+        var tmdbLink = `https://www.themoviedb.org/${mt}/${dd.id}`;
+        var letterboxdUrl = `https://letterboxd.com/tmdb/${dd.id}`; 
 
         function bw(n, max) { return n === null ? 0 : Math.min(100, Math.round(n / max * 100)); }
-        function sc(name, val, cls, w, sub) { return '<div class="score-cell"><span class="score-name">' + name + '</span><span class="score-num ' + cls + '">' + val + '</span><div class="bar"><div class="bar-fill ' + cls + '" data-w="' + w + '" style="width:0%"></div></div><span class="score-sub">' + sub + '</span></div>'; }
+        function sc(name, val, cls, w, sub) { 
+            return `<div class="score-cell"><span class="score-name">${name}</span><span class="score-num ${cls}">${val}</span><div class="bar"><div class="bar-fill ${cls}" data-w="${w}" style="width:0%"></div></div><span class="score-sub">${sub}</span></div>`; 
+        }
         
         var totalWeight = 0, weightedSum = 0;
         if (metaScore !== null) { totalWeight += 35; weightedSum += metaScore * 35; }
@@ -1369,6 +1346,7 @@ window.loadFilm = function(id, mt) {
         if (tmdbScore !== null) { totalWeight += 15; weightedSum += (tmdbScore * 10) * 15; }
         
         var finalAvg = totalWeight > 0 ? weightedSum / totalWeight : null;
+        
         var verd = null;
         if (finalAvg !== null) {
           if (finalAvg >= 90) verd = {l:"Başyapıt", c:"masterpiece"};
@@ -1379,37 +1357,34 @@ window.loadFilm = function(id, mt) {
           else verd = {l:"Çöp", c:"trash"};
         }
         
-        var avgHtml = finalAvg !== null ? '<div class="weighted-avg"><div class="wa-title">Ağırlıklı Ortalama Puan</div><div class="wa-score">' + finalAvg.toFixed(1) + '<span> / 100</span></div><div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div></div>' : '';
+        var avgHtml = finalAvg !== null ? `<div class="weighted-avg"><div class="wa-title">Ağırlıklı Ortalama Puan</div><div class="wa-score">${finalAvg.toFixed(1)}<span> / 100</span></div><div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div></div>` : '';
 
         var tagsHtml = '';
         if (metaScore !== null && imdbScore !== null && metaScore >= 75 && imdbScore <= 6.8) tagsHtml += '<span class="tag-pill cinephile">🎬 Sinefiller İçin</span>';
         if (imdbScore !== null && imdbScore >= 8.0 && year && parseInt(year) < 2000) tagsHtml += '<span class="tag-pill timeless">⏳ Zamana Direnen</span>';
         if (director && writersArr.includes(director.name)) tagsHtml += '<span class="tag-pill auteur">✍️ Auteur Kalemi</span>';
-        var imdbVotes = od && od.imdbVotes && od.imdbVotes !== "N/A" ? parseInt(od.imdbVotes.replace(/,/g, '')) : 0;
-        if (imdbScore !== null && imdbScore >= 7.5 && imdbVotes > 100000 && metaScore !== null && metaScore <= 55) tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>';
-        if (od && od.Awards && /Oscar|Cannes|BAFTA|Palme d'Or|Golden Globe/i.test(od.Awards)) tagsHtml += '<span class="tag-pill award">🏆 Ödüllü</span>';
+        if (imdbScore !== null && imdbScore >= 7.5 && metaScore !== null && metaScore <= 55) tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>';
         if (isTrueStory) tagsHtml += '<span class="tag-pill true-story">🎭 Gerçek Hikaye</span>';
         if (isBook) tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>';
         if (isRemake) tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>';
 
         var matchBadgeHtml = '';
         if (matchScore !== null) {
-             matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + ' <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showTooltipModal(\'Zihinsel Eşleşme\', \'Sıradan bir tavsiye olmanın ötesinde, senin zevklerini ve eserlere verdiğin puanları dikkate alarak, bir içeriğin sana ne kadar hitap ettiğini gösterir. Sen puan vermeye devam ettikçe daha isabetli tahminler yapar.\')">?</button></div>';
+             matchBadgeHtml = `<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %${matchScore} <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showTooltipModal('Zihinsel Eşleşme', 'Test cevaplarınıza göre bu eserin size ne kadar uygun olduğunu gösterir.')">?</button></div>`;
         }
 
-        var tagsContainerHtml = tagsHtml !== '' ? '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '<button class="tag-info-btn" onclick="showTooltipModal(\'Etiketler\', \'Bu etiketler veri tabanlarından çekilen istatistiklere göre otomatik hesaplanır.\')">?</button></div>' : '<div class="tags-container" id="tags-container-' + id + '"></div>';
+        var tagsContainerHtml = tagsHtml !== '' ? `<div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div>` : `<div class="tags-container" id="tags-container-${id}"></div>`;
 
-        var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.' }));
+        var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: `🎬 ${title} (${year || ''})\n⭐ Ağırlıklı Puan: ${finalAvg ? finalAvg.toFixed(1) : 'Yok'}/100\nİzlesem mi? uygulamasından incelendi.` }));
         var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · ");
 
         var safeTitle = encodeURIComponent(title).replace(/'/g, "\\'");
         var safePoster = rawPoster ? rawPoster.replace(/'/g, "\\'") : '';
         var avgPass = finalAvg !== null ? finalAvg : 'null';
         
-        var wlBtnHtml = '<button id="btn-watchlist-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watchlist\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>';
-        var watchedBtnHtml = '<button id="btn-watched-' + id + '" class="action-btn wl-btn" onclick="toggleListBtn(this, \'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\', \'watched\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>';
-
-        var diaryBtnHtml = '<button id="btn-diary-' + id + '" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal(\'' + id + '\', \'' + mt + '\', \'' + safeTitle + '\', \'' + year + '\', \'' + safePoster + '\', \'' + avgPass + '\')">📓 Film Günlüğüm</button>';
+        var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>`;
+        var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>`;
+        var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
 
         var ratingHtml = `
           <div class="user-rating-section">
@@ -1425,32 +1400,58 @@ window.loadFilm = function(id, mt) {
           </div>
         `;
 
-        resEl.innerHTML = '<div class="card"><div class="card-head"><div class="card-head-top">' +
-          (rawPoster ? '<img class="poster" src="' + rawPoster + '" alt="Afişi Büyüt" onclick="openLightbox(\'' + rawPoster.replace('w342', 'original') + '\')" />' : '<div class="poster-ph">🎬</div>') +
-          '<div class="head-info"><div class="card-title">' + title + '</div><div class="card-meta">' + metaLine + '</div></div></div>' +
-          tagsContainerHtml +
-          '<div class="actions-row">' +
-            wlBtnHtml + watchedBtnHtml +
-            (trailer ? '<button class="action-btn trailer-btn" onclick="openTrailerModal(\'' + trailer.key + '\')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>' : '') +
-            '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
-          '</div><div class="outbound-links-row">' +
-          (imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '') +
-          '<a class="action-btn lb-btn" href="' + letterboxdUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>' +
-          (tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '') +
-          '</div>' + platformsHtml + '<div class="kadro-btn-wrap"><button id="kadro-btn-trigger" class="action-btn kadro-btn">🎭 Detaylı Kadroyu Gör</button></div></div>' +
-          avgHtml + '<div class="scores">' + sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10") + sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10") + sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer") + sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100") + '</div>' +
-          ratingHtml + 
-          '<div class="bottom">' + (verd ? '<div class="badge ' + verd.c + '">' + verd.l + '</div>' : '') + (plot ? '<p class="plot">' + plot + '</p>' : '') + '</div>' + reviewsHtml + recsHtml + '</div>';
+        resEl.innerHTML = `
+          <div class="card">
+            <div class="card-head">
+              <div class="card-head-top">
+                ${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}
+                <div class="head-info">
+                  <div class="card-title">${title}</div>
+                  <div class="card-meta">${metaLine}</div>
+                </div>
+              </div>
+              ${tagsContainerHtml}
+              <div class="actions-row">
+                ${wlBtnHtml} ${watchedBtnHtml}
+                ${trailer ? `<button class="action-btn trailer-btn" onclick="openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}
+                <button class="action-btn share-btn" onclick="shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>
+              </div>
+              <div class="outbound-links-row">
+                ${imdbLink ? `<a class="action-btn imdb-btn" href="${imdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>` : ''}
+                <a class="action-btn lb-btn" href="${letterboxdUrl}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>
+                ${tmdbLink ? `<a class="action-btn tmdb-btn" href="${tmdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>` : ''}
+              </div>
+              ${platformsHtml}
+              <div class="kadro-btn-wrap"><button id="kadro-btn-trigger" class="action-btn kadro-btn">🎭 Detaylı Kadroyu Gör</button></div>
+            </div>
+            ${avgHtml}
+            <div class="scores">
+              ${sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10")}
+              ${sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10")}
+              ${sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer")}
+              ${sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100")}
+            </div>
+            ${ratingHtml}
+            <div class="bottom">
+              ${verd ? `<div class="badge ${verd.c}">${verd.l}</div>` : ''}
+              ${plot ? `<p class="plot">${plot}</p>` : ''}
+            </div>
+            ${reviewsHtml}
+            ${recsHtml}
+          </div>`;
         
-        setTimeout(function() {
-          resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
-          var kBtn = document.getElementById("kadro-btn-trigger");
-          if(kBtn) kBtn.addEventListener("click", function() { openGenericModal('Film Kadrosu (15 Kişi)', currentCastHtml); });
-          var loadMoreBtn = document.getElementById("load-more-reviews");
+        setTimeout(() => {
+          resEl.querySelectorAll(".bar-fill[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
+          let kBtn = document.getElementById("kadro-btn-trigger");
+          if(kBtn) kBtn.addEventListener("click", () => openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml));
+          
+          let loadMoreBtn = document.getElementById("load-more-reviews");
           if (loadMoreBtn) {
-              loadMoreBtn.addEventListener("click", function() {
-                  var container = document.getElementById("reviews-container");
-                  window.currentFilmReviews.slice(window.currentReviewCount, window.currentReviewCount + 5).forEach(function(rev) { container.insertAdjacentHTML('beforeend', createReviewHTML(rev)); });
+              loadMoreBtn.addEventListener("click", () => {
+                  let container = document.getElementById("reviews-container");
+                  window.currentFilmReviews.slice(window.currentReviewCount, window.currentReviewCount + 5).forEach(rev => { 
+                      container.insertAdjacentHTML('beforeend', createReviewHTML(rev)); 
+                  });
                   window.currentReviewCount += 5;
                   if (window.currentReviewCount >= window.currentFilmReviews.length) loadMoreBtn.style.display = "none";
               });
@@ -1459,48 +1460,281 @@ window.loadFilm = function(id, mt) {
           if(existingRating > 0) renderStars(existingRating); else renderStars(0);
 
           if (currentUser) {
-              db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).get().then(function(doc) {
-                  if(doc.exists) {
-                      var btn = document.getElementById("btn-watchlist-" + id);
-                      if(btn) { btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; }
-                  }
-              }).catch(function(){});
-              db.collection("users").doc(currentUser.uid).collection("watched").doc(id.toString()).get().then(function(doc) {
-                  if(doc.exists) {
-                      var btn = document.getElementById("btn-watched-" + id);
-                      if(btn) { btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; }
-                  }
-              }).catch(function(){});
+              db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).get().then(doc => {
+                  if(doc.exists) { let btn = document.getElementById("btn-watchlist-" + id); if(btn) { btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; } }
+              });
+              db.collection("users").doc(currentUser.uid).collection("watched").doc(id.toString()).get().then(doc => {
+                  if(doc.exists) { let btn = document.getElementById("btn-watched-" + id); if(btn) { btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; } }
+              });
           }
         }, 50);
 
         if (director && director.id) {
-            fetch("https://api.themoviedb.org/3/person/" + director.id + "/movie_credits?api_key=" + TK + "&language=tr-TR").then(function(r) { return r.json(); }).then(function(dData) {
+            fetch(`https://api.themoviedb.org/3/person/${director.id}/movie_credits?api_key=${TK}&language=tr-TR`)
+            .then(r => r.json())
+            .then(dData => {
                 if (dData.crew) {
-                    var top5 = dData.crew.filter(function(c) { return c.job === 'Director'; }).sort(function(a, b) { return b.vote_count - a.vote_count; }).slice(0, 5);
-                    if (top5.length > 0 && (top5.reduce(function(sum, f) { return sum + f.vote_average; }, 0) / top5.length) >= 7.6) {
-                        var tContainer = document.getElementById('tags-container-' + id);
+                    let top5 = dData.crew.filter(c => c.job === 'Director').sort((a, b) => b.vote_count - a.vote_count).slice(0, 5);
+                    if (top5.length > 0 && (top5.reduce((sum, f) => sum + f.vote_average, 0) / top5.length) >= 7.6) {
+                        let tContainer = document.getElementById('tags-container-' + id);
                         if (tContainer) {
-                            var btnHtml = '<button class="tag-info-btn" onclick="showTooltipModal(\'Etiketler\', \'Bu etiketler veri tabanlarından çekilen istatistiklere göre otomatik hesaplanır.\')">?</button>';
+                            let btnHtml = `<button class="tag-info-btn" onclick="showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button>`;
                             if(tContainer.innerHTML.includes('tag-info-btn')) tContainer.innerHTML = tContainer.innerHTML.replace(btnHtml, '<span class="tag-pill master">👑 Usta Yönetmen</span>' + btnHtml);
                             else tContainer.innerHTML += '<span class="tag-pill master">👑 Usta Yönetmen</span>' + btnHtml;
                         }
                     }
                 }
-            }).catch(function(){}); 
+            }).catch(()=>{}); 
         }
       }
 
       if (imdbId) {
-        fetch("https://www.omdbapi.com/?i=" + imdbId + "&apikey=" + OK).then(function(r) { return r.json(); }).then(function(od) {
-            var iScore = od.imdbRating && od.imdbRating !== "N/A" ? parseFloat(od.imdbRating) : tmdbScore;
-            var rtRaw = (od.Ratings || []).find(function(r) { return r.Source === "Rotten Tomatoes"; });
+        fetch(`https://www.omdbapi.com/?i=${imdbId}&apikey=${OK}`).then(r => r.json()).then(od => {
+            let iScore = od.imdbRating && od.imdbRating !== "N/A" ? parseFloat(od.imdbRating) : tmdbScore;
+            let rtRaw = (od.Ratings || []).find(r => r.Source === "Rotten Tomatoes");
             render(iScore, rtRaw ? parseInt(rtRaw.Value) : null, od.Metascore && od.Metascore !== "N/A" ? parseInt(od.Metascore) : null, od);
-          }).catch(function() { render(tmdbScore, null, null, null); });
-      } else render(tmdbScore, null, null, null);
-    }).catch(function() { resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bir hata oluştu.</div></div></div>'; });
+          }).catch(() => render(tmdbScore, null, null, null));
+      } else { render(tmdbScore, null, null, null); }
+  }).catch(() => { resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bir hata oluştu.</div></div></div>'; });
+};
+
+// ==========================================
+// 7. YILDIZ & GÜNLÜK KAYIT MANTIĞI
+// ==========================================
+window.handleStarMove = function(e, container) {
+  const rect = container.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < 15) { window.renderStars(0); currentDraftRating = 0; return; }
+  let val = Math.ceil((x / rect.width) * 10) / 2; 
+  if(val < 0.5) val = 0.5; if(val > 5) val = 5;
+  window.renderStars(val); currentDraftRating = val;
+};
+
+window.renderStars = function(v) {
+  const filled = document.querySelector('.star-filled');
+  if(filled) filled.style.width = (v * 20) + "%";
+  const hints = ["Puanı Geri Al", "Çöp", "Çok Kötü", "Kötü", "Sıradan", "Eh İşte", "İyi", "Çok İyi", "Harika", "Başyapıt", "Kusursuz"];
+  document.getElementById("star-hint").innerText = v === 0 ? hints[0] : hints[v * 2];
+};
+
+window.ensureInWatchedList = function(id, mt, title, year, poster, score) {
+    if(!currentUser) return;
+    let scoreVal = score === "null" ? null : parseFloat(score);
+    let docRef = db.collection("users").doc(currentUser.uid).collection("watched").doc(id.toString());
+    
+    docRef.get().then(doc => {
+        if(!doc.exists) { docRef.set({ id: id.toString(), mt, title: decodeURIComponent(title), year, poster, score: scoreVal, addedAt: firebase.firestore.FieldValue.serverTimestamp() }); }
+    });
+
+    db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).delete();
+    let wlBtn = document.getElementById('btn-watchlist-' + id); if(wlBtn) { wlBtn.classList.remove('added'); wlBtn.innerHTML = '⏳ İzleyeceğim'; }
+    let wBtn = document.getElementById('btn-watched-' + id); if(wBtn) { wBtn.classList.add('added'); wBtn.innerHTML = '✓ Listemde'; }
+};
+
+window.submitRating = function(id, title, year, poster, score, mt) {
+  if(!currentUser) { openAuthModal(); return; }
+  
+  if(currentDraftRating === 0) {
+      db.collection("users").doc(currentUser.uid).collection("ratings").doc(id.toString()).delete().then(() => {
+          delete userRatings[id]; updateStatsUI();
+          document.getElementById("star-hint").innerText = "Puan Geri Alındı!";
+          setTimeout(()=> { document.getElementById("star-hint").innerText = "Puan Ver"; }, 1500);
+      }); return; 
+  }
+  
+  db.collection("users").doc(currentUser.uid).collection("ratings").doc(id.toString()).set({
+    rating: currentDraftRating, title: decodeURIComponent(title), poster: poster, ratedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    window.ensureInWatchedList(id, mt, title, year, poster, score);
+    userRatings[id] = currentDraftRating; updateStatsUI();
+    document.getElementById("star-hint").innerText = "Puan Kaydedildi!";
+    setTimeout(()=> window.renderStars(currentDraftRating), 1500);
+  });
+};
+
+window.toggleDiaryDate = function() {
+    document.getElementById('diary-date').disabled = document.getElementById('diary-no-date').checked;
+};
+
+window.openDiaryModal = function(id, mt, title, year, poster, score) {
+    if(!currentUser) { openAuthModal(); return; }
+    
+    document.getElementById("diary-movie-id").value = id; document.getElementById("diary-movie-mt").value = mt;
+    document.getElementById("diary-movie-title").value = title; document.getElementById("diary-movie-year").value = year;
+    document.getElementById("diary-movie-poster").value = poster; document.getElementById("diary-movie-score").value = score;
+    
+    let today = new Date().toISOString().split('T')[0];
+    document.getElementById("diary-notes").value = "";
+    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+    currentDiaryEmotion = "";
+
+    if (userDiary[id]) {
+        if(userDiary[id].date) {
+            document.getElementById("diary-no-date").checked = false; document.getElementById("diary-date").disabled = false; document.getElementById("diary-date").value = userDiary[id].date;
+        } else if (userDiary[id].date === null) {
+            document.getElementById("diary-no-date").checked = true; document.getElementById("diary-date").disabled = true; document.getElementById("diary-date").value = "";
+        }
+        if(userDiary[id].note) document.getElementById("diary-notes").value = userDiary[id].note;
+        if(userDiary[id].emotion) {
+            currentDiaryEmotion = userDiary[id].emotion;
+            document.querySelectorAll(".emoji-btn").forEach(b => { if(b.dataset.emo === currentDiaryEmotion) b.classList.add("active"); });
+        }
+    } else {
+        document.getElementById("diary-no-date").checked = false; document.getElementById("diary-date").disabled = false; document.getElementById("diary-date").value = today;
+    }
+    document.getElementById("diary-modal").classList.add("active"); document.body.style.overflow = "hidden";
+};
+
+window.closeDiaryModal = function() { document.getElementById("diary-modal").classList.remove("active"); document.body.style.overflow = ""; };
+document.getElementById("diary-modal").addEventListener("click", function(e) { if (e.target === this) window.closeDiaryModal(); });
+
+window.selectEmoji = function(btn, emotion) {
+    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active"); currentDiaryEmotion = emotion;
+};
+
+window.saveDiaryEntry = function() {
+    if(!currentUser) return;
+    let id = document.getElementById("diary-movie-id").value;
+    let dDate = document.getElementById("diary-no-date").checked ? null : document.getElementById("diary-date").value;
+    
+    let dataToSave = { date: dDate, emotion: currentDiaryEmotion, note: document.getElementById("diary-notes").value.trim(), savedAt: firebase.firestore.FieldValue.serverTimestamp() };
+    
+    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).set(dataToSave).then(() => {
+        userDiary[id] = dataToSave;
+        window.ensureInWatchedList(id, document.getElementById("diary-movie-mt").value, document.getElementById("diary-movie-title").value, document.getElementById("diary-movie-year").value, document.getElementById("diary-movie-poster").value, document.getElementById("diary-movie-score").value);
+        window.closeDiaryModal();
+        let dbBtn = document.getElementById("btn-diary-" + id); if(dbBtn) { dbBtn.innerHTML = "📓 Güncellendi"; setTimeout(() => dbBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
+    });
+};
+
+window.clearDiaryEntry = function() {
+    if(!currentUser) return;
+    let id = document.getElementById("diary-movie-id").value;
+    db.collection("users").doc(currentUser.uid).collection("diary").doc(id.toString()).delete().then(() => {
+        delete userDiary[id]; window.closeDiaryModal();
+        let dbBtn = document.getElementById("btn-diary-" + id); if(dbBtn) { dbBtn.innerHTML = "📓 Temizlendi"; setTimeout(() => dbBtn.innerHTML = "📓 Film Günlüğüm", 2000); }
+        if (window.currentListType === 'watched' && window.myList.some(item => item.id == id)) window.renderListUI(window.currentSort);
+        let badge = document.querySelector(`.diary-badge`); if(badge) badge.remove(); 
+    });
+};
+
+// ==========================================
+// 8. LİSTE YÖNETİMİ (LIVE SEARCH & NULL HANDLING)
+// ==========================================
+window.fetchUserList = function(listType) {
+    closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
+    if (!currentUser) return;
+    window.currentListType = listType; window.currentListSearchTerm = ""; 
+    let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
+    resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
+    db.collection("users").doc(currentUser.uid).collection(listType).get().then(snap => {
+        window.myList = []; snap.forEach(doc => window.myList.push(doc.data()));
+        window.renderListUI(window.currentSort);
+    }).catch(() => resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Hata oluştu.</div></div></div>');
+};
+
+window.liveFilterList = function(val) {
+    window.currentListSearchTerm = val;
+    let term = val.toLowerCase().trim();
+    document.querySelectorAll('.wl-card-grid').forEach(card => {
+        let title = card.getAttribute('data-title').toLowerCase(); let year = card.getAttribute('data-year') || '';
+        card.style.display = (title.includes(term) || year.includes(term)) ? 'flex' : 'none';
+    });
+};
+
+window.renderListUI = function(sortType) {
+    window.currentSort = sortType;
+    let listNameTR = window.currentListType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
+    if (window.myList.length === 0) { resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${window.currentListType === 'watchlist' ? '⏳' : '👁️'}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; return; }
+    
+    let sorted = [...window.myList];
+    if (sortType === 'date_desc') sorted.sort((a,b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
+    if (sortType === 'date_asc') sorted.sort((a,b) => (a.addedAt?.seconds || 0) - (b.addedAt?.seconds || 0));
+    if (sortType === 'score_desc') sorted.sort((a,b) => (b.score || 0) - (a.score || 0));
+    if (sortType === 'score_asc') sorted.sort((a,b) => (a.score || 0) - (b.score || 0));
+    
+    if (sortType === 'watched_date_desc' || sortType === 'watched_date_asc') {
+        sorted.sort((a, b) => {
+            let dA = userDiary[a.id]?.date || null; let dB = userDiary[b.id]?.date || null;
+            if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; 
+            return sortType === 'watched_date_desc' ? (dA < dB ? 1 : (dA > dB ? -1 : 0)) : (dA > dB ? 1 : (dA < dB ? -1 : 0)); 
+        });
+    }
+
+    let watchedBtns = window.currentListType === 'watched' ? `<button class="wl-sort-btn ${sortType.includes('watched_date') ? 'active' : ''}" onclick="window.renderListUI(window.currentSort === 'watched_date_desc' ? 'watched_date_asc' : 'watched_date_desc')">İzleme Tarihi ${sortType === 'watched_date_asc' ? '▲' : '▼'}</button>` : '';
+    let searchHtml = `<input type="text" class="list-search-input" placeholder="Film adı veya yapım yılı..." value="${window.currentListSearchTerm}" oninput="window.liveFilterList(this.value)">`;
+
+    let html = `<div style="width: 100%;">
+                    <div class="wl-header">
+                        <div class="wl-title">${listNameTR} (${sorted.length})</div>
+                        <div class="wl-sort-group">
+                            <button class="wl-sort-btn ${sortType === 'date_desc' || sortType === 'date_asc' ? 'active' : ''}" onclick="window.renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Eklenme Tarihi ${sortType === 'date_asc' ? '▲' : '▼'}</button>
+                            <button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="window.renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button>
+                            ${watchedBtns}
+                        </div>
+                    </div>
+                    ${searchHtml}
+                    <div class="wl-grid">`;
+    
+    sorted.forEach(item => {
+        let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
+        let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
+        let diaryBadge = userDiary[item.id] ? `<div class="diary-badge">📝</div>` : '';
+        html += `<div class="wl-card-grid" data-title="${item.title.replace(/"/g, '&quot;')}" data-year="${item.year || ''}" onclick="window.loadFilm(${item.id}, '${item.mt}'); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); window.removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
+    });
+    
+    resEl.innerHTML = html + `</div></div>`; 
+
+    if(window.currentListSearchTerm) {
+        window.liveFilterList(window.currentListSearchTerm);
+        let sInput = document.querySelector('.list-search-input');
+        if(sInput) { sInput.focus(); let v = sInput.value; sInput.value = ''; sInput.value = v; }
+    }
+};
+
+window.removeFromList = function(id, listType) {
+    if (!currentUser) return; window.myList = window.myList.filter(item => item.id != id); window.renderListUI(window.currentSort); 
+    db.collection("users").doc(currentUser.uid).collection(listType).doc(id.toString()).delete();
+};
+
+window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetList) {
+    if (!currentUser) { openAuthModal(); return; }
+    let isAdded = btn.classList.contains('added'); 
+    let docRef = db.collection("users").doc(currentUser.uid).collection(targetList).doc(id.toString());
+    if (isAdded) { 
+        btn.classList.remove('added'); btn.innerHTML = targetList === 'watchlist' ? '⏳ İzleyeceğim' : '👁️ İzledim'; docRef.delete(); 
+    } else { 
+        btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; 
+        docRef.set({ id: id.toString(), mt, title: decodeURIComponent(title), year, poster, score: score === "null" ? null : parseFloat(score), addedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
+        let otherList = targetList === 'watched' ? 'watchlist' : 'watched';
+        db.collection("users").doc(currentUser.uid).collection(otherList).doc(id.toString()).delete();
+        let otherBtn = document.getElementById(`btn-${otherList}-${id}`); if(otherBtn) { otherBtn.classList.remove('added'); otherBtn.innerHTML = otherList === 'watchlist' ? '⏳ İzleyeceğim' : '👁️ İzledim'; }
+    }
+};
+
+// ==========================================
+// 9. ÇEVİRİ, PAYLAŞIM VE YORUMLAR
+// ==========================================
+window.shareFilm = function(btn) {
+  var data = JSON.parse(decodeURIComponent(btn.dataset.share));
+  if (navigator.share) { navigator.share({ title: data.title, text: data.text }).catch(()=>{}); } 
+  else { navigator.clipboard.writeText(data.text).then(() => { var oldHtml = btn.innerHTML; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Kopyalandı!'; setTimeout(() => btn.innerHTML = oldHtml, 2000); }); }
+};
+
+window.translateText = function(btn) {
+  var text = decodeURIComponent(btn.dataset.text); openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
+  fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(text)}`).then(r => r.json()).then(data => {
+      var translated = ""; if (data && data[0]) { data[0].forEach(item => { if (item[0]) translated += item[0]; }); } 
+      document.getElementById("generic-modal-content").innerHTML = translated ? translated.replace(/\n/g, "<br>") : "Çeviri yapılamadı.";
+  }).catch(() => document.getElementById("generic-modal-content").innerHTML = "Bağlantı hatası.");
+};
+
+function createReviewHTML(rev) {
+    var author = rev.author || "Anonim"; var ratingHtml = (rev.author_details && rev.author_details.rating) ? `<span class="rating">⭐ ${rev.author_details.rating}/10</span>` : ''; 
+    var content = rev.content || "";
+    return `<div class="review-card"><div class="rev-author">${author} ${ratingHtml}</div><div class="rev-content">${content}</div><button class="rev-translate-btn" data-text="${encodeURIComponent(content)}" onclick="translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>`;
 }
 </script>
 </body>
 </html>
-6
