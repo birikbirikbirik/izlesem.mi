@@ -631,7 +631,6 @@
 // KULLANIM KILAVUZU & MODAL KONTROLLERİ
 // ==========================================
 
-// Global Modal Aç/Kapat Fonksiyonları EKLENDİ
 window.openGenericModal = function(title, html) { 
     document.getElementById("generic-modal-title").innerText = title; 
     document.getElementById("generic-modal-content").innerHTML = html; 
@@ -947,7 +946,7 @@ qEl.addEventListener("input", () => {
                     hideDD(); 
                     qEl.value = title; 
                     toggleClearBtn();
-                    saveSearchToHistory(title); // EKSİK OLAN KISIM EKLENDİ
+                    saveSearchToHistory(title);
                     if(item.media_type === "person") window.loadPerson(item.id);
                     else { closePersonView(); window.loadFilm(item.id, item.media_type); }
                 };
@@ -986,24 +985,65 @@ function doSearch() {
 
 function loadRandomDiscovery() {
   qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
-  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Rastgele film seçiliyor...</span></div>';
+  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
   
-  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_genres=${[18, 9648, 80, 53, 36][Math.floor(Math.random() * 5)]}&page=${Math.floor(Math.random() * 50) + 1}`)
+  let deepGenres = [18, 9648, 80, 53, 36];
+  let randomGenre = deepGenres[Math.floor(Math.random() * deepGenres.length)];
+  let baseUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_genres=${randomGenre}`;
+
+  fetch(baseUrl + "&page=1")
   .then(r => r.json())
   .then(data => {
-      if (data.results && data.results.length > 0) window.loadFilm(data.results[Math.floor(Math.random() * data.results.length)].id, "movie");
-  }).catch(()=> resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Hata.</div></div></div>');
+      if (data.total_results > 0) {
+          let randomPage = Math.floor(Math.random() * Math.min(data.total_pages, 500)) + 1;
+          return fetch(baseUrl + "&page=" + randomPage);
+      } else throw new Error("Havuz boş");
+  })
+  .then(r => r.json())
+  .then(finalData => {
+      if (finalData && finalData.results && finalData.results.length > 0) {
+          window.loadFilm(finalData.results[Math.floor(Math.random() * finalData.results.length)].id, "movie");
+      } else {
+          resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Cevher bulunamadı.</div></div></div>';
+      }
+  })
+  .catch(() => resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası.</div></div></div>');
 }
 
 function loadComfortZoneDiscovery() {
   qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor aranıyor...</span></div>';
   
-  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_keywords=2504|5695|6075|27933|4344&page=${Math.floor(Math.random() * 20) + 1}`)
+  let realKwIds = "2504|5695|6075|27933|4344";
+  let langs = ['ko', 'fa', 'fr', 'da', 'es', 'it', 'ja', 'sv', 'de']; 
+  let randomLang = langs[Math.floor(Math.random() * langs.length)];
+  let baseUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${TK}&language=tr-TR&vote_average.gte=7.0&vote_count.gte=500&with_keywords=${realKwIds}`;
+  let langUrl = baseUrl + "&with_original_language=" + randomLang;
+
+  fetch(langUrl + "&page=1")
   .then(r => r.json())
   .then(data => {
-      if (data.results && data.results.length > 0) window.loadFilm(data.results[Math.floor(Math.random() * data.results.length)].id, "movie");
-  });
+      if (data.total_results > 0) {
+          let randomPage = Math.floor(Math.random() * Math.min(data.total_pages, 500)) + 1;
+          return fetch(langUrl + "&page=" + randomPage);
+      } else {
+          return fetch(baseUrl + "&page=1").then(r2 => r2.json()).then(data2 => {
+              if (data2.total_results > 0) {
+                  let randomPage2 = Math.floor(Math.random() * Math.min(data2.total_pages, 500)) + 1;
+                  return fetch(baseUrl + "&page=" + randomPage2);
+              } else throw new Error("Havuz boş");
+          });
+      }
+  })
+  .then(r => r.json())
+  .then(finalData => {
+      if (finalData && finalData.results && finalData.results.length > 0) {
+          window.loadFilm(finalData.results[Math.floor(Math.random() * finalData.results.length)].id, "movie");
+      } else {
+          resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Sonuç bulunamadı.</div></div></div>';
+      }
+  })
+  .catch(() => resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası.</div></div></div>');
 }
 
 // ==========================================
@@ -1258,7 +1298,6 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
 // ==========================================
 // 6. KİŞİ SAYFASI (YENİ SAYFA HİSSİ & ÇEVİRİ)
 // ==========================================
-// İngilizce departman isimlerini Türkçeye çevirme sözlüğü
 const deptMap = {
     'Directing': 'Yönetmen',
     'Writing': 'Senarist',
@@ -1275,7 +1314,6 @@ const deptMap = {
 };
 
 window.loadPerson = function(id) {
-    // Mevcut film ekranını gizle, kişi ekranını göster
     resEl.style.display = "none";
     personViewEl.style.display = "block";
     personViewEl.innerHTML = '<div class="loading" style="padding:40px;"><div class="spinner"></div></div>';
@@ -1287,21 +1325,19 @@ window.loadPerson = function(id) {
         let age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : 'Bilinmiyor';
         let credits = p.combined_credits || {cast:[], crew:[]};
         
-        // Eserleri Departmanlara Ayırma (Sözlük Filtresi İle)
         let depts = {};
         credits.cast.forEach(c => { 
             (depts['Oyuncu'] = depts['Oyuncu'] || []).push(c); 
         });
         credits.crew.forEach(c => { 
-            let dName = deptMap[c.department] || c.department; // ÇEVİRİ BURADA YAPILIYOR
+            let dName = deptMap[c.department] || c.department; 
             (depts[dName] = depts[dName] || []).push(c); 
         });
 
-        // En çok eser verilen departmanı bulma
         let sortedDepts = Object.keys(depts).sort((a,b) => depts[b].length - depts[a].length);
 
         let html = `
-            <button class="top-btn" style="margin-bottom:15px; border-color:var(--accent); color:var(--accent);" onclick="closePersonView()">
+            <button class="top-btn" style="margin-bottom:15px; border-color:var(--accent); color:var(--accent);" onclick="window.closePersonView()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 Geri Dön
             </button>
@@ -1341,7 +1377,7 @@ function renderFilmography(list) {
     });
 
     return unique.map(f => `
-        <div class="film-row" onclick="closePersonView(); window.loadFilm(${f.id}, '${f.media_type}'); window.scrollTo({top:0, behavior:'smooth'});">
+        <div class="film-row" onclick="window.closePersonView(); window.loadFilm(${f.id}, '${f.media_type}'); window.scrollTo({top:0, behavior:'smooth'});">
             <img class="film-mini-poster" src="${f.poster_path ? 'https://image.tmdb.org/t/p/w92'+f.poster_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'58\' style=\'background:%23card\'></svg>'}">
             <div class="film-row-info">
                 <div class="film-row-title">${f.title || f.name}</div>
@@ -1404,12 +1440,12 @@ window.loadFilm = function(id, mt) {
       var writers = writersArr.filter((v,i,a) => a.indexOf(v)===i).slice(0,3).join(", ");
       var actors = credits.cast.slice(0, 15);
       
-      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="closeGenericModal(); loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
+      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="window.closeGenericModal(); window.loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
       castHtml += `<div style="margin-bottom:24px; font-size:15px;"><strong>Senarist:</strong> ${writers || 'Bilinmiyor'}</div>`;
       castHtml += `<div style="font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--accent); margin-bottom:12px;">Oyuncular (15)</div><div class="kadro-scroll">`;
       actors.forEach(a => {
           var imgUrl = a.profile_path ? `https://image.tmdb.org/t/p/w185${a.profile_path}` : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' style=\'background:%23ede0ce\'></svg>';
-          castHtml += `<div class="kadro-item" onclick="closeGenericModal(); loadPerson(${a.id})"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`;
+          castHtml += `<div class="kadro-item" onclick="window.closeGenericModal(); window.loadPerson(${a.id})"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`;
       });
       castHtml += `</div>`; 
       window.currentCastHtml = castHtml;
@@ -1441,7 +1477,7 @@ window.loadFilm = function(id, mt) {
           if (topRecs.length > 0) {
               recsHtml = `<div class="reviews-wrap" style="border-top:none; padding-top:0;"><h3 class="rev-title" style="margin-top:0;">Bunu Sevenler Şunları Da İzledi</h3><div class="recs-grid">`;
               topRecs.forEach(r => {
-                  recsHtml += `<div class="rec-card" onclick="loadFilm(${r.id}, '${r.media_type||mt}'); window.scrollTo({top:0, behavior:'smooth'});"><img src="https://image.tmdb.org/t/p/w154${r.poster_path}"/><div class="rec-title">${r.title||r.name}${r.release_date||r.first_air_date ? `<br/>(${(r.release_date||r.first_air_date).slice(0,4)})` : ''}</div></div>`;
+                  recsHtml += `<div class="rec-card" onclick="window.loadFilm(${r.id}, '${r.media_type||mt}'); window.scrollTo({top:0, behavior:'smooth'});"><img src="https://image.tmdb.org/t/p/w154${r.poster_path}"/><div class="rec-title">${r.title||r.name}${r.release_date||r.first_air_date ? `<br/>(${(r.release_date||r.first_air_date).slice(0,4)})` : ''}</div></div>`;
               });
               recsHtml += `</div></div>`;
           }
@@ -1516,7 +1552,7 @@ window.loadFilm = function(id, mt) {
         
         var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>`;
         var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>`;
-        var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
+        var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="window.openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
 
         var ratingHtml = `
           <div class="user-rating-section">
@@ -1545,7 +1581,7 @@ window.loadFilm = function(id, mt) {
               ${tagsContainerHtml}
               <div class="actions-row">
                 ${wlBtnHtml} ${watchedBtnHtml}
-                ${trailer ? `<button class="action-btn trailer-btn" onclick="openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}
+                ${trailer ? `<button class="action-btn trailer-btn" onclick="window.openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}
                 <button class="action-btn share-btn" onclick="shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>
               </div>
               <div class="outbound-links-row">
@@ -1574,6 +1610,8 @@ window.loadFilm = function(id, mt) {
         
         setTimeout(() => {
           resEl.querySelectorAll(".bar-fill[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
+          
+          // EKSİK OLAN KADROYU GÖR BUTONU MOTORU
           let kBtn = document.getElementById("kadro-btn-trigger");
           if(kBtn) kBtn.addEventListener("click", () => window.openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml));
           
@@ -1664,7 +1702,7 @@ window.ensureInWatchedList = function(id, mt, title, year, poster, score) {
 };
 
 window.submitRating = function(id, title, year, poster, score, mt) {
-  if(!currentUser) { openAuthModal(); return; }
+  if(!currentUser) { window.openAuthModal(); return; }
   
   if(currentDraftRating === 0) {
       db.collection("users").doc(currentUser.uid).collection("ratings").doc(id.toString()).delete().then(() => {
@@ -1689,7 +1727,7 @@ window.toggleDiaryDate = function() {
 };
 
 window.openDiaryModal = function(id, mt, title, year, poster, score) {
-    if(!currentUser) { openAuthModal(); return; }
+    if(!currentUser) { window.openAuthModal(); return; }
     
     document.getElementById("diary-movie-id").value = id; document.getElementById("diary-movie-mt").value = mt;
     document.getElementById("diary-movie-title").value = title; document.getElementById("diary-movie-year").value = year;
@@ -1754,9 +1792,9 @@ window.clearDiaryEntry = function() {
 // 9. LİSTE YÖNETİMİ & CANLI ARAMA
 // ==========================================
 window.fetchUserList = function(listType) {
-    closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
+    window.closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
     if (!currentUser) return;
-    closePersonView(); 
+    window.closePersonView(); 
     window.currentListType = listType; window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
@@ -1832,7 +1870,7 @@ window.removeFromList = function(id, listType) {
 };
 
 window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetList) {
-    if (!currentUser) { openAuthModal(); return; }
+    if (!currentUser) { window.openAuthModal(); return; }
     let isAdded = btn.classList.contains('added'); 
     let docRef = db.collection("users").doc(currentUser.uid).collection(targetList).doc(id.toString());
     if (isAdded) { 
@@ -1867,7 +1905,7 @@ function createReviewHTML(rev) {
     var author = rev.author || "Anonim"; 
     var ratingHtml = (rev.author_details && rev.author_details.rating) ? `<span class="rating">⭐ ${rev.author_details.rating}/10</span>` : ''; 
     var content = rev.content || "";
-    return `<div class="review-card"><div class="rev-author">${author} ${ratingHtml}</div><div class="rev-content">${content}</div><button class="rev-translate-btn" data-text="${encodeURIComponent(content)}" onclick="translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>`;
+    return `<div class="review-card"><div class="rev-author">${author} ${ratingHtml}</div><div class="rev-content">${content}</div><button class="rev-translate-btn" data-text="${encodeURIComponent(content)}" onclick="window.translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>`;
 }
 
 window.openTrailerModal = function(key) { 
