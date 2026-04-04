@@ -98,8 +98,10 @@
     
     .card { width: 100%; max-width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; animation: fadeUp .35s ease; box-shadow: 0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: translateY(0) } }
+    
     .card-head { padding: 22px 24px 18px; border-bottom: 1.5px solid var(--border); display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
     .card-head-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
+    
     .poster { width: 80px; height: 120px; object-fit: cover; border-radius: 6px; flex-shrink: 0; box-shadow: 0 2px 8px var(--shadow); cursor: zoom-in; transition: transform 0.2s; }
     .poster:hover { transform: scale(1.03); }
     .poster-ph { width: 80px; height: 120px; background: var(--bg2); border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
@@ -110,10 +112,8 @@
     .tag-pill.random { background: var(--bg2); color: var(--accent); border: 1px solid var(--border); }
     .tag-pill.cinephile { background: rgba(13, 148, 136, 0.1); color: var(--tmdb); border: 1px solid rgba(13, 148, 136, 0.3); }
     .tag-pill.timeless { background: rgba(200, 150, 10, 0.1); color: var(--imdb); border: 1px solid rgba(200, 150, 10, 0.3); }
-    
-    /* GÜNCELLENEN YÖNETMEN SİNEMASI ETİKETİ */
-    .tag-pill.master { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1.5px solid rgba(138, 43, 226, 0.4); }
-    
+    .tag-pill.auteur { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.4); }
+    .tag-pill.master { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.4); }
     .tag-pill.popcorn { background: rgba(230, 50, 50, 0.1); color: #e63232; border: 1px solid rgba(230, 50, 50, 0.3); }
     .tag-pill.award { background: rgba(212, 175, 55, 0.1); color: #b8860b; border: 1px solid rgba(212, 175, 55, 0.3); }
     .tag-pill.true-story { background: rgba(43, 91, 132, 0.1); color: #2b5b84; border: 1px solid rgba(43, 91, 132, 0.3); }
@@ -129,9 +129,11 @@
     .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background .2s; font-family: 'DM Sans', sans-serif; flex: 1; min-width: calc(50% - 4px); }
     .action-btn svg { width: 12px; height: 12px; }
+    
     .action-btn.wl-btn { background: var(--bg2); color: var(--text); border: 1.5px solid var(--border); }
     .action-btn.wl-btn:hover { border-color: var(--meta-green); color: var(--meta-green); }
     .action-btn.wl-btn.added { background: rgba(74, 144, 48, 0.1); color: var(--meta-green); border-color: var(--meta-green); }
+
     .action-btn.trailer-btn { background: #e02020; color: #fff; }
     .action-btn.trailer-btn:hover { background: #c00; }
     .action-btn.share-btn { background: var(--bg2); color: var(--text); }
@@ -493,7 +495,9 @@
 </div>
 
 <script>
+// ==========================================
 // 1. CONFIG VE GLOBAL DEĞİŞKENLER
+// ==========================================
 const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
 const OK = "44bf03a2";
 const firebaseConfig = { apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60", authDomain: "izlesemmi.firebaseapp.com", projectId: "izlesemmi", storageBucket: "izlesemmi.firebasestorage.app", messagingSenderId: "498958427347", appId: "1:498958427347:web:538638b49f7a05a8b6a026" };
@@ -590,15 +594,71 @@ window.animateBars = function() { document.querySelectorAll(".bar-fill[data-w]")
 
 // 5. GENEL MODALLAR (Kılavuz, Fragman, Lightbox)
 window.openGenericModal = function(title, html) { window.pushModalState(); document.getElementById("generic-modal-title").innerText = title; document.getElementById("generic-modal-content").innerHTML = html; document.getElementById("generic-modal").classList.add("active"); document.body.style.overflow="hidden"; };
-window.showHowToUseModal = function(e) { if (e) e.preventDefault(); window.openGenericModal('Nasıl Kullanılır?', `
-    <div style="font-size:13.5px; line-height:1.6; color:var(--text); max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-        <div style="margin-bottom:16px;"><strong>1. Arama:</strong> Film, dizi veya kişileri aratabilirsiniz. Arama sonuçlarında kişiler ve yapımlar görsel olarak ayrılır.</div>
-        <div style="margin-bottom:16px;"><strong>2. Kişi Profilleri:</strong> Oyuncu veya yönetmen ismine tıkladığınızda biyografisine ve tüm eserlerini içeren filmografi listesine ulaşırsınız.</div>
-        <div style="margin-bottom:16px;"><strong>3. Puanlama & Test:</strong> Testi çözüp filmlere puan verdikçe 'Zihinsel Eşleşme' algoritması sizin zevklerinizi öğrenir.</div>
-        <div style="margin-bottom:16px;"><strong>4. Günlük:</strong> Sadece sizin göreceğiniz his ve notlarınızı kaydedebilirsiniz. Günlüğe not düşülen film otomatik 'İzlediklerim' listesine eklenir.</div>
-        <div style="margin-bottom:16px;"><strong>5. Listeler:</strong> Filmi listeden yanlışlıkla silseniz dahi puanınız ve günlüğünüz asla silinmez; tekrar listeye çağırabilirsiniz. Listeleri puana ve yıla göre sıralayabilirsiniz.</div>
-    </div>`); 
+
+window.showHowToUseModal = function(e) {
+    if (e) e.preventDefault();
+    var contentHTML = `
+        <div style="font-size:13.5px; line-height:1.6; color:var(--text); max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+            <p style="margin-bottom:16px;">Bu platform, film ve diziler hakkında farklı veri tabanlarından bilgi çekerek analiz sunan bir araçtır. Sayfa yapısı ve kullanım özellikleri yukarıdan aşağıya doğru şu şekildedir:</p>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">1. Arama ve Keşif</strong><br>
+                • <strong>Arama Çubuğu:</strong> İstediğiniz film, dizi veya <b>sinema sektörü çalışanını (yönetmen, oyuncu, senarist vb.)</b> aratabilirsiniz. Arama sonuçlarında kişiler ve yapımlar görsel olarak birbirinden ayrılır.<br>
+                • <strong>Konfor Alanından Çık:</strong> Belirli temalara (psikolojik, felsefi, yavaş tempolu vb.) sahip ve belli bir puanın üzerindeki yapımları rastgele karşınıza çıkarır.<br>
+                • <strong>Tema Değiştirici:</strong> Sağ üst köşeden açık, sepya veya koyu tema arasında geçiş yapabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">2. Künye ve Etiketler</strong><br>
+                • Yapımın afişi, yılı, süresi, ülkesi ve türleri listelenir.<br>
+                • Verilere dayalı olarak filme otomatik atanan bazı etiketler bulunur (Örn: Yönetmen Sineması, Sinefiller İçin, Halkın Seçimi). Bu etiketlerin hangi kriterlere göre atandığını görmek için yanlarındaki <strong>(?)</strong> butonuna tıklayabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">3. Aksiyonlar, Bağlantılar, Kadro ve Kişi Sayfaları</strong><br>
+                • <strong>Aksiyon Butonları:</strong> Yapımı listelerinize ekleyebilir, fragmanını açabilir veya sayfa bağlantısını kopyalayabilirsiniz.<br>
+                • <strong>Platform Bağlantıları:</strong> Yapımın IMDb, Letterboxd ve TMDb sayfalarına tek tıkla gidebilirsiniz.<br>
+                • <strong>Nereden İzlenir:</strong> Yapımın Türkiye'de resmi olarak hangi dijital platformlarda bulunduğunu görebilirsiniz.<br>
+                • <strong>Kadro ve Kişi Profilleri:</strong> Yönetmen ve senarist bilgisinin yanı sıra 15 kişilik detaylı oyuncu kadrosuna buradan ulaşabilirsiniz. <b>Listeden veya arama motorundan bir kişinin ismine tıkladığınızda</b>, o kişinin detaylı profiline gidersiniz. Bu sayfada kişinin biyografisini okuyabilir ve görev aldığı tüm eserleri (oyuncu, yönetmen vb.) sekmeler halinde ayrılmış detaylı bir filmografi listesinde inceleyebilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">4. Puanlama Sistemi</strong><br>
+                • <strong>Ağırlıklı Ortalama Puan:</strong> Metacritic (%35), IMDb (%30), Rotten Tomatoes (%20) ve TMDb (%15) oranları kullanılarak 100 üzerinden hesaplanan tek bir ortalama puandır.<br>
+                • Altındaki renkli tablolarda ise bu dört platformun kendi bağımsız puanları ayrı ayrı listelenir.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">5. Kişisel Puanınız ve Zihinsel Eşleşme</strong><br>
+                • <strong>Profil ve Test:</strong> Sağ üstteki profil menüsünden 14 soruluk testi çözüp, sevdiğiniz/sevmediğiniz türleri seçerek bir "Zihin Profili" oluşturabilirsiniz.<br>
+                • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar. Puanınızı silmek isterseniz yıldızların en soluna (başına) dokunabilirsiniz.<br>
+                • <strong>Zihinsel Eşleşme:</strong> Test cevaplarınız ve geçmişte verdiğiniz puanlar dikkate alınarak, incelediğiniz yapımın size hitap etme olasılığı %12 ile %98 arasında bir yüzdeyle gösterilir.
+            </div>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">6. Film Günlüğüm</strong><br>
+                • Yapımlara özel, sadece sizin görebileceğiniz notlar alabilir, izleme tarihinizi (veya tarihsiz) ve hislerinizi kaydedebilirsiniz. Not aldığınız yapımlar listelerinizde özel bir ikonla (📝) işaretlenir. <b>Günlüğe veri girdiğinizde yapım otomatik olarak 'İzlediklerim' listenize kaydedilir.</b>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
+                • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan verip/günlük tutarak işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
+                • Bir yapıma puan verdiğinizde veya günlüğüne not düştüğünüzde, o yapım otomatik olarak "İzleyeceklerim" listenizden silinip "İzlediklerim" arşivinize geçer.<br>
+                • Listelerde aradığınızı hızlıca bulmak için <strong>Live Search (Canlı Arama)</strong> çubuğunu kullanabilirsiniz. Siz "Film adı veya yılı" yazdıkça liste saniyeler içinde süzülecektir.<br>
+                • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.<br>
+                • <b>Hata Telafisi (Fail-Safe):</b> Bir yapımı İzlediklerim listesinden silseniz dahi, verdiğiniz puan veya günlüğe yazdıklarınız asla silinmez. Yanlışlıkla sildiğiniz bir filmi, puanını veya günlüğünü tekrar kaydederek hiçbir veri kaybı yaşamadan anında İzlediklerim listenize geri çağırabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">8. Yorumlar, Çeviri ve Öneriler</strong><br>
+                • Yapım hakkında yazılmış öne çıkan yabancı yorumları okuyabilir, <strong>"Sitede Çevir"</strong> butonuna basarak metinleri doğrudan Türkçe'ye çevirebilirsiniz.<br>
+                • Sayfanın en altında bulunan <strong>"Bunu Sevenler Şunları Da İzledi"</strong> bölümünden benzer yapımlara ulaşabilirsiniz.
+            </div>
+        </div>
+    `;
+    window.openGenericModal('Nasıl Kullanılır?', contentHTML);
 };
+
 window.showTooltipModal = function(title, text) { window.pushModalState(); document.getElementById("tooltip-modal-title").innerText = title; document.getElementById("tooltip-modal-content").innerHTML = text; document.getElementById("tooltip-modal").classList.add("active"); };
 window.openLightbox = function(src) { window.pushModalState(); document.getElementById("lb-img").src = src; document.getElementById("lb").style.display = "flex"; };
 window.openTrailerModal = function(key) { window.pushModalState(); document.getElementById("trailer-modal-content").innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${key}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; document.getElementById("trailer-modal").classList.add("active"); document.body.style.overflow = "hidden"; };
@@ -786,9 +846,21 @@ window.loadFilm = function(id, mt) {
         var finalAvg = totalWeight > 0 ? weightedSum / totalWeight : null; var verd = null;
         if (finalAvg !== null) { if (finalAvg >= 90) verd = {l:"Başyapıt", c:"masterpiece"}; else if (finalAvg >= 80) verd = {l:"Çok İyi", c:"v-good"}; else if (finalAvg >= 65) verd = {l:"İyi", c:"good"}; else if (finalAvg >= 55) verd = {l:"Ortalama", c:"avg"}; else if (finalAvg >= 45) verd = {l:"Zayıf", c:"weak"}; else verd = {l:"Çöp", c:"trash"}; }
         var avgHtml = finalAvg !== null ? `<div class="weighted-avg"><div class="wa-title">Ağırlıklı Ortalama Puan</div><div class="wa-score">${finalAvg.toFixed(1)}<span> / 100</span></div><div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div></div>` : '';
-        var tagsHtml = ''; if (metaScore !== null && imdbScore !== null && metaScore >= 75 && imdbScore <= 6.8) tagsHtml += '<span class="tag-pill cinephile">🎬 Sinefiller İçin</span>'; if (imdbScore !== null && imdbScore >= 8.0 && year && parseInt(year) < 2000) tagsHtml += '<span class="tag-pill timeless">⏳ Zamana Direnen</span>'; if (director && writersArr.includes(director.name)) tagsHtml += '<span class="tag-pill auteur">✍️ Auteur Kalemi</span>'; if (imdbScore !== null && imdbScore >= 7.5 && metaScore !== null && metaScore <= 55) tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>'; if (isTrueStory) tagsHtml += '<span class="tag-pill true-story">🎭 Gerçek Hikaye</span>'; if (isBook) tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>'; if (isRemake) tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>';
+        
+        var tagsHtml = ''; 
+        if (metaScore !== null && imdbScore !== null && metaScore >= 75 && imdbScore <= 6.8) tagsHtml += '<span class="tag-pill cinephile">🎬 Sinefiller İçin</span>'; 
+        if (imdbScore !== null && imdbScore >= 8.0 && year && parseInt(year) < 2000) tagsHtml += '<span class="tag-pill timeless">⏳ Zamana Direnen</span>'; 
+        // YÖNETMEN SİNAMASI ETİKETİ DÜZELTİLDİ
+        if (director && writersArr.includes(director.name)) tagsHtml += '<span class="tag-pill master">✍️ Yönetmen Sineması</span>'; 
+        
+        if (imdbScore !== null && imdbScore >= 7.5 && metaScore !== null && metaScore <= 55) tagsHtml += '<span class="tag-pill popcorn">🍿 Halkın Seçimi</span>'; 
+        if (isTrueStory) tagsHtml += '<span class="tag-pill true-story">🎭 Gerçek Hikaye</span>'; 
+        if (isBook) tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>'; 
+        if (isRemake) tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>';
+        
         var matchBadgeHtml = ''; if (matchScore !== null) { matchBadgeHtml = `<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %${matchScore} <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="window.showTooltipModal('Zihinsel Eşleşme', 'Test cevaplarınıza göre bu eserin size ne kadar uygun olduğunu gösterir.')">?</button></div>`; }
         var tagsContainerHtml = tagsHtml !== '' ? `<div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div>` : `<div class="tags-container" id="tags-container-${id}"></div>`;
+
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: `🎬 ${title} (${year || ''})\n⭐ Ağırlıklı Puan: ${finalAvg ? finalAvg.toFixed(1) : 'Yok'}/100\nİzlesem mi? uygulamasından incelendi.` })); var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · "); var safeTitle = encodeURIComponent(title).replace(/'/g, "\\'"); var safePoster = rawPoster ? rawPoster.replace(/'/g, "\\'") : ''; var avgPass = finalAvg !== null ? finalAvg : 'null';
         
         var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceklerim</button>`;
@@ -814,7 +886,13 @@ window.loadFilm = function(id, mt) {
                     let top5 = dData.crew.filter(c => c.job === 'Director').sort((a, b) => b.vote_count - a.vote_count).slice(0, 5);
                     if (top5.length > 0 && (top5.reduce((sum, f) => sum + f.vote_average, 0) / top5.length) >= 7.6) {
                         let tContainer = document.getElementById('tags-container-' + id);
-                        if (tContainer) { let btnHtml = `<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button>`; if(tContainer.innerHTML.includes('tag-info-btn')) tContainer.innerHTML = tContainer.innerHTML.replace(btnHtml, '<span class="tag-pill master">👑 Yönetmen Sineması</span>' + btnHtml); else tContainer.innerHTML += '<span class="tag-pill master">👑 Yönetmen Sineması</span>' + btnHtml; }
+                        if (tContainer) { 
+                            let btnHtml = `<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button>`; 
+                            if(!tContainer.innerHTML.includes('👑 Yönetmen Sineması')) {
+                                if(tContainer.innerHTML.includes('tag-info-btn')) tContainer.innerHTML = tContainer.innerHTML.replace(btnHtml, '<span class="tag-pill master">👑 Yönetmen Sineması</span>' + btnHtml); 
+                                else tContainer.innerHTML += '<span class="tag-pill master">👑 Yönetmen Sineması</span>' + btnHtml; 
+                            }
+                        }
                     }
                 }
             }).catch(()=>{}); 
