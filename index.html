@@ -906,8 +906,12 @@ auth.onAuthStateChanged(function(user) {
 });
 
 window.fetchUserList = function(listType) { 
-    window.forceCloseAllModals(); 
-    window.pushAppView(listType, null); 
+    // Modal'ı kapat ve history'yi temizle
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    document.body.style.overflow = "";
+    let trailerEl = document.getElementById("trailer-modal-content"); if(trailerEl) trailerEl.innerHTML = "";
+    isModalOpen = false;
+
     if(qEl) qEl.value = ""; 
     if(window.toggleClearBtn) window.toggleClearBtn(); 
     if(window.hideDD) window.hideDD(); 
@@ -916,10 +920,20 @@ window.fetchUserList = function(listType) {
     window.currentListType = listType; 
     window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzleyeceklerim' : 'İzlediklerim'; 
+
+    // Önce içeriği hazırla, sonra URL'yi güncelle
     if(resEl) {
         resEl.style.display = "block";
+        personViewEl.style.display = "none";
         resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>'; 
     }
+
+    try { 
+        let url = `?type=${listType}`;
+        history.replaceState(window.getAppSnapshot(), null, "");
+        history.pushState(window.getAppSnapshot(), null, url);
+        historyPushed = true;
+    } catch(e) { historyPushed = false; }
     
     db.collection("users").doc(currentUser.uid).collection(listType).get().then(snap => { 
         window.myList = []; 
