@@ -115,7 +115,7 @@
     .card-meta { font-size: 12px; color: var(--muted); letter-spacing: .04em; margin-bottom: 10px; line-height: 1.5; }
     
     .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; font-family: 'DM Sans', sans-serif; flex: 1; min-width: calc(50% - 4px); transition: background .2s; }
+    .action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; font-family: 'DM Sans', sans-serif; flex: 1; min-width: calc(50% - 4px); }
     .action-btn svg { width: 12px; height: 12px; }
     .action-btn.wl-btn { background: var(--bg2); color: var(--text); border: 1.5px solid var(--border); }
     .action-btn.wl-btn.added { background: rgba(74, 144, 48, 0.1); color: var(--meta-green); border-color: var(--meta-green); }
@@ -132,14 +132,8 @@
     .platforms-list { display: flex; gap: 8px; flex-wrap: wrap; }
     .provider-logo { width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 2px 4px var(--shadow); }
     
-    .kadro-btn-wrap { margin-top: 26px; }
-    .kadro-btn { width: 100%; justify-content: center; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .kadro-btn:hover { background: var(--bg2); }
-    .load-more-btn { background: transparent; border: 1px dashed var(--border); color: var(--text); min-width: 100%; }
-
     .kadro-scroll { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
-    .kadro-item { display: flex; align-items: center; gap: 12px; background: var(--bg2); padding: 10px 14px; border-radius: 10px; cursor: pointer; transition: transform 0.2s; }
-    .kadro-item:active { transform: scale(0.98); }
+    .kadro-item { display: flex; align-items: center; gap: 12px; background: var(--bg2); padding: 10px 14px; border-radius: 10px; cursor: pointer; }
     .kadro-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--card); }
 
     .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
@@ -261,8 +255,7 @@
     .modal-close { background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; line-height: 0.5; padding: 5px; }
     .modal-body { padding: 24px; font-size: 14px; line-height: 1.7; color: var(--text); }
 
-    /* TOOLTIP & TRAILER MODAL */
-    #tooltip-modal { z-index: 3000; }
+    /* TRAILER MODAL */
     #trailer-modal .modal-box { max-width: 800px; background: #000; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
     #trailer-modal .modal-close { position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 24px; padding: 0 0 2px 0; }
 
@@ -384,7 +377,7 @@
 
 <div id="trailer-modal" class="modal-overlay" onclick="if(event.target === this) window.uiCloseModal()">
   <div class="modal-box" style="max-width: 800px; background: #000; border: none; padding: 0;">
-    <button class="modal-close" onclick="window.uiCloseModal()" style="position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 24px; padding: 0 0 2px 0;">&times;</button>
+    <button class="modal-close" onclick="window.uiCloseModal()" style="position: absolute; top: 10px; right: 10px; color: #fff; z-index: 20; background: rgba(0,0,0,0.5); border-radius: 50%; width: 34px; height: 34px;">&times;</button>
     <div id="trailer-modal-content" style="width:100%; aspect-ratio:16/9;"></div>
   </div>
 </div>
@@ -451,6 +444,7 @@ const db = firebase.firestore();
 let currentUser = null; 
 let isLoginMode = true; 
 let isModalOpen = false;
+let historyPushed = false; // Güvenlik ağı (Geri tuşu hatasını önler)
 
 window.myList = []; 
 window.currentSort = 'date_desc'; 
@@ -527,7 +521,10 @@ window.pushAppView = function(type, id) {
     try {
         history.replaceState(window.getAppSnapshot(), null, "");
         history.pushState(window.getAppSnapshot(), null, url);
-    } catch(e) {}
+        historyPushed = true;
+    } catch(e) { 
+        historyPushed = false; 
+    }
 };
 
 window.pushModalState = function() { 
@@ -536,7 +533,10 @@ window.pushModalState = function() {
         let s = window.getAppSnapshot(); 
         s.isModal = true; 
         history.pushState(s, null, ""); 
-    } catch(e) {}
+        historyPushed = true;
+    } catch(e) { 
+        historyPushed = false;
+    }
     isModalOpen = true; 
 };
 
@@ -579,7 +579,11 @@ window.checkDeepLink = function() {
 
 window.uiCloseModal = function() { 
     if (isModalOpen) { 
-        try { history.back(); } catch(e) { window.forceCloseAllModals(); }
+        if (historyPushed) {
+            try { history.back(); } catch(e) { window.forceCloseAllModals(); }
+        } else {
+            window.forceCloseAllModals();
+        }
     } else {
         window.forceCloseAllModals(); 
     }
@@ -606,11 +610,6 @@ window.openGenericModal = function(title, html) {
     document.getElementById("generic-modal-content").innerHTML = html; 
     document.getElementById("generic-modal").classList.add("active"); 
     document.body.style.overflow = "hidden"; 
-};
-
-window.openKadroModal = function(targetId) {
-    let el = document.getElementById(targetId);
-    if(el) window.openGenericModal('Film Kadrosu (15 Kişi)', el.innerHTML);
 };
 
 window.showHowToUseModal = function(e) {
@@ -857,7 +856,13 @@ window.switchTab = function(btn, dept) {
     try { history.replaceState(window.getAppSnapshot(), null, window.location.search); } catch(e){} 
 };
 
-// 7. FİLM SAYFASI VE KADRO KAPSÜLÜ
+window.closePersonView = function() { 
+    resEl.style.display = "block"; 
+    personViewEl.style.display = "none"; 
+    personViewEl.innerHTML = ""; 
+};
+
+// 7. FİLM SAYFASI (ÇİFTE ETİKET ÇÖZÜMÜ)
 window.loadFilm = function(id, mt) {
   if (!window.location.search.includes(`id=${id}`)) window.pushAppView(mt, id);
   resEl.style.display = "block"; 
@@ -900,9 +905,7 @@ window.loadFilm = function(id, mt) {
           castHtml += `<div class="kadro-item" onclick="window.forceCloseAllModals(); window.loadPerson(${a.id});"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`; 
       });
       castHtml += `</div>`; 
-      
-      // KADRO KAPSÜLÜ: Modal'ın içini doğrudan DOM'a görünmez şekilde gömüyoruz.
-      var hiddenCastContainer = `<div id="cast-data-${id}" style="display:none;">${castHtml}</div>`;
+      window.currentCastHtml = castHtml;
 
       var providersTR = dd['watch/providers'] && dd['watch/providers'].results && dd['watch/providers'].results.TR; 
       var platformsHtml = '';
@@ -988,11 +991,11 @@ window.loadFilm = function(id, mt) {
         
         var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceklerim</button>`;
         var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzlediklerim</button>`;
-        var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="window.openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
+        var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn" style="background:var(--card); border: 1px solid var(--border); color:var(--text); width:100%; margin-top:0;" onclick="window.openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
 
         var ratingHtml = `<div class="user-rating-section">${matchBadgeHtml}${diaryBtnHtml}<div style="border-top: 1px dashed var(--border); margin: 15px 0;"></div><div class="rating-label">Senin Puanın</div><div class="stars-container" onmousemove="window.handleStarMove(event, this)" onclick="window.submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')"><span>☆☆☆☆☆</span><div class="star-filled">★★★★★</div></div><div id="star-hint" class="star-hint">Puan Ver</div></div>`;
 
-        resEl.innerHTML = `<div class="card"><div class="card-head"><div class="card-head-top">${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="window.openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}<div class="head-info"><div class="card-title">${title}</div><div class="card-meta">${metaLine}</div></div></div><div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div><div class="actions-row">${wlBtnHtml} ${watchedBtnHtml}${trailer ? `<button class="action-btn trailer-btn" onclick="window.openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}<button class="action-btn share-btn" onclick="window.shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button></div><div class="outbound-links-row">${imdbLink ? `<a class="action-btn lb-btn" href="${imdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>` : ''}<a class="action-btn lb-btn" style="background:#202830; color:#00e054;" href="${letterboxdUrl}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>${tmdbLink ? `<a class="action-btn tmdb-btn" href="${tmdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>` : ''}</div>${platformsHtml}<div class="kadro-btn-wrap"><button class="action-btn kadro-btn" onclick="window.openKadroModal('cast-data-${id}')">🎭 Detaylı Kadroyu Gör</button></div>${hiddenCastContainer}</div>${avgHtml}<div class="scores">${sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10")}${sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10")}${sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer")}${sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100")}</div>${ratingHtml}<div class="bottom">${verd ? `<div class="badge ${verd.c}">${verd.l}</div>` : ''}${plot ? `<p class="plot">${plot}</p>` : ''}</div>${reviewsHtml}${recsHtml}</div>`;
+        resEl.innerHTML = `<div class="card"><div class="card-head"><div class="card-head-top">${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="window.openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}<div class="head-info"><div class="card-title">${title}</div><div class="card-meta">${metaLine}</div></div></div><div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div><div class="actions-row">${wlBtnHtml} ${watchedBtnHtml}${trailer ? `<button class="action-btn trailer-btn" onclick="window.openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}<button class="action-btn share-btn" onclick="window.shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button></div><div class="outbound-links-row">${imdbLink ? `<a class="action-btn lb-btn" href="${imdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>` : ''}<a class="action-btn lb-btn" style="background:#202830; color:#00e054;" href="${letterboxdUrl}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>${tmdbLink ? `<a class="action-btn tmdb-btn" href="${tmdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>` : ''}</div>${platformsHtml}<div class="kadro-btn-wrap"><button class="action-btn" style="background:var(--card); border: 1px solid var(--border); color:var(--text); width:100%;" onclick="window.openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml)">🎭 Detaylı Kadroyu Gör</button></div></div>${avgHtml}<div class="scores">${sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10")}${sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10")}${sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer")}${sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100")}</div>${ratingHtml}<div class="bottom">${verd ? `<div class="badge ${verd.c}">${verd.l}</div>` : ''}${plot ? `<p class="plot">${plot}</p>` : ''}</div>${reviewsHtml}${recsHtml}</div>`;
         
         setTimeout(() => {
           window.animateBars(); 
