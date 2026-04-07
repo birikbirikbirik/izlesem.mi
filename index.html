@@ -1536,6 +1536,7 @@ window.createReviewHTML = function(rev) {
 };
 
 // 13. YAPAY ZEKA (GEMINI) SOHBET SİSTEMİ
+.trim(// 13. YAPAY ZEKA (GEMINI) SOHBET SİSTEMİ
 window.currentAIChatHistory = [];
 window.currentAIFilmContext = "";
 
@@ -1544,12 +1545,15 @@ window.openAIChatModal = function(title, year, plot) {
     let historyEl = document.getElementById("ai-chat-history");
     let inputEl = document.getElementById("ai-chat-input");
     
+    // YENİ: Başlığı düzgün formata çevir (%20 sorununu çözer)
+    let cleanTitle = decodeURIComponent(title);
+    
     // Geçmişi temizle ve karşılama mesajı ekle
-    historyEl.innerHTML = `<div style="align-self: flex-start; background: var(--bg2); color: var(--text); padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid var(--border); max-width: 85%; font-size:13.5px; line-height:1.6;">Merhaba! <b>${title} (${year})</b> hakkında ne öğrenmek istersiniz? Uzman bir sinema eleştirmeni olarak sorularınızı yanıtlamaya hazırım.</div>`;
+    historyEl.innerHTML = `<div style="align-self: flex-start; background: var(--bg2); color: var(--text); padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid var(--border); max-width: 85%; font-size:13.5px; line-height:1.6;">Merhaba! <b>${cleanTitle} (${year})</b> hakkında ne öğrenmek istersiniz? Uzman bir sinema eleştirmeni olarak sorularınızı yanıtlamaya hazırım.</div>`;
     inputEl.value = "";
 
     // Arka planda yapay zekaya verilecek gizli talimat (System Instruction)
-    window.currentAIFilmContext = `Sen uzman bir sinema eleştirmenisin. Kullanıcının şu an sayfasında olduğu ve hakkında sorular soracağı yapım: "${title}" (${year}). Yapımın özeti: "${plot}". Kullanıcıya karşı bilgilendirici, objektif, analitik ve samimi bir dil kullan. DİKKAT: Kullanıcı açıkça istemediği sürece (örneğin "sonunda ne oluyor", "spoiler ver" demedikçe) KESİNLİKLE sürpriz bozan (SPOILER) detaylar VERME.`;
+    window.currentAIFilmContext = `Sen uzman bir sinema eleştirmenisin. Kullanıcının şu an sayfasında olduğu ve hakkında sorular soracağı yapım: "${cleanTitle}" (${year}). Yapımın özeti: "${plot}". Kullanıcıya karşı bilgilendirici, objektif, analitik ve samimi bir dil kullan. DİKKAT: Kullanıcı açıkça istemediği sürece (örneğin "sonunda ne oluyor", "spoiler ver" demedikçe) KESİNLİKLE sürpriz bozan (SPOILER) detaylar VERME.`;
     window.currentAIChatHistory = [];
 
     document.getElementById("ai-chat-modal").classList.add("active");
@@ -1587,7 +1591,7 @@ window.sendAIMessage = function() {
     window.currentAIChatHistory.push({role: "user", parts: [{text: text}]});
 
     var payload = {
-        system_instruction: { parts: [{ text: window.currentAIFilmContext }] },
+        systemInstruction: { parts: [{ text: window.currentAIFilmContext }] }, // YENİ: API için doğru format
         contents: window.currentAIChatHistory
     };
 
@@ -1595,13 +1599,19 @@ window.sendAIMessage = function() {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload)
-    }).then(r => r.json()).then(data => {
+    })
+    .then(async r => {
+        const data = await r.json();
+        if (!r.ok) throw data; // Hata varsa doğrudan Catch bloğuna at
+        return data;
+    })
+    .then(data => {
         document.getElementById(loadingId).remove();
         inputEl.disabled = false; btnEl.disabled = false;
         inputEl.focus();
 
         var reply = "Üzgünüm, şu an yanıt veremiyorum.";
-        if(data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+        if(data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
             reply = data.candidates[0].content.parts[0].text;
             
             window.currentAIChatHistory.push({role: "model", parts: [{text: reply}]});
@@ -1617,7 +1627,14 @@ window.sendAIMessage = function() {
     }).catch(err => {
         document.getElementById(loadingId).remove();
         inputEl.disabled = false; btnEl.disabled = false;
-        var errHtml = `<div style="align-self: flex-start; background: rgba(230,50,50,0.1); color: #e63232; padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid rgba(230,50,50,0.3); max-width: 85%; font-size:13.5px;">Bağlantı hatası yaşandı. Lütfen tekrar deneyin.</div>`;
+        
+        // YENİ: Gerçek hatayı ekrana basıyoruz
+        let errMsg = "Bağlantı hatası yaşandı. Lütfen tekrar deneyin.";
+        if (err.error && err.error.message) {
+            errMsg = "API Hatası: " + err.error.message;
+        }
+
+        var errHtml = `<div style="align-self: flex-start; background: rgba(230,50,50,0.1); color: #e63232; padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid rgba(230,50,50,0.3); max-width: 85%; font-size:13.5px;">${errMsg}</div>`;
         historyEl.insertAdjacentHTML('beforeend', errHtml);
         window.currentAIChatHistory.pop(); // Hata verirse son mesajı sil ki tekrar gönderebilsin
     });
