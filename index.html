@@ -1387,7 +1387,8 @@ window.fetchUserList = function(listType) {
     window.pushAppView(listType, null); 
     qEl.value = ""; window.toggleClearBtn(); window.hideDD(); 
     if (!currentUser) return; 
-    window.closePersonView(); 
+        personViewEl.style.display = "none";
+    resEl.style.display = "block";
     window.currentListType = listType; window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzleyeceklerim' : 'İzlediklerim'; 
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>'; 
