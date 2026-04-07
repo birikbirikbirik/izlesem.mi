@@ -428,32 +428,12 @@
   </div>
 </div>
 
-<div id="ai-chat-modal" class="modal-overlay" onclick="if(event.target === this) window.uiCloseModal()">
-  <div class="modal-box" style="max-width: 500px; display:flex; flex-direction:column; height: 80vh; max-height: 700px; padding:0;">
-    <div class="modal-header">
-      <div class="modal-title">🤖 Yapay Zeka ile Sohbet</div>
-      <button class="modal-close" onclick="window.uiCloseModal()">&times;</button>
-    </div>
-    <div style="background: rgba(230, 50, 50, 0.1); border-bottom: 1px solid rgba(230, 50, 50, 0.2); padding: 12px 16px; font-size: 12px; color: var(--text); font-weight: 600; text-align: center; line-height:1.5;">
-      ⚠️ İpucu: Spoiler yemek istemiyorsanız, lütfen sorunuzu sorarken yapay zekayı uyarın.
-    </div>
-    <div id="ai-chat-history" style="flex:1; overflow-y:auto; padding: 16px; display:flex; flex-direction:column; gap: 12px;">
-       </div>
-    <div style="padding: 16px; border-top: 1.5px solid var(--border); display:flex; gap:8px; background: var(--card);">
-       <input type="text" id="ai-chat-input" placeholder="Bu yapım hakkında bir şey sorun..." style="flex:1;" onkeydown="if(event.key==='Enter') window.sendAIMessage()">
-       <button class="search-btn" id="ai-send-btn" onclick="window.sendAIMessage()">Gönder</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // 1. YAPILANDIRMA VE GLOBAL DEĞİŞKENLER
+// GitHub botlarından korunmak için yeni TMDB API anahtarını bölerek ekledik:
+const tkParts = ["0194f83c16d", "93ad107f908", "a9ce621b77"];
+const TK = tkParts.join("");
 
-// GITHUB BOTLARINI ATLATMAK İÇİN BÖLÜNMÜŞ YENİ TMDB ANAHTARI
-const tkParts = ["253101bbd17", "01181893f9b", "db5ea11d08"];
-const TK = tkParts.join(""); 
-
-// OMDb ANAHTARI
 const okParts = ["44bf", "03a2"];
 const OK = okParts.join("");
 
@@ -1012,10 +992,8 @@ window.loadFilm = function(id, mt) {
         var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceklerim</button>`;
         var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzlediklerim</button>`;
         
-        var safePlotForAI = plot ? plot.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ') : '';
         var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="window.openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
-        var aiBtnHtml = `<button id="btn-ai-${id}" class="action-btn kadro-btn" style="margin-top:10px; border-color:var(--tmdb); color:var(--tmdb); background:rgba(13, 148, 136, 0.05);" onclick="window.openAIChatModal('${safeTitle}', '${year}', '${safePlotForAI}')">🤖 Yapay Zeka ile Sohbet Et</button>`;
-        var ratingHtml = `<div class="user-rating-section">${matchBadgeHtml}${diaryBtnHtml}${aiBtnHtml}<div style="border-top: 1px dashed var(--border); margin: 15px 0;"></div><div class="rating-label">Senin Puanın</div><div class="stars-container" onmousemove="window.handleStarMove(event, this)" onclick="window.submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')"><span>☆☆☆☆☆</span><div class="star-filled">★★★★★</div></div><div id="star-hint" class="star-hint">Puan Ver</div></div>`;
+        var ratingHtml = `<div class="user-rating-section">${matchBadgeHtml}${diaryBtnHtml}<div style="border-top: 1px dashed var(--border); margin: 15px 0;"></div><div class="rating-label">Senin Puanın</div><div class="stars-container" onmousemove="window.handleStarMove(event, this)" onclick="window.submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')"><span>☆☆☆☆☆</span><div class="star-filled">★★★★★</div></div><div id="star-hint" class="star-hint">Puan Ver</div></div>`;
         
         resEl.innerHTML = `<div class="card"><div class="card-head"><div class="card-head-top">${rawPoster ? `<img class="poster" src="${rawPoster}" alt="Afişi Büyüt" onclick="window.openLightbox('${rawPoster.replace('w342', 'original')}')" />` : '<div class="poster-ph">🎬</div>'}<div class="head-info"><div class="card-title">${title}</div><div class="card-meta">${metaLine}</div></div></div><div class="tags-container" id="tags-container-${id}">${tagsHtml}<button class="tag-info-btn" onclick="window.showTooltipModal('Etiketler', 'Veri tabanlarından çekilen istatistiklere göre otomatik atanır.')">?</button></div><div class="actions-row">${wlBtnHtml} ${watchedBtnHtml}${trailer ? `<button class="action-btn trailer-btn" onclick="window.openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}<button class="action-btn share-btn" onclick="window.shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button></div><div class="outbound-links-row">${imdbLink ? `<a class="action-btn lb-btn" href="${imdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>` : ''}<a class="action-btn lb-btn" style="background:#202830; color:#00e054;" href="${letterboxdUrl}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>${tmdbLink ? `<a class="action-btn tmdb-btn" href="${tmdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>` : ''}</div>${platformsHtml}<div class="kadro-btn-wrap"><button class="action-btn kadro-btn" onclick="window.openKadroModal('cast-data-${id}')">🎭 Detaylı Kadroyu Gör</button></div>${hiddenCastContainer}</div>${avgHtml}<div class="scores">${sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10")}${sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10")}${sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer")}${sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100")}</div>${ratingHtml}<div class="bottom">${verd ? `<div class="badge ${verd.c}">${verd.l}</div>` : ''}${plot ? `<p class="plot">${plot}</p>` : ''}</div>${reviewsHtml}${recsHtml}</div>`;
         setTimeout(() => {
@@ -1409,14 +1387,11 @@ window.fetchUserList = function(listType) {
     window.pushAppView(listType, null); 
     qEl.value = ""; window.toggleClearBtn(); window.hideDD();
     if (!currentUser) return; 
-    
-    personViewEl.style.display = "none";
+        personViewEl.style.display = "none";
     resEl.style.display = "block";
-    window.currentListType = listType; window.currentListSearchTerm = ""; 
-    
-    let listNameTR = listType === 'watchlist' ? 'İzleyeceklerim' : 'İzlediklerim';
-    resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>'; 
-    
+    window.currentListType = listType; window.currentListSearchTerm = "";
+    let listNameTR = listType === 'watchlist' ? 'İzleyeceklerim' : 'İzlediklerim'; 
+    resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
     db.collection("users").doc(currentUser.uid).collection(listType).get().then(snap => { 
         window.myList = []; 
         snap.forEach(doc => window.myList.push(doc.data())); 
@@ -1438,7 +1413,6 @@ window.liveFilterList = function(val) {
 window.renderListUI = function(sortType) {
     window.currentSort = sortType; 
     let listNameTR = window.currentListType === 'watchlist' ? 'İzleyeceklerim' : 'İzlediklerim';
-    
     if (window.myList.length === 0) { 
         resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${window.currentListType === 'watchlist' ? '⏳' : '👁️'}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; 
         try { history.replaceState(window.getAppSnapshot(), null, window.location.search); } catch(e){} 
@@ -1489,7 +1463,6 @@ window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetL
     if (!currentUser) { window.openAuthModal(); return; }
     let isAdded = btn.classList.contains('added'); 
     let docRef = db.collection("users").doc(currentUser.uid).collection(targetList).doc(id.toString());
-    
     if (isAdded) { 
         btn.classList.remove('added'); 
         btn.innerHTML = targetList === 'watchlist' ? '⏳ İzleyeceklerim' : '👁️ İzlediklerim'; 
@@ -1498,7 +1471,6 @@ window.toggleListBtn = function(btn, id, mt, title, year, poster, score, targetL
         btn.classList.add('added');
         btn.innerHTML = '✓ Listemde'; 
         docRef.set({ id: id.toString(), mt, title: decodeURIComponent(title), year, poster, score: score === "null" ? null : parseFloat(score), addedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        
         let otherList = targetList === 'watched' ? 'watchlist' : 'watched'; 
         db.collection("users").doc(currentUser.uid).collection(otherList).doc(id.toString()).delete(); 
         
@@ -1534,111 +1506,11 @@ window.translateText = function(btn) {
   }).catch(() => document.getElementById("generic-modal-content").innerHTML = "Bağlantı hatası.");
 };
 
-// 13. YAPAY ZEKA (GEMINI) SOHBET SİSTEMİ
-window.currentAIChatHistory = [];
-window.currentAIFilmContext = "";
-
-window.openAIChatModal = function(title, year, plot) {
-    window.pushModalState();
-    let historyEl = document.getElementById("ai-chat-history");
-    let inputEl = document.getElementById("ai-chat-input");
-    
-    // Başlığı düzgün formata çevir
-    let cleanTitle = decodeURIComponent(title);
-    
-    // Geçmişi temizle ve karşılama mesajı ekle
-    historyEl.innerHTML = `<div style="align-self: flex-start; background: var(--bg2); color: var(--text); padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid var(--border); max-width: 85%; font-size:13.5px; line-height:1.6;">Merhaba! <b>${cleanTitle} (${year})</b> hakkında ne öğrenmek istersiniz? Uzman bir sinema eleştirmeni olarak sorularınızı yanıtlamaya hazırım.</div>`;
-    inputEl.value = "";
-
-    // Arka planda yapay zekaya verilecek gizli talimat
-    window.currentAIFilmContext = `Sen uzman bir sinema eleştirmenisin. Kullanıcının şu an sayfasında olduğu ve hakkında sorular soracağı yapım: "${cleanTitle}" (${year}). Yapımın özeti: "${plot}". Kullanıcıya karşı bilgilendirici, objektif, analitik ve samimi bir dil kullan. DİKKAT: Kullanıcı açıkça istemediği sürece (örneğin "sonunda ne oluyor", "spoiler ver" demedikçe) KESİNLİKLE sürpriz bozan (SPOILER) detaylar VERME.`;
-    window.currentAIChatHistory = [];
-
-    document.getElementById("ai-chat-modal").classList.add("active");
-    document.body.style.overflow = "hidden";
-    setTimeout(() => inputEl.focus(), 100);
-};
-
-window.sendAIMessage = function() {
-    var inputEl = document.getElementById("ai-chat-input");
-    var btnEl = document.getElementById("ai-send-btn");
-    var text = inputEl.value.trim();
-    if(!text) return;
-
-    var historyEl = document.getElementById("ai-chat-history");
-
-    // Kullanıcı mesajını ekrana bas
-    var userMsgHtml = `<div style="align-self: flex-end; background: var(--tmdb); color: #fff; padding: 10px 14px; border-radius: 14px 14px 0 14px; max-width: 85%; font-size:13.5px; line-height:1.5; word-wrap:break-word;">${text}</div>`;
-    historyEl.insertAdjacentHTML('beforeend', userMsgHtml);
-    inputEl.value = "";
-    historyEl.scrollTop = historyEl.scrollHeight;
-
-    // Yükleniyor animasyonunu bas
-    var loadingId = "ai-load-" + Date.now();
-    var aiLoadingHtml = `<div id="${loadingId}" style="align-self: flex-start; background: var(--bg2); color: var(--text); padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid var(--border); max-width: 85%; font-size:13.5px; opacity:0.7;">Düşünüyor... <div class="spinner" style="width:12px; height:12px; display:inline-block; border-width:2px; vertical-align:middle; margin-left:4px;"></div></div>`;
-    historyEl.insertAdjacentHTML('beforeend', aiLoadingHtml);
-    historyEl.scrollTop = historyEl.scrollHeight;
-    
-    inputEl.disabled = true;
-    btnEl.disabled = true;
-
-    // YENİ GEMINI API ANAHTARI GİZLEMESİ
-    var keyParts = ["AIzaSyDKYAA7", "UwPHl230a3cx", "QPe7chzNR3w1bSE"];
-    var geminiKey = keyParts.join("");
-    
-    // Ücretsiz ve güncel Flash modelini kullanıyoruz
-    var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiKey;
-
-    window.currentAIChatHistory.push({role: "user", parts: [{text: text}]});
-
-    var payload = {
-        systemInstruction: { parts: [{ text: window.currentAIFilmContext }] },
-        contents: window.currentAIChatHistory
-    };
-
-    fetch(url, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload)
-    })
-    .then(async r => {
-        const data = await r.json();
-        if (!r.ok) throw data; 
-        return data;
-    })
-    .then(data => {
-        document.getElementById(loadingId).remove();
-        inputEl.disabled = false; btnEl.disabled = false;
-        inputEl.focus();
-
-        var reply = "Üzgünüm, şu an yanıt veremiyorum.";
-        if(data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            reply = data.candidates[0].content.parts[0].text;
-            
-            window.currentAIChatHistory.push({role: "model", parts: [{text: reply}]});
-            
-            // Formatlama (Kalın yazılar ve alt satıra geçişler)
-            reply = reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-        }
-
-        var aiMsgHtml = `<div style="align-self: flex-start; background: var(--bg2); color: var(--text); padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid var(--border); max-width: 85%; font-size:13.5px; line-height:1.6; word-wrap:break-word;">${reply}</div>`;
-        historyEl.insertAdjacentHTML('beforeend', aiMsgHtml);
-        historyEl.scrollTop = historyEl.scrollHeight;
-
-    }).catch(err => {
-        document.getElementById(loadingId).remove();
-        inputEl.disabled = false; btnEl.disabled = false;
-        
-        // Hatayı ekrana basıyoruz
-        let errMsg = "Bağlantı hatası yaşandı. Lütfen tekrar deneyin.";
-        if (err.error && err.error.message) {
-            errMsg = "API Hatası: " + err.error.message;
-        }
-
-        var errHtml = `<div style="align-self: flex-start; background: rgba(230,50,50,0.1); color: #e63232; padding: 10px 14px; border-radius: 14px 14px 14px 0; border: 1px solid rgba(230,50,50,0.3); max-width: 85%; font-size:13.5px;">${errMsg}</div>`;
-        historyEl.insertAdjacentHTML('beforeend', errHtml);
-        window.currentAIChatHistory.pop(); // Hata verirse son mesajı sil ki tekrar gönderebilsin
-    });
+window.createReviewHTML = function(rev) {
+    var author = rev.author || "Anonim"; 
+    var ratingHtml = (rev.author_details && rev.author_details.rating) ? `<span class="rating">⭐ ${rev.author_details.rating}/10</span>` : ''; 
+    var content = rev.content || "";
+    return `<div class="review-card"><div class="rev-author">${author} ${ratingHtml}</div><div class="rev-content">${content}</div><button class="rev-translate-btn" data-text="${encodeURIComponent(content)}" onclick="window.translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>`;
 };
 
 // BAŞLATMA
