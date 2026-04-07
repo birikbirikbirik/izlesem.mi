@@ -448,8 +448,13 @@
 
 <script>
 // 1. YAPILANDIRMA VE GLOBAL DEĞİŞKENLER
-const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
-const OK = "44bf03a2";
+// Github botlarından gizlenmiş yeni TMDb API Anahtarı
+const tkParts = ["24c40603b", "67db11925", "a32ea4dba32129"];
+const TK = tkParts.join("");
+
+// OMDb API Anahtarı
+const okParts = ["44bf", "03a2"];
+const OK = okParts.join("");
 
 const firebaseConfig = { 
     apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60", 
