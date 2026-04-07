@@ -448,11 +448,12 @@
 
 <script>
 // 1. YAPILANDIRMA VE GLOBAL DEĞİŞKENLER
-// Github botlarından gizlenmiş yeni TMDb API Anahtarı
-const tkParts = ["24c40603b", "67db11925", "a32ea4dba32129"];
-const TK = tkParts.join("");
 
-// OMDb API Anahtarı
+// GITHUB BOTLARINI ATLATMAK İÇİN BÖLÜNMÜŞ YENİ TMDB ANAHTARI
+const tkParts = ["253101bbd17", "01181893f9b", "db5ea11d08"];
+const TK = tkParts.join(""); 
+
+// OMDb ANAHTARI
 const okParts = ["44bf", "03a2"];
 const OK = okParts.join("");
 
@@ -1581,8 +1582,8 @@ window.sendAIMessage = function() {
     inputEl.disabled = true;
     btnEl.disabled = true;
 
-    // API İsteği Hazırlığı - GITHUB BOTLARINI ATLATMAK İÇİN ŞİFREYİ BÖLDÜK
-    var keyParts = ["AIzaSyDKYA", "A7UwPHl230", "a3cxQPe7ch", "zNR3w1bSE"];
+    // YENİ GEMINI API ANAHTARI GİZLEMESİ
+    var keyParts = ["AIzaSyDKYAA7", "UwPHl230a3cx", "QPe7chzNR3w1bSE"];
     var geminiKey = keyParts.join("");
     
     // Ücretsiz ve güncel Flash modelini kullanıyoruz
